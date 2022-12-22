@@ -33,7 +33,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/vee-validate.ts"  ],
   "exclude": [
     "node_modules"
   ]
