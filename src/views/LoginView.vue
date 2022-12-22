@@ -1,19 +1,28 @@
 <template>
   <ValidationObserver>
-    <v-container fill-height fluid class="justify-center">
+    <v-container
+      fill-height
+      fluid
+      class="justify-center"
+    >
       <v-card width="500">
         <v-card-title>Login</v-card-title>
         <v-card-text>
-          <ValidationProvider v-slot="{ errors }" rules="required">
+          <ValidationProvider
+            v-slot="{ errors }"
+            rules="required"
+          >
             <v-text-field
               v-model="username"
               label="Benutzername"
               :error-messages="errors"
               outlined
-            >
-            </v-text-field>
+            />
           </ValidationProvider>
-          <ValidationProvider v-slot="{ errors }" rules="required">
+          <ValidationProvider
+            v-slot="{ errors }"
+            rules="required"
+          >
             <v-text-field
               v-model="password"
               label="Passwort"
@@ -22,12 +31,17 @@
               :type="showPassword ? 'text' : 'password'"
               outlined
               @click:append="showPassword = !showPassword"
-            >
-            </v-text-field>
+            />
           </ValidationProvider>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer> <v-btn large @click="login">Login</v-btn>
+          <v-spacer />
+          <v-btn
+            large
+            @click="login"
+          >
+            Login
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-container>
