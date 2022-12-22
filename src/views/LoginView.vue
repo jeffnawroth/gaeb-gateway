@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver>
+  <ValidationObserver v-slot="{ invalid }">
     <v-container
       fill-height
       fluid
@@ -38,6 +38,7 @@
           <v-spacer />
           <v-btn
             large
+            :disabled="invalid"
             @click="login"
           >
             Login
@@ -61,7 +62,7 @@ export default Vue.extend({
   methods: {
     login() {
       //TODO: Add login
-      console.log("Login pressed");
+      this.$router.push({ name: "home-view" });
     },
   },
 });
