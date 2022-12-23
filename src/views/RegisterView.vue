@@ -23,7 +23,7 @@
           <ValidationProvider
             v-slot="{ errors }"
             vid="password"
-            rules="required"
+            rules="required|min:8"
           >
             <v-text-field
               v-model="password"
