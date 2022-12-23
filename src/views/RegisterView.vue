@@ -10,6 +10,7 @@
         <v-card-text>
           <ValidationProvider
             v-slot="{ errors }"
+            vid="register"
             rules="required"
           >
             <v-text-field
@@ -21,6 +22,7 @@
           </ValidationProvider>
           <ValidationProvider
             v-slot="{ errors }"
+            vid="password"
             rules="required"
           >
             <v-text-field
@@ -35,16 +37,17 @@
           </ValidationProvider>
           <ValidationProvider
             v-slot="{ errors }"
-            rules="required"
+            vid="passwordConfirm"
+            rules="required|confirmed:password"
           >
             <v-text-field
-              v-model="password2"
+              v-model="passwordConfirm"
               label="Passwort bestätigen"
               :error-messages="errors"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="showPassword ? 'text' : 'password'"
+              :append-icon="showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPasswordConfirm ? 'text' : 'password'"
               outlined
-              @click:append="showPassword = !showPassword"
+              @click:append="showPasswordConfirm = !showPasswordConfirm"
             />
           </ValidationProvider>
         </v-card-text>
@@ -71,8 +74,9 @@ export default Vue.extend({
   data: () => ({
     username: "",
     password: "",
-    password2: "",
+    passwordConfirm: "",
     showPassword: false,
+    showPasswordConfirm: false,
   }),
   methods: {
     register() {
