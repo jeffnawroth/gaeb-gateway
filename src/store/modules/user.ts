@@ -1,3 +1,4 @@
+import router from "@/router";
 import axios from "axios";
 
 export default {
@@ -21,9 +22,18 @@ export default {
   },
   actions: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async register({ commit }: any, credentials: any) {
-      const data = await axios.post("//localhost:3000/register", credentials);
-      commit("SET_USER_DATA", data.data);
+    async register({ commit, dispatch }: any, credentials: any) {
+      try {
+        const data = await axios.post("//localhost:3000/register", credentials);
+        commit("SET_USER_DATA", data.data);
+        router.push({ name: "home-view" });
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Bei der Registrierung ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async login({ commit }: any, credentials: any) {

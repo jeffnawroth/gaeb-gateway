@@ -71,7 +71,7 @@
           <v-btn
             large
             :disabled="invalid"
-            @click="register"
+            @click="registerUser"
           >
             Registrieren
           </v-btn>
@@ -84,6 +84,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   data: () => ({
@@ -95,18 +96,13 @@ export default Vue.extend({
     showPasswordConfirm: false,
   }),
   methods: {
-    async register() {
-      //TODO: Add registration
-      try {
-        await this.$store.dispatch("user/register", {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });
-        this.$router.push({ name: "home-view" });
-      } catch (error: any) {
-        console.log(error.response);
-      }
+    ...mapActions("user", ["register"]),
+    async registerUser() {
+      await this.register({
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      });
     },
   },
 });
