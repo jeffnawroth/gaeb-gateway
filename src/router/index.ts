@@ -6,18 +6,24 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     name: "home-view",
-    path: "/home",
-    component: () => import(/* webpackChunkName: "home-view" */ '@/views/HomeView.vue')
+    path: "/",
+    component: () =>
+      import(/* webpackChunkName: "home-view" */ "@/views/HomeView.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "login-view",
-    path: "/",
-    component: () => import(/* webpackChunkName: "login-view" */ '@/views/LoginView.vue')
+    path: "/login",
+    component: () =>
+      import(/* webpackChunkName: "login-view" */ "@/views/LoginView.vue"),
   },
   {
     name: "register-view",
     path: "/register",
-    component: () => import(/* webpackChunkName: "register-view" */ '@/views/RegisterView.vue')
+    component: () =>
+      import(
+        /* webpackChunkName: "register-view" */ "@/views/RegisterView.vue"
+      ),
   },
 ];
 
@@ -25,6 +31,15 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const loggedIn = localStorage.getItem("user");
+
+  if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
+    next({ name: "login-view" });
+  }
+  next();
 });
 
 export default router;
