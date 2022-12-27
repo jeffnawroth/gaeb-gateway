@@ -15,9 +15,10 @@ export default {
         "Authorization"
       ] = `Bearer ${userData.token}`;
     },
-    CLEAR_USER_DATA() {
+    CLEAR_USER_DATA(state: any) {
       localStorage.removeItem("user");
-      location.reload();
+      state.user = null;
+      axios.defaults.headers.common["Authorization"] = null;
     },
   },
   actions: {

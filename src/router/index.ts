@@ -9,7 +9,7 @@ const routes: Array<RouteConfig> = [
     path: "/",
     component: () =>
       import(/* webpackChunkName: "home-view" */ "@/views/HomeView.vue"),
-    meta: { requiresAuth: true },
+    /*  meta: { requiresAuth: true }, */
   },
   {
     name: "login-view",
