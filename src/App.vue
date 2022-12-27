@@ -1,8 +1,13 @@
 <template>
   <v-app>
     <v-main>
-      <NotificationContainer />
-      <router-view />
+      <v-container
+        fluid
+        fill-height
+      >
+        <NotificationContainer />
+        <router-view />
+      </v-container>
     </v-main>
   </v-app>
 </template>
