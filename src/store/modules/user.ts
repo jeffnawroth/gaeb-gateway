@@ -36,9 +36,18 @@ export default {
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async login({ commit }: any, credentials: any) {
-      const data = await axios.post("//localhost:3000/login", credentials);
-      commit("SET_USER_DATA", data.data);
+    async login({ commit, dispatch }: any, credentials: any) {
+      try {
+        const data = await axios.post("//localhost:3000/login", credentials);
+        commit("SET_USER_DATA", data.data);
+        router.push({ name: "home-view" });
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Bei der Anmeldung ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      }
     },
     logout({ commit }: any) {
       commit("CLEAR_USER_DATA");

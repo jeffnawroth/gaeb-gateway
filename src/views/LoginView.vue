@@ -42,7 +42,7 @@
           <v-btn
             large
             :disabled="invalid"
-            @click="login"
+            @click="loginUser"
           >
             Login
           </v-btn>
@@ -55,6 +55,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   data: () => ({
@@ -63,17 +64,12 @@ export default Vue.extend({
     showPassword: false,
   }),
   methods: {
-    async login() {
-      //TODO: Add login
-      try {
-        await this.$store.dispatch("user/login", {
-          email: this.email,
-          password: this.password,
-        });
-        this.$router.push({ name: "home-view" });
-      } catch (error: any) {
-        console.log(error.response);
-      }
+    ...mapActions("user", ["login"]),
+    async loginUser() {
+      await this.login({
+        email: this.email,
+        password: this.password,
+      });
     },
   },
 });
