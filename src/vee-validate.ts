@@ -1,5 +1,5 @@
 import { extend } from "vee-validate";
-import { required, confirmed, min } from "vee-validate/dist/rules";
+import { required, confirmed, min, email } from "vee-validate/dist/rules";
 
 extend("required", {
   ...required,
@@ -11,5 +11,13 @@ extend("confirmed", {
 });
 extend("min", {
   ...min,
-  message: "Das Passwort benötigt mindestens {length} Zeichen"
+  message: "Das Passwort benötigt mindestens {length} Zeichen",
+});
+extend("min", {
+  ...min,
+  message: "Das Passwort benötigt mindestens {length} Zeichen",
+});
+extend("email", {
+  ...email,
+  message: "Das E-Mail-Feld muss eine gültige E-Mail sein",
 });
