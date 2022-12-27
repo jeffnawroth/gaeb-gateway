@@ -10,11 +10,11 @@
         <v-card-text>
           <ValidationProvider
             v-slot="{ errors }"
-            rules="required"
+            rules="required|email"
           >
             <v-text-field
-              v-model="username"
-              label="Benutzername"
+              v-model="email"
+              label="E-Mail"
               :error-messages="errors"
               outlined
             />
@@ -33,6 +33,9 @@
               @click:append="showPassword = !showPassword"
             />
           </ValidationProvider>
+          <router-link :to="{ name: 'register-view' }">
+            Du hast noch kein Konto? Registrieren.
+          </router-link>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -55,14 +58,22 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   data: () => ({
-    username: "",
+    email: "",
     password: "",
     showPassword: false,
   }),
   methods: {
-    login() {
+    async login() {
       //TODO: Add login
-      this.$router.push({ name: "home-view" });
+      try {
+        await this.$store.dispatch("user/login", {
+          email: this.email,
+          password: this.password,
+        });
+        this.$router.push({ name: "home-view" });
+      } catch (error: any) {
+        console.log(error.response);
+      }
     },
   },
 });
