@@ -63,6 +63,7 @@ export default Vue.extend({
   }),
   methods: {
     ...mapActions("user", ["login"]),
+    //Logging in the user
     async loginUser() {
       await this.login({
         email: this.email,

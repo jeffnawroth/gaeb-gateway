@@ -95,6 +95,7 @@ export default Vue.extend({
   }),
   methods: {
     ...mapActions("user", ["register"]),
+    //Register the user
     async registerUser() {
       await this.register({
         username: this.username,

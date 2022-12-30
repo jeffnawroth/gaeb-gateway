@@ -45,9 +45,11 @@ export default Vue.extend({
     progress: 0,
   }),
   mounted() {
+    //Remove notification after 6 seconds
     this.timeout = setTimeout(() => {
       this.remove(this.notification);
     }, 6000);
+    //Increase the circular progress
     this.interval = setInterval(() => {
       if (this.progress !== 100) this.progress += 20;
     }, 1000);
