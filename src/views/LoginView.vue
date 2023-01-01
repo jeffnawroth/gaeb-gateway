@@ -3,7 +3,7 @@
     <v-col class="d-flex justify-center">
       <v-card width="500">
         <ValidationObserver v-slot="{ invalid }">
-          <v-card-title>Login</v-card-title>
+          <v-card-title>Anmelden</v-card-title>
           <v-card-text>
             <ValidationProvider
               v-slot="{ errors }"
@@ -41,7 +41,7 @@
               :disabled="invalid"
               @click="loginUser"
             >
-              Login
+              Anmelden
             </v-btn>
           </v-card-actions>
         </ValidationObserver>

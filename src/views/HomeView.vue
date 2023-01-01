@@ -2,10 +2,10 @@
   <v-row>
     <v-col class="d-flex justify-center">
       <h1 v-if="!loggedIn">
-        Welcome to the App!
+        Willkommen bei GAEB Gateway!
       </h1>
       <h1 v-else>
-        Welcome {{ user.firstName }}
+        Wilkommen {{ user.firstName }}
       </h1>
     </v-col>
     <v-col
@@ -13,19 +13,19 @@
       cols="12"
     >
       <h2 v-if="!loggedIn">
-        To use this app you'll need to
+        Um diese Anwendung zu nutzen, müssen Sie sich
         <router-link :to="{ name: 'login-view' }">
-          Login
-        </router-link> or
+          Anmelden
+        </router-link> oder
         <router-link :to="{ name: 'register-view' }">
-          Register
+          Registrieren
         </router-link>
       </h2>
       <v-btn
         v-else
         @click="logout"
       >
-        Logout
+        Abmelden
       </v-btn>
     </v-col>
   </v-row>

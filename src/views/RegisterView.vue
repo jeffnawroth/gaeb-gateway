@@ -72,7 +72,7 @@
               />
             </ValidationProvider>
             <router-link :to="{ name: 'login-view' }">
-              Du hast bereits ein Konto? Einloggen.
+              Du hast bereits ein Konto? Anmelden.
             </router-link>
           </v-card-text>
           <v-card-actions>
