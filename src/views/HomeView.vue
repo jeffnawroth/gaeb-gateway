@@ -5,7 +5,7 @@
         Welcome to the App!
       </h1>
       <h1 v-else>
-        Welcome {{ user.username }}
+        Welcome {{ user.firstName }}
       </h1>
     </v-col>
     <v-col

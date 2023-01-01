@@ -7,12 +7,24 @@
           <v-card-text>
             <ValidationProvider
               v-slot="{ errors }"
-              vid="username"
+              vid="firstName"
               rules="required"
             >
               <v-text-field
-                v-model="username"
-                label="Benutzername"
+                v-model="firstName"
+                label="Vorname"
+                :error-messages="errors"
+                outlined
+              />
+            </ValidationProvider>
+            <ValidationProvider
+              v-slot="{ errors }"
+              vid="lastName"
+              rules="required"
+            >
+              <v-text-field
+                v-model="lastName"
+                label="Nachname"
                 :error-messages="errors"
                 outlined
               />
@@ -86,7 +98,8 @@ import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   data: () => ({
-    username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     passwordConfirm: "",
@@ -98,7 +111,8 @@ export default Vue.extend({
     //Register the user
     async registerUser() {
       await this.register({
-        username: this.username,
+        firstName: this.firstName,
+        lastName: this.lastName,
         email: this.email,
         password: this.password,
       });
