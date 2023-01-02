@@ -39,7 +39,7 @@ namespace gaeb_gateway_backend.Controllers;
     [HttpGet("{id:int}")]
     public async Task<IActionResult>Get(int id)
     {
-        var team = await _context.Users.FirstOrDefaultAsync(userToGet => userToGet.id == id);
+        var team = await _context.Users.FirstOrDefaultAsync(userToGet => userToGet.Id == id);
 
         if (team == null)
             return BadRequest("Invalid id");
@@ -53,19 +53,19 @@ namespace gaeb_gateway_backend.Controllers;
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("Get", user.id, user);
+        return CreatedAtAction("Get", user.Id, user);
     }
 
     
     [HttpPatch]
     public async Task <IActionResult> Patch(int id, string password)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(userToPatch => userToPatch.id == id);
-
+        var user = await _context.Users.FirstOrDefaultAsync(userToPatch => userToPatch.Id == id);
+ 
         if (user == null)
             return BadRequest("Invalid id");
 
-        user.password = password;
+        user.Password = password;
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -74,7 +74,7 @@ namespace gaeb_gateway_backend.Controllers;
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(userToDelete => userToDelete.id == id);
+        var user = await _context.Users.FirstOrDefaultAsync(userToDelete => userToDelete.Id == id);
 
         if (user == null)
             return BadRequest("Invalid id");

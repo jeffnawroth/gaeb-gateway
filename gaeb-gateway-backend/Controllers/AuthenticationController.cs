@@ -57,15 +57,25 @@ public class AuthenticationController : ControllerBase
 
             // Create a user
             var new_user = new IdentityUser()
-            {   
-                Email = requestDto.Email,
-                UserName = requestDto.Email,
-                
-                
-                
+            {
+                UserName = requestDto.Name,
+                Email = requestDto.Email
             };
-
+            
             var is_created = await _userManager.CreateAsync(new_user, requestDto.Password);
+
+            if (!is_created.Succeeded)
+            {
+                // Get the errors from the result
+                var errors = is_created.Errors.Select(e => e.Description);
+                // Return a BadRequest response with the errors
+                return BadRequest(new AuthResult()
+                {
+                    Result = false,
+                    Errors2 = errors
+                });
+            }
+
 
             if (is_created.Succeeded)
             {

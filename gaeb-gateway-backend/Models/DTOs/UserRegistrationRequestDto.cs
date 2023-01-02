@@ -6,18 +6,15 @@ namespace gaeb_gateway_backend.Models.DTOs
     // The expecting body of the request
 	public class UserRegistrationRequestDto
 	{
-        
-        
-		public string firstName { get; set; }
-        
-       
-        //public string lastName { get; set; }
 
-       
-        public string email { get; set; }
+        [Required]
+		public string Name { get; set; }
 
-        
-        public string password { get; set; }
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
 	}
 }
 
