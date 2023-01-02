@@ -25,6 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlDbConnection")));
 
+builder.Services.Configure<JwtConfi>
+
 
 var app = builder.Build();
 
