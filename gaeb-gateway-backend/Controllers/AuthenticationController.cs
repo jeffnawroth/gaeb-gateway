@@ -11,6 +11,8 @@ using gaeb_gateway_backend.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
+
 namespace gaeb_gateway_backend.Controllers;
 
 [Route("api/[controller]")] // api/authentication
@@ -85,10 +87,13 @@ public class AuthenticationController : ControllerBase
                 // Generate the token
                 var token = GenerateJwtToken(new_user);
 
-                return Ok(new AuthResult()
+                return Ok(new AuthUserResult()
                 {
-                    Result = true,
+                    FirstName = requestDto.FirstName,
+                    LastName = requestDto.LastName,
+                    Email = requestDto.Email,
                     Token = token
+
                 });
             }
 
@@ -138,10 +143,13 @@ public class AuthenticationController : ControllerBase
 
             var jwtToken = GenerateJwtToken(existing_user);
 
-            return Ok(new AuthResult()
+            return Ok(new AuthUserResult()
             {
-                Token = jwtToken,
-                Result = true
+                FirstName = existing_user.FirstName,
+                LastName = existing_user.LastName,
+                Email = existing_user.Email,
+                Token = jwtToken
+
             });
         }
 
