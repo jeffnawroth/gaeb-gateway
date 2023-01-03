@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using gaeb_gateway_backend.Configurations;
 using gaeb_gateway_backend.Data;
+using gaeb_gateway_backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +60,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApiDbContext>();
 
 

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace gaeb_gateway_backend.Models
 {
-	// response information from API
+	// Response information from API
 	public class AuthResult
 	{
 		public string Token { get; set; }

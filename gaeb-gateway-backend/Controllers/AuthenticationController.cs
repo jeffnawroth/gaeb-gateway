@@ -11,19 +11,18 @@ using gaeb_gateway_backend.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
 namespace gaeb_gateway_backend.Controllers;
 
 [Route("api/[controller]")] // api/authentication
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
     //private readonly JwtConfig _jwtConfig;
 
     public AuthenticationController(
-        UserManager<IdentityUser> userManager,
+        UserManager<ApplicationUser> userManager,
         IConfiguration configuration
         //JwtConfig jwtConfig
         )
@@ -56,12 +55,16 @@ public class AuthenticationController : ControllerBase
             }
 
             // Create a user
-            var new_user = new IdentityUser()
+            var new_user = new ApplicationUser()
             {
-                UserName = requestDto.Name,
-                Email = requestDto.Email
+                FirstName = requestDto.FirstName,
+                LastName = requestDto.LastName,
+                Email = requestDto.Email,
+                UserName = requestDto.FirstName + "." + requestDto.LastName
+                 
             };
-            
+
+                      
             var is_created = await _userManager.CreateAsync(new_user, requestDto.Password);
 
             if (!is_created.Succeeded)
@@ -155,7 +158,7 @@ public class AuthenticationController : ControllerBase
      }
    
 
-private string GenerateJwtToken(IdentityUser user)
+private string GenerateJwtToken(ApplicationUser user)
 {
     var jwtTokenHandler = new JwtSecurityTokenHandler();
 

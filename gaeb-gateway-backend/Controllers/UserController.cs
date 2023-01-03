@@ -61,7 +61,7 @@ namespace gaeb_gateway_backend.Controllers;
     public async Task <IActionResult> Patch(int id, string password)
     {
         var user = await _context.Users.FirstOrDefaultAsync(userToPatch => userToPatch.Id == id);
- 
+
         if (user == null)
             return BadRequest("Invalid id");
 

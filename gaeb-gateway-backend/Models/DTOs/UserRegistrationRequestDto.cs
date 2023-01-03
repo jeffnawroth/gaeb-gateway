@@ -8,7 +8,10 @@ namespace gaeb_gateway_backend.Models.DTOs
 	{
 
         [Required]
-		public string Name { get; set; }
+		public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
 
         [Required]
         public string Email { get; set; }
