@@ -11,7 +11,6 @@ using gaeb_gateway_backend.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using NuGet.Common;
 
 namespace gaeb_gateway_backend.Controllers;
 
