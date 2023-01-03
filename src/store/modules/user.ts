@@ -1,5 +1,6 @@
 import router from "@/router";
 import axios from "axios";
+import { AuthenticationApi } from "@/api";
 
 export default {
   namespaced: true,
@@ -25,7 +26,11 @@ export default {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async register({ commit, dispatch }: any, credentials: any) {
       try {
-        const data = await axios.post("//localhost:3000/register", credentials);
+        /*         const data = await axios.post("//localhost:3000/register", credentials); */
+        const data =
+          await AuthenticationApi.prototype.apiAuthenticationRegisterPost(
+            credentials
+          );
         commit("SET_USER_DATA", data.data);
         router.push({ name: "home-view" });
       } catch (error) {
@@ -39,7 +44,10 @@ export default {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async login({ commit, dispatch }: any, credentials: any) {
       try {
-        const data = await axios.post("//localhost:3000/login", credentials);
+        const data =
+          await AuthenticationApi.prototype.apiAuthenticationLoginPost(
+            credentials
+          );
         commit("SET_USER_DATA", data.data);
         router.push({ name: "home-view" });
       } catch (error) {
