@@ -44,7 +44,7 @@
             <ValidationProvider
               v-slot="{ errors }"
               vid="password"
-              rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric"
+              rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric|requireUppercase"
             >
               <v-text-field
                 v-model="password"
@@ -59,11 +59,20 @@
 
               <div class="mb-6">
                 <ul>
-                  <li
-                    v-for="option in passwordOptions"
-                    :key="option"
-                  >
-                    {{ option }}
+                  <li :class="{ 'success--text': isMinLengthValid }">
+                    mindestens 6 Zeichen
+                  </li>
+                  <li :class="{ 'success--text': hasDigit }">
+                    mindestens eine Ziffer ('0'-'9')
+                  </li>
+                  <li :class="{ 'success--text': hasLowercase }">
+                    mindestens einen Kleinbuchstaben ('a'-'z')
+                  </li>
+                  <li :class="{ 'success--text': hasNonAlphanumeric }">
+                    mindestens ein nicht alphanumerisches Zeichen
+                  </li>
+                  <li :class="{ 'success--text': hasUppercase }">
+                    mindestens einen Großbuchstaben ('A'-'Z')
                   </li>
                 </ul>
               </div>
@@ -119,14 +128,29 @@ export default Vue.extend({
     passwordConfirm: "",
     showPassword: false,
     showPasswordConfirm: false,
-    passwordOptions: [
-      "mindestens 6 Zeichen",
-      "mindestens eine Ziffer ('0'-'9')",
-      "mindestens einen Kleinbuchstaben ('a'-'z')",
-      "mindestens ein nicht alphanumerisches Zeichen",
-      "mindestens einen Großbuchstaben ('A'-'Z')",
-    ],
   }),
+  computed: {
+    isMinLengthValid() {
+      // check if password is at least 6 characters long
+      return this.password.length >= 6;
+    },
+    hasDigit() {
+      // check if password contains a digit
+      return /\d/.test(this.password);
+    },
+    hasLowercase() {
+      // check if password contains a lowercase letter
+      return /[a-z]/.test(this.password);
+    },
+    hasNonAlphanumeric() {
+      // check if password contains a non-alphanumeric character
+      return /\W/.test(this.password);
+    },
+    hasUppercase() {
+      // check if password contains an uppercase letter
+      return /[A-Z]/.test(this.password);
+    },
+  },
   methods: {
     ...mapActions("user", ["register"]),
     //Register the user
