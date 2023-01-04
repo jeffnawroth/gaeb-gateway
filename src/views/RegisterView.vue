@@ -44,7 +44,7 @@
             <ValidationProvider
               v-slot="{ errors }"
               vid="password"
-              rules="required|min:8"
+              rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric"
             >
               <v-text-field
                 v-model="password"
@@ -53,9 +53,22 @@
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 outlined
+                counter
                 @click:append="showPassword = !showPassword"
               />
+
+              <div class="mb-6">
+                <ul>
+                  <li
+                    v-for="option in passwordOptions"
+                    :key="option"
+                  >
+                    {{ option }}
+                  </li>
+                </ul>
+              </div>
             </ValidationProvider>
+
             <ValidationProvider
               v-slot="{ errors }"
               vid="passwordConfirm"
@@ -68,6 +81,7 @@
                 :append-icon="showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPasswordConfirm ? 'text' : 'password'"
                 outlined
+                counter
                 @click:append="showPasswordConfirm = !showPasswordConfirm"
               />
             </ValidationProvider>
@@ -105,6 +119,13 @@ export default Vue.extend({
     passwordConfirm: "",
     showPassword: false,
     showPasswordConfirm: false,
+    passwordOptions: [
+      "mindestens 6 Zeichen",
+      "mindestens eine Ziffer ('0'-'9')",
+      "mindestens einen Kleinbuchstaben ('a'-'z')",
+      "mindestens ein nicht alphanumerisches Zeichen",
+      "mindestens einen Großbuchstaben ('A'-'Z')",
+    ],
   }),
   methods: {
     ...mapActions("user", ["register"]),

@@ -26,7 +26,6 @@ export default {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async register({ commit, dispatch }: any, credentials: any) {
       try {
-        /*         const data = await axios.post("//localhost:3000/register", credentials); */
         const data =
           await AuthenticationApi.prototype.apiAuthenticationRegisterPost(
             credentials
