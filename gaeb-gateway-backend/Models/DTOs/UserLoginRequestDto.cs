@@ -6,9 +6,9 @@ namespace gaeb_gateway_backend.Models.DTOs;
 public class UserLoginRequestDto
 {
 	[Required]
-	public string email { get; set; }
+	public string Email { get; set; }
 
     [Required]
-    public string password { get; set; }
+    public string Password { get; set; }
 }
 
