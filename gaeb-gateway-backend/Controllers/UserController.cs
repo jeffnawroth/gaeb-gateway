@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace gaeb_gateway_backend.Controllers;
 
@@ -18,72 +18,110 @@ namespace gaeb_gateway_backend.Controllers;
 [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+    /*private static ApiDbContext _context;*/
 
-    private static ApiDbContext _context;
-
-    public UserController(ApiDbContext context)
+    public UserController(UserManager<ApplicationUser> userManager)
     {
-        _context = context;
+        _userManager = userManager;
     }
 
    
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAll()
     {
-    var users = await _context.Users.ToListAsync();
+    var users = await _userManager.Users.ToListAsync();
         return Ok(users);
     }
 
     
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult>Get(int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult>GetById(string id)
     {
-        var team = await _context.Users.FirstOrDefaultAsync(userToGet => userToGet.Id == id);
-
-        if (team == null)
-            return BadRequest("Invalid id");
-
-        return Ok(team);
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(User user)
+    public async Task<IActionResult> Create([FromBody] ApplicationUser user)
     {
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction("Get", user.Id, user);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var result = await _userManager.CreateAsync(user);
+        if (result.Succeeded)
+        {
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        }
+        return BadRequest(result.Errors);
     }
 
     
-    [HttpPatch]
-    public async Task <IActionResult> Patch(int id, string password)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] ApplicationUser user)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(userToPatch => userToPatch.Id == id);
-
-        if (user == null)
-            return BadRequest("Invalid id");
-
-        user.Password = password;
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        if (id != user.Id)
+        {
+            return BadRequest();
+        }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var existingUser = await _userManager.FindByIdAsync(id);
+        if (existingUser == null)
+        {
+            return NotFound();
+        }
+        existingUser.Id = user.Id;
+        existingUser.UserName = user.UserName;
+        existingUser.FirstName = user.FirstName;
+        existingUser.LastName = user.LastName;
+        existingUser.Email = user.Email;
+        existingUser.ConcurrencyStamp = user.ConcurrencyStamp;
+        existingUser.NormalizedUserName = user.NormalizedUserName;
+        existingUser.NormalizedEmail = user.NormalizedEmail;
+        existingUser.EmailConfirmed = user.EmailConfirmed;
+        existingUser.PasswordHash = user.PasswordHash;
+        existingUser.SecurityStamp = user.SecurityStamp;
+        existingUser.PhoneNumber = user.PhoneNumber;
+        existingUser.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+        existingUser.TwoFactorEnabled = user.TwoFactorEnabled;
+        existingUser.LockoutEnd = user.LockoutEnd;
+        existingUser.LockoutEnabled = user.LockoutEnabled;
+        existingUser.AccessFailedCount = user.AccessFailedCount;
+        
+        var result = await _userManager.UpdateAsync(existingUser);
+        if (result.Succeeded)
+        {
+            return Ok(user);
+        }
+        return BadRequest(result.Errors);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(userToDelete => userToDelete.Id == id);
-
+        var user = await _userManager.FindByIdAsync(id);
         if (user == null)
-            return BadRequest("Invalid id");
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        {
+            return NotFound();
+        }
+        var result = await _userManager.DeleteAsync(user);
+        if (result.Succeeded)
+        {
+            return Ok();
+        }
+        return BadRequest(result.Errors);
     }
     
 }
+
+
 
