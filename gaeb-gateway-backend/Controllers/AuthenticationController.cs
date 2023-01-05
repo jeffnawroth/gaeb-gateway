@@ -117,7 +117,7 @@ public class AuthenticationController : ControllerBase
         if (ModelState.IsValid)
         {
             // Check if user exists
-            var existing_user = await _userManager.FindByEmailAsync(loginRequest.email);
+            var existing_user = await _userManager.FindByEmailAsync(loginRequest.Email);
 
             if (existing_user == null)
                 return BadRequest(new AuthResult()
@@ -128,7 +128,7 @@ public class AuthenticationController : ControllerBase
                     },
                     Result = false
                 });
-            var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.password);
+            var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.Password);
 
             if (!isCorrect)
                 return BadRequest(new AuthResult()
@@ -182,10 +182,6 @@ private string GenerateJwtToken(ApplicationUser user)
             new Claim(JwtRegisteredClaimNames.Email, value:user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
-            //new
-            new Claim(ClaimTypes.Name, user.FirstName),
-            new Claim(ClaimTypes.Surname, user.LastName),
-            new Claim(ClaimTypes.Email, user.Email)
                 }),
 
             // Set expire time for token
