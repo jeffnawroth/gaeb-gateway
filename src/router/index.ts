@@ -25,6 +25,16 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "register-view" */ "@/views/RegisterView.vue"
       ),
   },
+  {
+    name: "404",
+    path: "/404",
+    component: () =>
+      import(/* webpackChunkName: "404" */ "@/views/NotFound.vue"),
+  },
+  {
+    path: "*",
+    redirect: { name: "404" },
+  },
 ];
 
 const router = new VueRouter({
