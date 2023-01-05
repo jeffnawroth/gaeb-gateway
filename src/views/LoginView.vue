@@ -30,9 +30,6 @@
                 @click:append="showPassword = !showPassword"
               />
             </ValidationProvider>
-            <router-link :to="{ name: 'register-view' }">
-              Du hast noch kein Konto? Registrieren.
-            </router-link>
           </v-card-text>
           <v-card-actions>
             <v-spacer />

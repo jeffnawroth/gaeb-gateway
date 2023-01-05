@@ -16,17 +16,14 @@
         Um diese Anwendung zu nutzen, müssen Sie sich
         <router-link :to="{ name: 'login-view' }">
           Anmelden
-        </router-link> oder
-        <router-link :to="{ name: 'register-view' }">
-          Registrieren
         </router-link>
       </h2>
-      <v-btn
-        v-else
-        @click="logout"
-      >
-        Abmelden
-      </v-btn>
+    </v-col>
+    <v-col
+      class="d-flex justify-center"
+      cols="12"
+    >
+      <p>Zur Registrierung wenden Sie sich bitte an den Administrator</p>
     </v-col>
   </v-row>
 </template>
