@@ -59,7 +59,7 @@ export default Vue.extend({
     showPassword: false,
   }),
   methods: {
-    ...mapActions("user", ["login"]),
+    ...mapActions("authentication", ["login"]),
     //Logging in the user
     async loginUser() {
       await this.login({

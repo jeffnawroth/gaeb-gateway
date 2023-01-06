@@ -149,7 +149,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    ...mapActions("user", ["register"]),
+    ...mapActions("authentication", ["register"]),
     //Register the user
     async registerUser() {
       await this.register({

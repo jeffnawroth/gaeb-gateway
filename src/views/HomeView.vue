@@ -34,12 +34,12 @@ import { authComputed } from "@/store/helpers";
 import { mapState } from "vuex";
 export default Vue.extend({
   computed: {
-    ...mapState("user", ["user"]),
+    ...mapState("authentication", ["user"]),
     ...authComputed,
   },
   methods: {
     logout() {
-      this.$store.dispatch("user/logout");
+      this.$store.dispatch("authentication/logout");
     },
   },
 });

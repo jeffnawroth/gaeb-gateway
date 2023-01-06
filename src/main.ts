@@ -4,7 +4,6 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./vee-validate";
-import axios from "axios";
 
 Vue.config.productionTip = false;
 
@@ -16,7 +15,7 @@ new Vue({
     const userString = localStorage.getItem("user");
     if (userString) {
       const userData = JSON.parse(userString);
-      this.$store.commit("user/SET_USER_DATA", userData);
+      this.$store.commit("authentication/SET_USER_DATA", userData);
     }
     /* axios.interceptors.response.use(
       (response) => response,
