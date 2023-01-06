@@ -1,13 +1,17 @@
 <template>
   <v-app>
+    <v-app-bar
+      app
+      clipped-left
+      elevation="0"
+    />
+    <v-navigation-drawer
+      clipped
+      app
+    />
     <v-main>
-      <v-container
-        fluid
-        fill-height
-      >
-        <NotificationContainer />
-        <router-view />
-      </v-container>
+      <NotificationContainer />
+      <router-view />
     </v-main>
   </v-app>
 </template>
