@@ -24,14 +24,14 @@ export default {
   },
   actions: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async register({ commit, dispatch }: any, credentials: any) {
+    /* async register({ commit, dispatch }: any, credentials: any) {
       try {
         const data =
           await AuthenticationApi.prototype.apiAuthenticationRegisterPost(
             credentials
           );
         commit("SET_USER_DATA", data.data);
-        router.push({ name: "home-view" });
+        router.push({ name: "user-management" });
       } catch (error) {
         const notification = {
           type: "error",
@@ -39,7 +39,7 @@ export default {
         };
         dispatch("notification/add", notification, { root: true });
       }
-    },
+    }, */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async login({ commit, dispatch }: any, credentials: any) {
       try {

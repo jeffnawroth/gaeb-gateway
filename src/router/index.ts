@@ -32,6 +32,16 @@ const routes: Array<RouteConfig> = [
       import(
         /* webpackChunkName: "user-management" */ "@/views/UserManagement.vue"
       ),
+    children: [
+      {
+        name: "register-form",
+        path: "register",
+        component: () =>
+          import(
+            /* weppackChunkName: "register-user" */ "@/components/RegisterForm.vue"
+          ),
+      },
+    ],
   },
   {
     name: "404",

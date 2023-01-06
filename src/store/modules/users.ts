@@ -1,4 +1,5 @@
 import { ApplicationUser, UserApi } from "@/api";
+import router from "@/router";
 
 export default {
   namespaced: true,
@@ -8,6 +9,9 @@ export default {
   mutations: {
     SET_USERS(state: any, users: ApplicationUser[]) {
       state.users = users;
+    },
+    ADD_USER(state: any, user: ApplicationUser) {
+      state.users.push(user);
     },
     DELETE_USER(state: any, user: ApplicationUser) {
       state.users.splice(state.users.indexOf(user), 1);
@@ -32,10 +36,22 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
+    async createUser({ commit, dispatch }: any, user: ApplicationUser) {
+      try {
+        await UserApi.prototype.apiUserPost(user);
+        commit("ADD_USER", user);
+        router.push({ name: "user-management" });
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Beim erstellen des Nutzers ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+        return Promise.reject(error);
+      }
+    },
     async deleteUser({ commit, dispatch }: any, user: ApplicationUser) {
       try {
-        console.log(user);
-
         await UserApi.prototype.apiUserIdDelete(user.id as string);
         commit("DELETE_USER", user);
       } catch (error) {
