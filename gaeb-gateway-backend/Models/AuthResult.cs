@@ -5,7 +5,6 @@ namespace gaeb_gateway_backend.Models
 	public class AuthResult
 	{
 		public string Token { get; set; }
-		public bool Result { get; set; }
 		public List<string> Errors { get; set; }
 		public IEnumerable<string>? Errors2 { get; set; }
 

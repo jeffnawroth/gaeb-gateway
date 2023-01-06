@@ -20,17 +20,14 @@ public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
-    //private readonly JwtConfig _jwtConfig;
 
     public AuthenticationController(
         UserManager<ApplicationUser> userManager,
         IConfiguration configuration
-        //JwtConfig jwtConfig
         )
     {
         _userManager = userManager;
         _configuration = configuration;
-        //_jwtConfig = jwtConfig;
     }
 
     [HttpPost]
@@ -47,10 +44,10 @@ public class AuthenticationController : ControllerBase
             {
                 return BadRequest(new AuthResult()
                 {
-                    Result = false,
+                    
                     Errors = new List<string>()
                     {
-                        "Email already exists. Please Log in."
+                        "Email existiert bereits. Bitte einloggen."
                     }
                 });
             }
@@ -75,7 +72,6 @@ public class AuthenticationController : ControllerBase
                 // Return a BadRequest response with the errors
                 return BadRequest(new AuthResult()
                 {
-                    Result = false,
                     Errors2 = errors
                 });
             }
@@ -98,12 +94,13 @@ public class AuthenticationController : ControllerBase
 
             return BadRequest(new AuthResult()
             {
+               
                 Errors = new List<string>()
                 {
-                    "Server error"
+                    "Server Fehler"
                 },
-                Result = false
-            });
+                
+            }); ;
         }
 
         return BadRequest();
@@ -124,9 +121,8 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Invalid payload"
+                        "Ungültiger Payload"
                     },
-                    Result = false
                 });
             var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.Password);
 
@@ -135,9 +131,8 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Invalid credentials"
+                        "Email und Passwort stimmen nicht überein."
                     },
-                    Result = false
                 });
 
             var jwtToken = GenerateJwtToken(existing_user);
@@ -156,9 +151,8 @@ public class AuthenticationController : ControllerBase
         {
             Errors = new List<string>()
             {
-                "Invalid payload"
+                "Ungültiger Payload"
             },
-            Result = false
         });
 
 
