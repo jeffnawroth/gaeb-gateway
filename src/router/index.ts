@@ -26,6 +26,14 @@ const routes: Array<RouteConfig> = [
       ),
   },
   {
+    name: "user-management",
+    path: "/users",
+    component: () =>
+      import(
+        /* webpackChunkName: "user-management" */ "@/views/UserManagement.vue"
+      ),
+  },
+  {
     name: "404",
     path: "/404",
     component: () =>
