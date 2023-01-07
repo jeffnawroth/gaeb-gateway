@@ -48,7 +48,7 @@ export default {
             credentials
           );
         commit("SET_USER_DATA", data.data);
-        router.push({ name: "home" });
+        router.push({ name: "users" });
       } catch (error) {
         const notification = {
           type: "error",

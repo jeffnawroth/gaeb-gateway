@@ -16,7 +16,7 @@
           <v-spacer />
           <v-spacer />
           <v-btn @click="$router.push({ name: 'create-user' })">
-            Registrieren
+            Nutzer hinzufügen
           </v-btn>
         </v-toolbar>
       </template>
@@ -44,7 +44,7 @@
           {{ user.firstName + " " + user.lastName }} löschen möchten? Diese
           Aktion kann nicht rückgängig gemacht werden.
         </v-card-text>
-        <v-card-actions class="justify-space-between">
+        <v-card-actions class="justify-space-around">
           <v-btn @click="closeDelete">
             Abbrechen
           </v-btn>

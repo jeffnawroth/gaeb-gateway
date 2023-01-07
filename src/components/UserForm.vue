@@ -7,7 +7,7 @@
   >
     <v-card>
       <ValidationObserver v-slot="{ invalid }">
-        <v-card-title>Registrieren</v-card-title>
+        <v-card-title>{{ cardTitle }}</v-card-title>
         <v-card-text>
           <ValidationProvider
             v-slot="{ errors }"
@@ -101,8 +101,7 @@
             />
           </ValidationProvider>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer />
+        <v-card-actions class="justify-space-around">
           <v-btn
             large
             @click="close"
@@ -111,10 +110,11 @@
           </v-btn>
           <v-btn
             large
+            color="success"
             :disabled="invalid"
             @click="saveUser"
           >
-            Registrieren
+            Speichern
           </v-btn>
         </v-card-actions>
       </ValidationObserver>
@@ -122,7 +122,7 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { mapActions, mapMutations, mapState } from "vuex";
@@ -155,6 +155,9 @@ export default Vue.extend({
   }),
   computed: {
     ...mapState("users", ["user", "creationMode"]),
+    cardTitle() {
+      return this.creationMode ? "Nutzer hinzufügen" : "Nutzer bearbeiten";
+    },
     /*  isMinLengthValid(): boolean {
       // check if password is at least 6 characters long
       return this.localUser.passwordHash.length >= 6;
