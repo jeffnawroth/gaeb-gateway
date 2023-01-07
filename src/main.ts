@@ -13,6 +13,7 @@ new Vue({
   store,
   vuetify,
   created() {
+    this.$store.dispatch("authentication/loadDarkMode");
     const userString = localStorage.getItem("user");
     if (userString) {
       const userData = JSON.parse(userString);

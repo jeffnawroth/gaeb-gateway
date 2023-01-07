@@ -12,6 +12,13 @@
       >
         GAEB Gateway
       </v-toolbar-title>
+      <v-spacer />
+      <v-btn
+        icon
+        @click="TOGGLE_DARK_MODE"
+      >
+        <v-icon> mdi-theme-light-dark </v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -40,6 +47,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapMutations } from "vuex";
 export default Vue.extend({
   data: () => ({
     drawer: true,
@@ -51,6 +59,7 @@ export default Vue.extend({
       },
     ],
   }),
+  methods: mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
 });
 </script>
 

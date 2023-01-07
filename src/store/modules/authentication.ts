@@ -1,11 +1,13 @@
 import router from "@/router";
 import axios from "axios";
 import { AuthenticationApi } from "@/api";
+import vuetify from "@/plugins/vuetify";
 
 export default {
   namespaced: true,
   state: {
     user: null,
+    darkMode: false,
   },
   mutations: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,6 +22,15 @@ export default {
       localStorage.removeItem("user");
       state.user = null;
       axios.defaults.headers.common["Authorization"] = null;
+    },
+    TOGGLE_DARK_MODE(state: any) {
+      state.darkMode = !state.darkMode;
+      vuetify.framework.theme.dark = state.darkMode;
+      localStorage.setItem("darkMode", state.darkMode);
+    },
+    SET_DARK_MODE(state: any, value: boolean) {
+      state.darkMode = value;
+      vuetify.framework.theme.dark = state.darkMode;
     },
   },
   actions: {
@@ -59,6 +70,12 @@ export default {
     },
     logout({ commit }: any) {
       commit("CLEAR_USER_DATA");
+    },
+    loadDarkMode({ commit }: any) {
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode !== null) {
+        commit("SET_DARK_MODE", darkMode === "true");
+      }
     },
   },
   getters: {
