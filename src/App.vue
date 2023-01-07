@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import NotificationContainer from "@/components/NotificationContainer.vue";
+import NotificationContainer from "@/components/Notifcation/NotificationContainer.vue";
 export default Vue.extend({
   name: "App",
   components: {
