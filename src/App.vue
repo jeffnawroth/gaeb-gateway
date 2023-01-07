@@ -1,14 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      clipped-left
-      elevation="0"
-    />
-    <v-navigation-drawer
-      clipped
-      app
-    />
+    <NavigationLayout />
     <v-main>
       <NotificationContainer />
       <router-view />
@@ -19,13 +11,13 @@
 <script lang="ts">
 import Vue from "vue";
 import NotificationContainer from "@/components/Notifcation/NotificationContainer.vue";
+import NavigationLayout from "@/components/NavigationLayout.vue";
 export default Vue.extend({
   name: "App",
   components: {
     NotificationContainer,
+    NavigationLayout,
   },
-  data: () => ({
-    //
-  }),
+  data: () => ({}),
 });
 </script>
