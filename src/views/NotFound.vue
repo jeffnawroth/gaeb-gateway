@@ -22,7 +22,7 @@
           color="primary"
           to="/"
         >
-          Zurück zum Dashboard
+          Zurück zur Startseite
         </v-btn>
       </v-col>
     </v-row>
