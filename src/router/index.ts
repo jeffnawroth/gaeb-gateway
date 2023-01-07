@@ -30,16 +30,14 @@ const routes: Array<RouteConfig> = [
         path: "register",
         component: () =>
           import(
-            /* weppackChunkName: "register-user" */ "@/components/RegisterForm.vue"
+            /* weppackChunkName: "register-user" */ "@/components/UserForm.vue"
           ),
       },
       {
         name: "user",
         path: "user/:id",
         component: () =>
-          import(
-            /* weppackChunkName: "user" */ "@/components/RegisterForm.vue"
-          ),
+          import(/* weppackChunkName: "user" */ "@/components/UserForm.vue"),
       },
     ],
   },
