@@ -169,6 +169,8 @@ private string GenerateJwtToken(ApplicationUser user)
         // Token descriptor
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
+            Issuer = "https://localhost:7043/",
+            Audience = "https://localhost:7043/",
             Subject = new ClaimsIdentity(new[]
             {
             new Claim("Id", user.Id),
