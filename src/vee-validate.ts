@@ -46,3 +46,9 @@ extend("requireUppercase", {
   message:
     "Das Passwort muss mindestens einen Großbuchstaben enthalten ('A'-'Z')",
 });
+extend("alphabeticalName", {
+  ...regex,
+  validate: (value) => value.match(/^[a-zA-Z\s]*$/) !== null,
+  message:
+    "Der Name muss alphabetische Buchstaben enthalten ('A'-'Z' / 'a'-'z')",
+});

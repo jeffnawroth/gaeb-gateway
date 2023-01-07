@@ -13,7 +13,7 @@
             <ValidationProvider
               v-slot="{ errors }"
               vid="firstName"
-              rules="required"
+              rules="required|alphabeticalName"
             >
               <v-text-field
                 v-model="localUser.firstName"
@@ -25,7 +25,7 @@
             <ValidationProvider
               v-slot="{ errors }"
               vid="lastName"
-              rules="required"
+              rules="required|alphabeticalName"
             >
               <v-text-field
                 v-model="localUser.lastName"
