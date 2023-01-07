@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using gaeb_gateway_backend.Configurations;
 using gaeb_gateway_backend.Data;
 using gaeb_gateway_backend.Models;
@@ -36,7 +37,10 @@ builder.Services.AddSwaggerGen(options =>
         Title = "GAEB Gateway API",
         Description = "An ASP.NET Core Web API for GAEB Gateway"
     });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresqlDbConnection")));
 
