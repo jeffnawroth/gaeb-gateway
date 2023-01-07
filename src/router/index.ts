@@ -9,7 +9,6 @@ const routes: Array<RouteConfig> = [
     path: "/",
     component: () =>
       import(/* webpackChunkName: "home" */ "@/views/HomeView.vue"),
-    /*  meta: { requiresAuth: true }, */
   },
   {
     name: "login",
@@ -22,6 +21,8 @@ const routes: Array<RouteConfig> = [
     path: "/users",
     component: () =>
       import(/* webpackChunkName: "users" */ "@/views/UserManagement.vue"),
+    meta: { requiresAuth: true },
+
     children: [
       {
         name: "create-user",
