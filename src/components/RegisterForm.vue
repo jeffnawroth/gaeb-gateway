@@ -3,6 +3,7 @@
     v-model="dialog"
     width="500"
     @click:outside="close"
+    @keydown.esc="close"
   >
     <v-card>
       <ValidationObserver v-slot="{ invalid }">
@@ -14,7 +15,7 @@
             rules="required"
           >
             <v-text-field
-              v-model="firstName"
+              v-model="localUser.firstName"
               label="Vorname"
               :error-messages="errors"
               outlined
@@ -26,7 +27,7 @@
             rules="required"
           >
             <v-text-field
-              v-model="lastName"
+              v-model="localUser.lastName"
               label="Nachname"
               :error-messages="errors"
               outlined
@@ -38,19 +39,20 @@
             rules="required|email"
           >
             <v-text-field
-              v-model="email"
+              v-model="localUser.email"
               label="E-Mail"
               :error-messages="errors"
               outlined
             />
           </ValidationProvider>
           <ValidationProvider
+            v-if="creationMode"
             v-slot="{ errors }"
             vid="password"
             rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric|requireUppercase"
           >
             <v-text-field
-              v-model="password"
+              v-model="localUser.passwordHash"
               label="Passwort"
               :error-messages="errors"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -60,7 +62,7 @@
               @click:append="showPassword = !showPassword"
             />
 
-            <div class="mb-6">
+            <!--  <div class="mb-6">
               <ul>
                 <li :class="{ 'success--text': isMinLengthValid }">
                   mindestens 6 Zeichen
@@ -78,10 +80,11 @@
                   mindestens einen Großbuchstaben ('A'-'Z')
                 </li>
               </ul>
-            </div>
+            </div> -->
           </ValidationProvider>
 
           <ValidationProvider
+            v-if="creationMode"
             v-slot="{ errors }"
             vid="passwordConfirm"
             rules="required|confirmed:password"
@@ -109,7 +112,7 @@
           <v-btn
             large
             :disabled="invalid"
-            @click="registerUser"
+            @click="saveUser"
           >
             Registrieren
           </v-btn>
@@ -122,55 +125,79 @@
 <script lang="ts">
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
-import { mapActions } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
+import store from "@/store";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
+  async beforeRouteEnter(routeTo, routeFrom, next) {
+    if (routeTo.name === "user") {
+      try {
+        await store.dispatch("users/getUser", routeTo.params.id);
+      } catch (error) {
+        next();
+      }
+    } else {
+      store.commit("users/SET_CREATION_MODE", true);
+    }
+    next();
+  },
   data: () => ({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+    localUser: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      passwordHash: "",
+    },
     passwordConfirm: "",
     showPassword: false,
     showPasswordConfirm: false,
     dialog: true,
   }),
   computed: {
-    isMinLengthValid() {
+    ...mapState("users", ["user", "creationMode"]),
+    /*  isMinLengthValid(): boolean {
       // check if password is at least 6 characters long
-      return this.password.length >= 6;
+      return this.localUser.passwordHash.length >= 6;
     },
-    hasDigit() {
+    hasDigit(): boolean {
       // check if password contains a digit
-      return /\d/.test(this.password);
+      return /\d/.test(this.localUser.passwordHash);
     },
-    hasLowercase() {
+    hasLowercase(): boolean {
       // check if password contains a lowercase letter
-      return /[a-z]/.test(this.password);
+      return /[a-z]/.test(this.localUser.passwordHash);
     },
-    hasNonAlphanumeric() {
+    hasNonAlphanumeric(): boolean {
       // check if password contains a non-alphanumeric character
-      return /\W/.test(this.password);
+      return /\W/.test(this.localUser.passwordHash);
     },
-    hasUppercase() {
+    hasUppercase(): boolean {
       // check if password contains an uppercase letter
-      return /[A-Z]/.test(this.password);
-    },
+      return /[A-Z]/.test(this.localUser.passwordHash);
+    }, */
+  },
+  created() {
+    this.localUser = JSON.parse(JSON.stringify(this.user));
   },
   methods: {
-    ...mapActions("users", ["createUser"]),
+    ...mapActions("users", ["createUser", "updateUser"]),
+    ...mapMutations("users", ["SET_USER", "SET_CREATION_MODE"]),
     //Register the user
-    async registerUser() {
-      await this.createUser({
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        passwordHash: this.password,
-      });
+    async saveUser() {
+      if (this.creationMode) {
+        await this.createUser(this.localUser);
+      } else {
+        await this.updateUser(this.localUser);
+      }
+      this.close();
     },
     close() {
       this.$router.push({ name: "user-management" });
+      this.SET_USER({});
+      this.SET_CREATION_MODE(false);
     },
   },
 });
 </script>
+
+<style scoped></style>

@@ -1,10 +1,8 @@
 <template>
   <v-alert
-    id="notification"
+    id="alert"
     v-model="alert"
     :type="notification.type"
-    text
-    dense
     width="auto"
   >
     {{ notification.message }}
@@ -18,7 +16,6 @@
       >
         <v-icon
           small
-          :color="notification.type"
           @click="alert = false"
         >
           mdi-close
@@ -61,3 +58,9 @@ export default Vue.extend({
   methods: mapActions("notification", ["remove"]),
 });
 </script>
+
+<style scoped>
+#alert {
+  z-index: 999;
+}
+</style>

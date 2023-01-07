@@ -15,7 +15,7 @@
           />
           <v-spacer />
           <v-spacer />
-          <v-btn @click="$router.push({ name: 'register-form' })">
+          <v-btn @click="$router.push({ name: 'register-user' })">
             Registrieren
           </v-btn>
         </v-toolbar>
@@ -23,7 +23,7 @@
       <template #[`item.actions`]="{ item }">
         <v-icon
           class="mr-2"
-          @click="editUser(item)"
+          @click="$router.push({ name: 'user', params: { id: item.id } })"
         >
           mdi-pencil
         </v-icon>

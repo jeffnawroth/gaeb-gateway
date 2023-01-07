@@ -18,14 +18,6 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "login-view" */ "@/views/LoginView.vue"),
   },
   {
-    name: "register-view",
-    path: "/register",
-    component: () =>
-      import(
-        /* webpackChunkName: "register-view" */ "@/views/RegisterView.vue"
-      ),
-  },
-  {
     name: "user-management",
     path: "/users",
     component: () =>
@@ -34,11 +26,19 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        name: "register-form",
+        name: "register-user",
         path: "register",
         component: () =>
           import(
             /* weppackChunkName: "register-user" */ "@/components/RegisterForm.vue"
+          ),
+      },
+      {
+        name: "user",
+        path: "user/:id",
+        component: () =>
+          import(
+            /* weppackChunkName: "user" */ "@/components/RegisterForm.vue"
           ),
       },
     ],
