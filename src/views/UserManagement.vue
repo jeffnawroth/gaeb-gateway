@@ -4,6 +4,7 @@
       :items="users"
       :headers="headers"
       sort-by="lastName"
+      :search="search"
     >
       <template #top>
         <v-toolbar flat>
@@ -13,6 +14,16 @@
             inset
             vertical
           />
+
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Suche"
+            single-line
+            hide-details
+          />
+
+          <v-spacer />
           <v-spacer />
           <v-spacer />
           <v-btn @click="$router.push({ name: 'create-user' })">
@@ -74,6 +85,7 @@ export default Vue.extend({
       { text: "E-Mail", value: "email" },
       { text: "", value: "actions", sortable: false, width: "10%" },
     ],
+    search: "",
     deleteDialog: false,
     user: {} as ApplicationUser,
   }),
