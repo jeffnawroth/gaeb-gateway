@@ -53,6 +53,9 @@ namespace gaeb_gateway_backend.Controllers;
         {
             return BadRequest(ModelState);
         }
+
+        user.UserName = user.FirstName + "." + user.LastName;
+        user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, user.PasswordHash);
         var result = await _userManager.CreateAsync(user);
         if (result.Succeeded)
         {
