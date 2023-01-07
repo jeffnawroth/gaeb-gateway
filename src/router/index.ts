@@ -5,39 +5,39 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    name: "home-view",
+    name: "home",
     path: "/",
     component: () =>
-      import(/* webpackChunkName: "home-view" */ "@/views/HomeView.vue"),
+      import(/* webpackChunkName: "home" */ "@/views/HomeView.vue"),
     /*  meta: { requiresAuth: true }, */
   },
   {
-    name: "login-view",
+    name: "login",
     path: "/login",
     component: () =>
-      import(/* webpackChunkName: "login-view" */ "@/views/LoginView.vue"),
+      import(/* webpackChunkName: "login" */ "@/views/LoginView.vue"),
   },
   {
-    name: "user-management",
+    name: "users",
     path: "/users",
     component: () =>
-      import(
-        /* webpackChunkName: "user-management" */ "@/views/UserManagement.vue"
-      ),
+      import(/* webpackChunkName: "users" */ "@/views/UserManagement.vue"),
     children: [
       {
-        name: "register-user",
+        name: "create-user",
         path: "register",
         component: () =>
           import(
-            /* weppackChunkName: "register-user" */ "@/components/UserForm.vue"
+            /* weppackChunkName: "create-user" */ "@/components/UserForm.vue"
           ),
       },
       {
-        name: "user",
+        name: "edit-user",
         path: "user/:id",
         component: () =>
-          import(/* weppackChunkName: "user" */ "@/components/UserForm.vue"),
+          import(
+            /* weppackChunkName: "edit-user" */ "@/components/UserForm.vue"
+          ),
       },
     ],
   },
@@ -63,7 +63,7 @@ router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem("user");
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
-    next({ name: "login-view" });
+    next({ name: "login" });
   }
   next();
 });

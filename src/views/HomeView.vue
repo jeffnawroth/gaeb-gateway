@@ -14,7 +14,7 @@
     >
       <h2 v-if="!loggedIn">
         Um diese Anwendung zu nutzen, müssen Sie sich
-        <router-link :to="{ name: 'login-view' }">
+        <router-link :to="{ name: 'login' }">
           Anmelden
         </router-link>
       </h2>

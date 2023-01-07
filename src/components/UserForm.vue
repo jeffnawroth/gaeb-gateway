@@ -130,7 +130,7 @@ import store from "@/store";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   async beforeRouteEnter(routeTo, routeFrom, next) {
-    if (routeTo.name === "user") {
+    if (routeTo.name === "edit-user") {
       try {
         await store.dispatch("users/getUser", routeTo.params.id);
       } catch (error) {
@@ -192,7 +192,7 @@ export default Vue.extend({
       this.close();
     },
     close() {
-      this.$router.push({ name: "user-management" });
+      this.$router.push({ name: "users" });
       this.SET_USER({});
       this.SET_CREATION_MODE(false);
     },
