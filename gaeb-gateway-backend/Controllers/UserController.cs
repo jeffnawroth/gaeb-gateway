@@ -19,7 +19,6 @@ namespace gaeb_gateway_backend.Controllers;
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-    /*private static ApiDbContext _context;*/
 
     public UserController(UserManager<ApplicationUser> userManager)
     {
