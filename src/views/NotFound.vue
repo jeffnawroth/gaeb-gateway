@@ -1,25 +1,30 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
+  <v-container
+    fill-height
+    fluid
   >
-    <v-col
-      cols="12"
-      md="8"
-      class="text-center"
+    <v-row
+      align="center"
+      justify="center"
     >
-      <h1 class="display-2 mb-3">
-        404
-      </h1>
-      <h2 class="mb-5">
-        Seite nicht gefunden
-      </h2>
-      <v-btn
-        color="primary"
-        to="/"
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
       >
-        Zurück zum Dashboard
-      </v-btn>
-    </v-col>
-  </v-row>
+        <h1 class="display-2 mb-3">
+          404
+        </h1>
+        <h2 class="mb-5">
+          Seite nicht gefunden
+        </h2>
+        <v-btn
+          color="primary"
+          to="/"
+        >
+          Zurück zum Dashboard
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
