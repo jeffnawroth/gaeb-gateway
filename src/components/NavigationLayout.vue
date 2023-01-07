@@ -19,6 +19,13 @@
       >
         <v-icon> mdi-theme-light-dark </v-icon>
       </v-btn>
+
+      <v-btn
+        icon
+        @click="logout"
+      >
+        <v-icon> mdi-logout </v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -47,7 +54,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapMutations } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 export default Vue.extend({
   data: () => ({
     drawer: true,
@@ -59,7 +66,10 @@ export default Vue.extend({
       },
     ],
   }),
-  methods: mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
+  methods: {
+    ...mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
+    ...mapActions("authentication", ["logout"]),
+  },
 });
 </script>
 

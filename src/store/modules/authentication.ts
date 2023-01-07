@@ -70,6 +70,7 @@ export default {
     },
     logout({ commit }: any) {
       commit("CLEAR_USER_DATA");
+      router.push({ name: "home" });
     },
     loadDarkMode({ commit }: any) {
       const darkMode = localStorage.getItem("darkMode");
