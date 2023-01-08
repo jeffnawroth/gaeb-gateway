@@ -1,33 +1,37 @@
 import { ApplicationUser, UserApi } from "@/api";
-import router from "@/router";
 
+export interface State {
+  users: ApplicationUser[];
+  user: ApplicationUser;
+  creationMode: boolean;
+}
 export default {
   namespaced: true,
-  state: {
+  state: (): State => ({
     users: [] as ApplicationUser[],
     user: {} as ApplicationUser,
     creationMode: false,
-  },
+  }),
   mutations: {
-    SET_USERS(state: any, users: ApplicationUser[]) {
+    SET_USERS(state: State, users: ApplicationUser[]) {
       state.users = users;
     },
-    SET_USER(state: any, user: ApplicationUser[]) {
+    SET_USER(state: State, user: ApplicationUser) {
       state.user = user;
     },
-    ADD_USER(state: any, user: ApplicationUser) {
+    ADD_USER(state: State, user: ApplicationUser) {
       state.users.push(user);
     },
-    DELETE_USER(state: any, user: ApplicationUser) {
+    DELETE_USER(state: State, user: ApplicationUser) {
       state.users.splice(state.users.indexOf(user), 1);
     },
-    UPDATE_USER(state: any, user: ApplicationUser) {
+    UPDATE_USER(state: State, user: ApplicationUser) {
       const index = state.users.findIndex(
         (user: ApplicationUser) => user.id === state.user.id
       );
       state.users.splice(index, 1, user);
     },
-    SET_CREATION_MODE(state: any, value: boolean) {
+    SET_CREATION_MODE(state: State, value: boolean) {
       state.creationMode = value;
     },
   },

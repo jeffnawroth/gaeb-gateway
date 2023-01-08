@@ -63,7 +63,7 @@
               @click:append="showPassword = !showPassword"
             />
 
-            <!--  <div class="mb-6">
+            <div class="mb-6">
               <ul>
                 <li :class="{ 'success--text': isMinLengthValid }">
                   mindestens 6 Zeichen
@@ -81,7 +81,7 @@
                   mindestens einen Großbuchstaben ('A'-'Z')
                 </li>
               </ul>
-            </div> -->
+            </div>
           </ValidationProvider>
 
           <ValidationProvider
@@ -139,6 +139,7 @@ import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { mapActions, mapMutations, mapState } from "vuex";
 import store from "@/store";
+import { ApplicationUser } from "@/api";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   async beforeRouteEnter(routeTo, routeFrom, next) {
@@ -167,11 +168,14 @@ export default Vue.extend({
     discardChangesDialog: false,
   }),
   computed: {
-    ...mapState("users", ["user", "creationMode"]),
-    cardTitle(): string {
-      return this.creationMode ? "Nutzer hinzufügen" : "Nutzer bearbeiten";
-    },
-    /*  isMinLengthValid(): boolean {
+    ...mapState("users", {
+      user: (state: any) => state.user,
+      creationMode: (state: any) => state.creationMode,
+      cardTitle(state: any) {
+        return state.creationMode ? "Nutzer hinzufügen" : "Nutzer bearbeiten";
+      },
+    }),
+    isMinLengthValid(): boolean {
       // check if password is at least 6 characters long
       return this.localUser.passwordHash.length >= 6;
     },
@@ -190,10 +194,12 @@ export default Vue.extend({
     hasUppercase(): boolean {
       // check if password contains an uppercase letter
       return /[A-Z]/.test(this.localUser.passwordHash);
-    }, */
+    },
   },
   created() {
-    this.localUser = JSON.parse(JSON.stringify(this.user));
+    if (this.user.id) {
+      this.localUser = JSON.parse(JSON.stringify(this.user));
+    }
   },
   methods: {
     ...mapActions("users", ["createUser", "updateUser"]),
