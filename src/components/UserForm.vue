@@ -1,69 +1,69 @@
 <template>
   <div>
     <ValidationObserver v-slot="{ invalid, dirty }">
-      <v-dialog
+      <BaseDialog
         v-model="dialog"
-        width="500"
-        @click:outside="close(dirty)"
-        @keydown.esc="close(dirty)"
+        @click-cancel="close(dirty)"
       >
-        <v-card>
-          <v-card-title>{{ cardTitle }}</v-card-title>
-          <v-card-text>
-            <ValidationProvider
-              v-slot="{ errors }"
-              vid="firstName"
-              rules="required|alphabeticalName"
-            >
-              <v-text-field
-                v-model="localUser.firstName"
-                label="Vorname"
-                :error-messages="errors"
-                outlined
-              />
-            </ValidationProvider>
-            <ValidationProvider
-              v-slot="{ errors }"
-              vid="lastName"
-              rules="required|alphabeticalName"
-            >
-              <v-text-field
-                v-model="localUser.lastName"
-                label="Nachname"
-                :error-messages="errors"
-                outlined
-              />
-            </ValidationProvider>
-            <ValidationProvider
-              v-slot="{ errors }"
-              vid="email"
-              rules="required|email"
-            >
-              <v-text-field
-                v-model="localUser.email"
-                label="E-Mail"
-                :error-messages="errors"
-                outlined
-              />
-            </ValidationProvider>
-            <ValidationProvider
-              v-if="creationMode"
-              v-slot="{ errors }"
-              vid="password"
-              rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric|requireUppercase"
-            >
-              <v-text-field
-                v-model="localUser.passwordHash"
-                label="Passwort"
-                :error-messages="errors"
-                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPassword ? 'text' : 'password'"
-                outlined
-                counter
-                @click:append="showPassword = !showPassword"
-              />
+        <template #card-title>
+          {{ cardTitle }}
+        </template>
 
-              <!--  <div class="mb-6">
+        <template #card-text>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="firstName"
+            rules="required|alphabeticalName"
+          >
+            <v-text-field
+              v-model="localUser.firstName"
+              label="Vorname"
+              :error-messages="errors"
+              outlined
+            />
+          </ValidationProvider>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="lastName"
+            rules="required|alphabeticalName"
+          >
+            <v-text-field
+              v-model="localUser.lastName"
+              label="Nachname"
+              :error-messages="errors"
+              outlined
+            />
+          </ValidationProvider>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="email"
+            rules="required|email"
+          >
+            <v-text-field
+              v-model="localUser.email"
+              label="E-Mail"
+              :error-messages="errors"
+              outlined
+            />
+          </ValidationProvider>
+          <ValidationProvider
+            v-if="creationMode"
+            v-slot="{ errors }"
+            vid="password"
+            rules="required|min:6|requireDigit|requireLowercase|requireNonAlphanumeric|requireUppercase"
+          >
+            <v-text-field
+              v-model="localUser.passwordHash"
+              label="Passwort"
+              :error-messages="errors"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword ? 'text' : 'password'"
+              outlined
+              counter
+              @click:append="showPassword = !showPassword"
+            />
+
+            <!--  <div class="mb-6">
               <ul>
                 <li :class="{ 'success--text': isMinLengthValid }">
                   mindestens 6 Zeichen
@@ -82,73 +82,55 @@
                 </li>
               </ul>
             </div> -->
-            </ValidationProvider>
+          </ValidationProvider>
 
-            <ValidationProvider
-              v-if="creationMode"
-              v-slot="{ errors }"
-              vid="passwordConfirm"
-              rules="required|confirmed:password"
-            >
-              <v-text-field
-                v-model="passwordConfirm"
-                label="Passwort bestätigen"
-                :error-messages="errors"
-                :append-icon="showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPasswordConfirm ? 'text' : 'password'"
-                outlined
-                counter
-                @click:append="showPasswordConfirm = !showPasswordConfirm"
-              />
-            </ValidationProvider>
-          </v-card-text>
-          <v-card-actions class="justify-space-around">
-            <BaseButton
-              large
-              @click="
-                dialog = false;
-                close(dirty);
-              "
-            >
-              Abbrechen
-            </BaseButton>
+          <ValidationProvider
+            v-if="creationMode"
+            v-slot="{ errors }"
+            vid="passwordConfirm"
+            rules="required|confirmed:password"
+          >
+            <v-text-field
+              v-model="passwordConfirm"
+              label="Passwort bestätigen"
+              :error-messages="errors"
+              :append-icon="showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPasswordConfirm ? 'text' : 'password'"
+              outlined
+              counter
+              @click:append="showPasswordConfirm = !showPasswordConfirm"
+            />
+          </ValidationProvider>
+        </template>
 
-            <BaseButton
-              large
-              color="success"
-              :disabled="invalid || !dirty"
-              @click="saveUser"
-            >
-              Speichern
-            </BaseButton>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </ValidationObserver>
-    <v-dialog
-      v-model="discardChangesDialog"
-      max-width="500"
-      @click:outside="cancelDiscardDialog"
-      @keydown.esc="cancelDiscardDialog"
-    >
-      <v-card>
-        <v-card-title> Änderungen verwerfen? </v-card-title>
-        <v-card-text>
-          Sind Sie sicher, dass Sie Ihre Änderungen verwerfen möchten?
-        </v-card-text>
-        <v-card-actions class="justify-space-around">
-          <BaseButton @click="cancelDiscardDialog">
+        <template #card-actions>
+          <BaseButton
+            large
+            @click="
+              dialog = false;
+              close(dirty);
+            "
+          >
             Abbrechen
           </BaseButton>
+
           <BaseButton
-            class="error"
-            @click="close()"
+            large
+            color="success"
+            :disabled="invalid || !dirty"
+            @click="saveUser"
           >
-            Verwerfen
+            Speichern
           </BaseButton>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </template>
+      </BaseDialog>
+    </ValidationObserver>
+
+    <BaseDiscardDialog
+      v-model="discardChangesDialog"
+      @click-discard="close()"
+      @click-cancel="cancelDiscardDialog"
+    />
   </div>
 </template>
 

@@ -44,31 +44,11 @@
       </template>
     </v-data-table>
 
-    <v-dialog
+    <BaseDeleteDialog
       v-model="deleteDialog"
-      width="500"
-    >
-      <v-card>
-        <v-card-title>Nutzer Löschen</v-card-title>
-        <v-card-text>
-          Sind Sie sicher, dass Sie
-          {{ user.firstName + " " + user.lastName }} löschen möchten? Diese
-          Aktion kann nicht rückgängig gemacht werden.
-        </v-card-text>
-        <v-card-actions class="justify-space-around">
-          <BaseButton @click="closeDelete">
-            Abbrechen
-          </BaseButton>
-
-          <BaseButton
-            class="error"
-            @click="deleteConfirm"
-          >
-            Löschen
-          </BaseButton>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      @click-cancel="closeDelete"
+      @click-delete="deleteConfirm"
+    />
 
     <router-view />
   </div>
