@@ -56,11 +56,9 @@
 
 <script lang="ts">
 import { ApplicationUser } from "@/api";
-import BaseButton from "@/components/BaseComponents.vue/BaseButton.vue";
 import Vue from "vue";
 import { mapActions, mapState } from "vuex";
 export default Vue.extend({
-  components: { BaseButton },
   data: () => ({
     headers: [
       { text: "Nachname", value: "lastName" },
