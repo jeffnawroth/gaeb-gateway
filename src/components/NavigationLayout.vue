@@ -28,6 +28,7 @@
       </BaseButton>
 
       <BaseButton
+        v-if="loggedIn"
         show-tooltip
         bottom
         icon
@@ -37,6 +38,20 @@
 
         <template #tooltipContent>
           <span>Abmelden</span>
+        </template>
+      </BaseButton>
+
+      <BaseButton
+        v-else
+        show-tooltip
+        bottom
+        icon
+        @click="$router.push({ name: 'login' })"
+      >
+        <v-icon> mdi-login </v-icon>
+
+        <template #tooltipContent>
+          <span>Anmelden</span>
         </template>
       </BaseButton>
     </v-app-bar>
@@ -66,6 +81,7 @@
 </template>
 
 <script lang="ts">
+import { authComputed } from "@/store/helpers";
 import Vue from "vue";
 import { mapActions, mapMutations } from "vuex";
 export default Vue.extend({
@@ -79,6 +95,7 @@ export default Vue.extend({
       },
     ],
   }),
+  computed: authComputed,
   methods: {
     ...mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
     ...mapActions("authentication", ["logout"]),
