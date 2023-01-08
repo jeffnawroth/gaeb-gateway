@@ -9,7 +9,7 @@ import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
 
 const requireComponent = require.context(
-  "./components/BaseComponents.vue", //Directory to search within,
+  "./components/BaseComponents", //Directory to search within,
   false, // Search subdirectories
   /Base[A-Z]\w+\.(vue|js)$/ //Regex: Searching for files than begin with Base and end with .vue/.js
 );
