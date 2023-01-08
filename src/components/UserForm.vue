@@ -128,6 +128,8 @@
     <v-dialog
       v-model="discardChangesDialog"
       max-width="500"
+      @click:outside="cancelDiscardDialog"
+      @keydown.esc="cancelDiscardDialog"
     >
       <v-card>
         <v-card-title> Änderungen verwerfen? </v-card-title>
@@ -135,12 +137,7 @@
           Sind Sie sicher, dass Sie Ihre Änderungen verwerfen möchten?
         </v-card-text>
         <v-card-actions class="justify-space-around">
-          <BaseButton
-            @click="
-              discardChangesDialog = false;
-              dialog = true;
-            "
-          >
+          <BaseButton @click="cancelDiscardDialog">
             Abbrechen
           </BaseButton>
           <BaseButton
@@ -227,6 +224,10 @@ export default Vue.extend({
         await this.updateUser(this.localUser);
       }
       this.close();
+    },
+    cancelDiscardDialog() {
+      this.discardChangesDialog = false;
+      this.dialog = true;
     },
     close(dirty?: false) {
       if (!dirty) {
