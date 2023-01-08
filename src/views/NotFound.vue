@@ -18,12 +18,13 @@
         <h2 class="mb-5">
           Seite nicht gefunden
         </h2>
-        <v-btn
+
+        <BaseButton
           color="primary"
           to="/"
         >
           Zurück zur Startseite
-        </v-btn>
+        </BaseButton>
       </v-col>
     </v-row>
   </v-container>

@@ -26,9 +26,9 @@
           <v-spacer />
           <v-spacer />
           <v-spacer />
-          <v-btn @click="$router.push({ name: 'create-user' })">
+          <BaseButton @click="$router.push({ name: 'create-user' })">
             Nutzer hinzufügen
-          </v-btn>
+          </BaseButton>
         </v-toolbar>
       </template>
       <template #[`item.actions`]="{ item }">
@@ -56,15 +56,16 @@
           Aktion kann nicht rückgängig gemacht werden.
         </v-card-text>
         <v-card-actions class="justify-space-around">
-          <v-btn @click="closeDelete">
+          <BaseButton @click="closeDelete">
             Abbrechen
-          </v-btn>
-          <v-btn
+          </BaseButton>
+
+          <BaseButton
             class="error"
             @click="deleteConfirm"
           >
             Löschen
-          </v-btn>
+          </BaseButton>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -75,9 +76,11 @@
 
 <script lang="ts">
 import { ApplicationUser } from "@/api";
+import BaseButton from "@/components/BaseComponents.vue/BaseButton.vue";
 import Vue from "vue";
 import { mapActions, mapState } from "vuex";
 export default Vue.extend({
+  components: { BaseButton },
   data: () => ({
     headers: [
       { text: "Nachname", value: "lastName" },

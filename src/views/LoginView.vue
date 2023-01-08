@@ -37,13 +37,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn
+              <BaseButton
                 large
                 :disabled="invalid"
                 @click="loginUser"
               >
                 Anmelden
-              </v-btn>
+              </BaseButton>
             </v-card-actions>
           </ValidationObserver>
         </v-card>

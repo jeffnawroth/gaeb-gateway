@@ -103,7 +103,7 @@
             </ValidationProvider>
           </v-card-text>
           <v-card-actions class="justify-space-around">
-            <v-btn
+            <BaseButton
               large
               @click="
                 dialog = false;
@@ -111,15 +111,16 @@
               "
             >
               Abbrechen
-            </v-btn>
-            <v-btn
+            </BaseButton>
+
+            <BaseButton
               large
               color="success"
               :disabled="invalid || !dirty"
               @click="saveUser"
             >
               Speichern
-            </v-btn>
+            </BaseButton>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -134,20 +135,20 @@
           Sind Sie sicher, dass Sie Ihre Änderungen verwerfen möchten?
         </v-card-text>
         <v-card-actions class="justify-space-around">
-          <v-btn
+          <BaseButton
             @click="
               discardChangesDialog = false;
               dialog = true;
             "
           >
             Abbrechen
-          </v-btn>
-          <v-btn
+          </BaseButton>
+          <BaseButton
             class="error"
             @click="close()"
           >
             Verwerfen
-          </v-btn>
+          </BaseButton>
         </v-card-actions>
       </v-card>
     </v-dialog>

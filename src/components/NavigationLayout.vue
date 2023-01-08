@@ -13,19 +13,32 @@
         GAEB Gateway
       </v-toolbar-title>
       <v-spacer />
-      <v-btn
+
+      <BaseButton
+        show-tooltip
+        bottom
         icon
         @click="TOGGLE_DARK_MODE"
       >
         <v-icon> mdi-theme-light-dark </v-icon>
-      </v-btn>
+        <template #tooltipContent>
+          <span v-if="$vuetify.theme.dark">Heller Modus einschalten </span>
+          <span v-else>Dunkler Modus einschalten </span>
+        </template>
+      </BaseButton>
 
-      <v-btn
+      <BaseButton
+        show-tooltip
+        bottom
         icon
         @click="logout"
       >
         <v-icon> mdi-logout </v-icon>
-      </v-btn>
+
+        <template #tooltipContent>
+          <span>Abmelden</span>
+        </template>
+      </BaseButton>
     </v-app-bar>
 
     <v-navigation-drawer
