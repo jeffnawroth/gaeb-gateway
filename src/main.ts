@@ -5,6 +5,25 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./vee-validate";
 import axios from "axios";
+import upperFirst from "lodash/upperFirst";
+import camelCase from "lodash/camelCase";
+
+const requireComponent = require.context(
+  "./components/BaseComponents.vue", //Directory to search within,
+  false, // Search subdirectories
+  /Base[A-Z]\w+\.(vue|js)$/ //Regex: Searching for files than begin with Base and end with .vue/.js
+);
+
+requireComponent.keys().forEach((fileName) => {
+  const componentConfig = requireComponent(fileName);
+
+  //Converting Filenames to PascalCase
+  const componentName = upperFirst(
+    camelCase(fileName.replace(/^\.\/(.*)\.\w+$/, "$1"))
+  );
+
+  Vue.component(componentName, componentConfig.default || componentConfig);
+});
 
 Vue.config.productionTip = false;
 
