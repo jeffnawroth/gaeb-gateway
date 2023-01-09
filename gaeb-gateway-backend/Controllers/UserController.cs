@@ -95,6 +95,20 @@ namespace gaeb_gateway_backend.Controllers;
         existingUser.LockoutEnd = user.LockoutEnd;
         existingUser.LockoutEnabled = user.LockoutEnabled;
         existingUser.AccessFailedCount = user.AccessFailedCount;
+
+        var emailUser = await _userManager.FindByEmailAsync(user.Email);
+
+        if(emailUser != null && emailUser.Email != existingUser.Email)
+        {
+            return BadRequest(new AuthResult()
+            {
+
+                Errors = new List<string>()
+                    {
+                        "Nutzer mit der Email existiert bereits. Bitte andere Email-Adresse verwenden."
+                    }
+            });
+        }
         
         var result = await _userManager.UpdateAsync(existingUser);
         if (result.Succeeded)
