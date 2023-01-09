@@ -30,8 +30,19 @@ public class AuthenticationController : ControllerBase
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Registers a new user.
+    /// </summary>
+    /// <param name="requestDto">The user registration request data transfer object (DTO).</param>
+    /// <returns>A 200 OK response with the user's first name, last name, email, and JWT token if the registration is successful, or a 400 Bad Request error with the validation errors if the request is invalid.</returns>
+    /// <response code="200">If the registration is successful.</response>
+    /// <response code="400">If the request is invalid or the email is already registered.</response>
+    /// <response code="500">If an exception occurs while registering the user.</response>
     [HttpPost]
     [Route("Register")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> Register([FromBody] UserRegistrationRequestDto requestDto)
     {
         // Validate the incoming request
@@ -107,8 +118,19 @@ public class AuthenticationController : ControllerBase
     }
 
     
+    /// <summary>
+    /// Logs in a user.
+    /// </summary>
+    /// <param name="loginRequest">The user login request data transfer object (DTO).</param>
+    /// <returns>A 200 OK response with the user's first name, last name, email, and JWT token if the login is successful, or a 400 Bad Request error with the validation errors if the request is invalid.</returns>
+    /// <response code="200">If the login is successful.</response>
+    /// <response code="400">If the request is invalid or the email is not registered or the password is incorrect.</response>
+    /// <response code="500">If an exception occurs while logging in the user.</response>
     [Route("Login")]
     [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> Login([FromBody] UserLoginRequestDto loginRequest)
     {
         if (ModelState.IsValid)
