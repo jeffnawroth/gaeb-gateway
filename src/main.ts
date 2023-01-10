@@ -38,15 +38,17 @@ new Vue({
       const userData = JSON.parse(userString);
       this.$store.commit("authentication/SET_USER_DATA", userData);
     }
-    /* axios.interceptors.response.use(
+    axios.interceptors.response.use(
       (response) => response,
       (error) => {
+        console.log(error.response.status);
+
         if (error.response.status === 401) {
-          this.$store.dispatch("user/logout");
+          this.$store.dispatch("authentication/logout");
         }
         return Promise.reject(error);
       }
-    ); */
+    );
   },
   render: (h) => h(App),
 }).$mount("#app");
