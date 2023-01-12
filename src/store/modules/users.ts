@@ -48,17 +48,23 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
-    async getUser({ commit, dispatch }: any, id: string) {
-      try {
-        const response = await UserApi.prototype.apiUserIdGet(id);
-        commit("SET_USER", response.data);
-        return response.data;
-      } catch (error) {
-        const notification = {
-          type: "error",
-          message: "Beim Laden des Nutzers ist ein Problem aufgetreten.",
-        };
-        dispatch("notification/add", notification, { root: true });
+    async getUser({ commit, dispatch, getters }: any, id: string) {
+      const user = getters.getUserById(id);
+      if (user) {
+        commit("SET_USER", user);
+        return user;
+      } else {
+        try {
+          const response = await UserApi.prototype.apiUserIdGet(id);
+          commit("SET_USER", response.data);
+          return response.data;
+        } catch (error) {
+          const notification = {
+            type: "error",
+            message: "Beim Laden des Nutzers ist ein Problem aufgetreten.",
+          };
+          dispatch("notification/add", notification, { root: true });
+        }
       }
     },
     async createUser({ commit, dispatch }: any, user: ApplicationUser) {
@@ -101,5 +107,9 @@ export default {
       }
     },
   },
-  getters: {},
+  getters: {
+    getUserById: (state: State) => (id: string) => {
+      return state.users.find((user: ApplicationUser) => user.id === id);
+    },
+  },
 };
