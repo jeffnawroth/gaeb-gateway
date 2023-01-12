@@ -12,7 +12,7 @@ using gaeb_gateway_backend.Data;
 namespace gaebgatewaybackend.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20230105093832_InitialCreate")]
+    [Migration("20230112134656_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
