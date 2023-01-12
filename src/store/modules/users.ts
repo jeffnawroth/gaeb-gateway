@@ -46,6 +46,7 @@ export default {
           message: "Beim Laden der Nutzer ist ein Problem aufgetreten.",
         };
         dispatch("notification/add", notification, { root: true });
+        return Promise.reject(error);
       }
     },
     async getUser({ commit, dispatch, getters }: any, id: string) {

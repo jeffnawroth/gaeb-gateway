@@ -5,6 +5,7 @@
       :headers="headers"
       sort-by="lastName"
       :search="search"
+      :loading="loading"
     >
       <template #top>
         <v-toolbar flat>
@@ -69,12 +70,14 @@ export default Vue.extend({
     search: "",
     deleteDialog: false,
     user: {} as ApplicationUser,
+    loading: true,
   }),
   computed: {
     ...mapState("users", ["users"]),
   },
-  created() {
-    this.getUsers();
+  async created() {
+    await this.getUsers();
+    this.loading = false;
   },
   methods: {
     ...mapActions("users", ["getUsers", "deleteUser"]),
