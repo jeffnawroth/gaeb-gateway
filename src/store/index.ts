@@ -7,9 +7,15 @@ import users from "@/store/modules/users";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    loadingGlobal: false,
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    SET_LOADING_GLOBAL(state, value: boolean) {
+      state.loadingGlobal = value;
+    },
+  },
   actions: {},
   modules: {
     authentication,

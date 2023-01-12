@@ -52,6 +52,7 @@ export default {
       try {
         const response = await UserApi.prototype.apiUserIdGet(id);
         commit("SET_USER", response.data);
+        return response.data;
       } catch (error) {
         const notification = {
           type: "error",

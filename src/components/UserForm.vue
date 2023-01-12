@@ -137,23 +137,22 @@
 <script lang="ts">
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
-import { mapActions, mapMutations, mapState } from "vuex";
-import store from "@/store";
+import { mapActions, mapMutations } from "vuex";
 import { ApplicationUser } from "@/api";
+import { PropType } from "vue/types/v3-component-props";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
-  async beforeRouteEnter(routeTo, routeFrom, next) {
-    if (routeTo.name === "edit-user") {
-      try {
-        await store.dispatch("users/getUser", routeTo.params.id);
-      } catch (error) {
-        next();
-      }
-    } else {
-      store.commit("users/SET_CREATION_MODE", true);
-    }
-    next();
+  props: {
+    user: {
+      type: Object as PropType<ApplicationUser>,
+      default: () => ({} as ApplicationUser),
+    },
+    creationMode: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   data: () => ({
     localUser: {
       firstName: "",
@@ -168,13 +167,9 @@ export default Vue.extend({
     discardChangesDialog: false,
   }),
   computed: {
-    ...mapState("users", {
-      user: (state: any) => state.user,
-      creationMode: (state: any) => state.creationMode,
-      cardTitle(state: any) {
-        return state.creationMode ? "Nutzer hinzufügen" : "Nutzer bearbeiten";
-      },
-    }),
+    cardTitle() {
+      return this.creationMode ? "Nutzer hinzufügen" : "Nutzer bearbeiten";
+    },
     isMinLengthValid(): boolean {
       // check if password is at least 6 characters long
       return this.localUser.passwordHash.length >= 6;
@@ -220,7 +215,7 @@ export default Vue.extend({
     close(dirty?: false) {
       if (!dirty) {
         this.$router.push({ name: "users" });
-        this.SET_USER({});
+        /* this.SET_USER({}); */
         this.SET_CREATION_MODE(false);
       } else {
         this.discardChangesDialog = true;

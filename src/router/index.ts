@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
+import store from "@/store/index";
 
 Vue.use(VueRouter);
 
@@ -27,18 +28,38 @@ const routes: Array<RouteConfig> = [
       {
         name: "create-user",
         path: "register",
+        props: true,
         component: () =>
           import(
             /* weppackChunkName: "create-user" */ "@/components/UserForm.vue"
           ),
+        beforeEnter(routeTo, routeFrom, next) {
+          store.commit("users/SET_CREATION_MODE", true);
+          //@ts-expect-error: Property 'users' does not exist on type '{ loadingGlobal: boolean; }'.
+          routeTo.params.creationMode = store.state.users.creationMode;
+          next();
+        },
       },
       {
         name: "edit-user",
         path: "user/:id",
+        props: true,
         component: () =>
           import(
             /* weppackChunkName: "edit-user" */ "@/components/UserForm.vue"
           ),
+        async beforeEnter(routeTo, routeFrom, next) {
+          try {
+            const user = await store.dispatch(
+              "users/getUser",
+              routeTo.params.id
+            );
+            routeTo.params.user = user;
+            next();
+          } catch (error) {
+            next();
+          }
+        },
       },
     ],
   },
@@ -61,12 +82,17 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  store.commit("SET_LOADING_GLOBAL", true);
   const loggedIn = localStorage.getItem("user");
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     next({ name: "login" });
   }
   next();
+});
+
+router.afterEach(() => {
+  store.commit("SET_LOADING_GLOBAL", false);
 });
 
 export default router;

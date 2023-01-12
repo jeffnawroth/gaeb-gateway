@@ -12,6 +12,13 @@
       >
         GAEB Gateway
       </v-toolbar-title>
+
+      <v-progress-linear
+        :active="loadingGlobal"
+        :indeterminate="loadingGlobal"
+        absolute
+        bottom
+      />
       <v-spacer />
 
       <BaseButton
@@ -83,7 +90,7 @@
 <script lang="ts">
 import { authComputed } from "@/store/helpers";
 import Vue from "vue";
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 export default Vue.extend({
   data: () => ({
     drawer: true,
@@ -95,7 +102,10 @@ export default Vue.extend({
       },
     ],
   }),
-  computed: authComputed,
+  computed: {
+    ...authComputed,
+    ...mapState(["loadingGlobal"]),
+  },
   methods: {
     ...mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
     ...mapActions("authentication", ["logout"]),
