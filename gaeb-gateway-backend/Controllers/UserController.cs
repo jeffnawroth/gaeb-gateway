@@ -91,6 +91,20 @@ namespace gaeb_gateway_backend.Controllers;
 
         user.UserName = user.FirstName + "." + user.LastName;
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, user.PasswordHash);
+
+        var user_exist = await _userManager.FindByEmailAsync(user.Email);
+        if (user_exist != null)
+        {
+            return BadRequest(new AuthResult()
+            {
+
+                Errors = new List<string>()
+                    {
+                        "Email existiert bereits. Bitte einloggen."
+                    }
+            });
+        }
+
         var result = await _userManager.CreateAsync(user);
         if (result.Succeeded)
         {
@@ -147,9 +161,8 @@ namespace gaeb_gateway_backend.Controllers;
         existingUser.LockoutEnabled = user.LockoutEnabled;
         existingUser.AccessFailedCount = user.AccessFailedCount;
 
-        var emailUser = await _userManager.FindByEmailAsync(user.Email);
-
-        if(emailUser != null && emailUser.Email != existingUser.Email)
+        var user_exist = await _userManager.FindByEmailAsync(existingUser.Email);
+        if (user_exist != null && user_exist.Email == user.Email)
         {
             return BadRequest(new AuthResult()
             {
@@ -160,7 +173,7 @@ namespace gaeb_gateway_backend.Controllers;
                     }
             });
         }
-        
+       
         var result = await _userManager.UpdateAsync(existingUser);
         if (result.Succeeded)
         {
