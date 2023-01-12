@@ -6,7 +6,11 @@
     <v-row>
       <v-col class="d-flex justify-center">
         <v-card width="500">
-          <ValidationObserver v-slot="{ invalid }">
+          <ValidationObserver
+            ref="observer"
+            v-slot="{ invalid }"
+            @keyup.enter="loginUser"
+          >
             <v-card-title>Anmelden</v-card-title>
             <v-card-text>
               <ValidationProvider
@@ -67,10 +71,16 @@ export default Vue.extend({
     ...mapActions("authentication", ["login"]),
     //Logging in the user
     async loginUser() {
-      await this.login({
-        email: this.email,
-        password: this.password,
-      });
+      const valid = await (
+        this.$refs.observer as InstanceType<typeof ValidationObserver>
+      ).validate();
+
+      if (valid) {
+        await this.login({
+          email: this.email,
+          password: this.password,
+        });
+      }
     },
   },
 });

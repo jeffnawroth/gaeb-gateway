@@ -32,17 +32,17 @@ new Vue({
   store,
   vuetify,
   created() {
-    this.$store.dispatch("authentication/loadDarkMode");
+    store.dispatch("authentication/loadDarkMode");
     const userString = localStorage.getItem("user");
     if (userString) {
       const userData = JSON.parse(userString);
-      this.$store.commit("authentication/SET_USER_DATA", userData);
+      store.commit("authentication/SET_USER_DATA", userData);
     }
     axios.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response.status === 401) {
-          this.$store.dispatch("authentication/logout");
+          store.dispatch("authentication/logout");
         }
         return Promise.reject(error);
       }
