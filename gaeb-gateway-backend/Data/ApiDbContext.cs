@@ -11,6 +11,7 @@ namespace gaeb_gateway_backend.Data;
 public class ApiDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
     {

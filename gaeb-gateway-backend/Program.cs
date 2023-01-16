@@ -6,6 +6,7 @@ using gaeb_gateway_backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -72,6 +73,21 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+// Convert Secret String to Array of bytes
+var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
+
+var tokenValidationParameter = new TokenValidationParameters()
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = true,
+    ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
+    ValidateAudience = true,
+    ValidAudience = builder.Configuration["JwtConfig:Audience"],
+    RequireExpirationTime = false, // for dev -- needs to be updated when refresh token is added
+    ValidateLifetime = true
+};
+
 // Add Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -82,25 +98,14 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(jwt =>
 {
-    // Convert Secret String to Array of bytes
-    var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
-
     jwt.SaveToken = true;
+
     // Verify the token
     // Compare token if it is valid
-    jwt.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["JwtConfig:Audience"],
-        RequireExpirationTime = false, // for dev -- needs to be updated when refresh token is added
-        ValidateLifetime = true
-    };
+    jwt.TokenValidationParameters = tokenValidationParameter;
 });
 
+builder.Services.AddSingleton(tokenValidationParameter);
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApiDbContext>();

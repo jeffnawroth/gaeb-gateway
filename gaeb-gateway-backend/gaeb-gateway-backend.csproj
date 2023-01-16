@@ -48,6 +48,7 @@
     <None Remove="Models\" />
     <None Remove="Models\DTOs\" />
     <None Remove="Controllers\" />
+    <None Remove="Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -55,5 +56,6 @@
     <Folder Include="Models\" />
     <Folder Include="Models\DTOs\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
