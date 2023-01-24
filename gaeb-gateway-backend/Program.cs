@@ -84,8 +84,8 @@ var tokenValidationParameter = new TokenValidationParameters()
     ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
     ValidateAudience = true,
     ValidAudience = builder.Configuration["JwtConfig:Audience"],
-    RequireExpirationTime = false, // for dev -- needs to be updated when refresh token is added
-    ValidateLifetime = true
+    ValidateLifetime = true,
+    ClockSkew = TimeSpan.Zero
 };
 
 // Add Authentication

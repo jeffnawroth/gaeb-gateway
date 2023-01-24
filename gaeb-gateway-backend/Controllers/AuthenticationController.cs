@@ -213,9 +213,8 @@ public class AuthenticationController : ControllerBase
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
 
-        try
-        {
-            _tokenValidationParameters.ValidateLifetime = false; // For testing
+        
+            _tokenValidationParameters.ValidateLifetime = true; // For testing
 
             var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParameters, out var validedToken);
 
@@ -231,18 +230,20 @@ public class AuthenticationController : ControllerBase
             var utcExpiryDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
             var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
-            if (expiryDate > DateTime.Now)
+            if (expiryDate > DateTime.UtcNow)
             {
                 return new AuthResult()
                 {
                     Errors = new List<string>()
                     {
-                        "Token abgelaufen"
+                        "Access Token noch nicht abgelaufen"
                     }
                 };
             }
 
-            var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
+            
+
+        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
 
             if (storedToken == null)
             {
@@ -250,7 +251,7 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Token ungültig"
+                        "Refresh Token ungültig"
                     }
                 };
 
@@ -263,7 +264,7 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Token ungültig"
+                        "Refresh Token ungültig"
                     }
                 };
             }
@@ -274,7 +275,7 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Token ungültig"
+                        "Refresh Token ungültig"
                     }
                 };
             }
@@ -287,7 +288,7 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Token ungültig"
+                        "Refresh Token ungültig"
                     }
                 };
             }
@@ -298,10 +299,12 @@ public class AuthenticationController : ControllerBase
                 {
                     Errors = new List<string>()
                     {
-                        "Token abgelaufen"
+                        "Refreshed Token abgelaufen"
                     }
                 };
             }
+
+            
 
             storedToken.IsUsed = true;
             _context.RefreshTokens.Update(storedToken);
@@ -310,20 +313,9 @@ public class AuthenticationController : ControllerBase
             var dbUser = await _userManager.FindByIdAsync(storedToken.UserId);
             return await GenerateJwtToken(dbUser);
 
-        }
+        
 
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-
-            return new AuthResult()
-            {
-                Errors = new List<string>()
-                    {
-                        "Server Fehler"
-                    }
-            };
-        }
+        
     }
 
     private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
@@ -344,15 +336,15 @@ public class AuthenticationController : ControllerBase
         // Token descriptor
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
-            Issuer = "https://localhost:7043/",
-            Audience = "https://localhost:7043/",
+            Issuer = _configuration.GetSection("JwtConfig:Issuer").Value,
+            Audience = _configuration.GetSection("JwtConfig:Audience").Value,
             Subject = new ClaimsIdentity(new[]
             {
             new Claim("Id", user.Id),
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
             new Claim(JwtRegisteredClaimNames.Email, value:user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToUniversalTime().ToString())
                 }),
 
             // Set expire time for token
@@ -369,7 +361,7 @@ public class AuthenticationController : ControllerBase
             JwtId = token.Id,
             Token = RandomStringGeneration(23), // Generate a refresh token
             AddedDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(6),
+            ExpiryDate = DateTime.UtcNow.AddDays(7),
             IsRevoked = false,
             IsUsed = false,
             UserId = user.Id
