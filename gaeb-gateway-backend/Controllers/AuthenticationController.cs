@@ -124,7 +124,7 @@ public class AuthenticationController : ControllerBase
     /// Logs in a user.
     /// </summary>
     /// <param name="loginRequest">The user login request data transfer object (DTO).</param>
-    /// <returns>A 200 OK response with the user's first name, last name, email JWT token and refresh token if the login is successful, or a 400 Bad Request error with the validation errors if the request is invalid.</returns>
+    /// <returns>A 200 OK response with the user's first name, last name, email, and JWT token if the login is successful, or a 400 Bad Request error with the validation errors if the request is invalid.</returns>
     /// <response code="200">If the login is successful.</response>
     /// <response code="400">If the request is invalid or the email is not registered or the password is incorrect.</response>
     /// <response code="500">If an exception occurs while logging in the user.</response>
@@ -174,12 +174,7 @@ public class AuthenticationController : ControllerBase
 
 
      }
-    /// <summary>
-    /// Refreshes the access token.
-    /// </summary>
-    /// <param name="TokenRequest">The token request data transfer object (DTO).</param>
-    /// <returns>A 200 OK response with the user's first name, last name, email, a new updatet JWT token and a refresh token if the request is successful</returns>
-    /// <response code="200">If the request is successful.</response>
+
     [Route("RefreshToken")]
     [HttpPost]
     public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
@@ -217,12 +212,11 @@ public class AuthenticationController : ControllerBase
     private async Task<AuthResult> VerifyAndGenerateToken(TokenRequest tokenRequest)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
-            
-            // The lifetime should not be validated because it will be expired for this operation. Otherwise an exception occurs.
-            var tokenValidationParameters = _tokenValidationParameters.Clone();
-            tokenValidationParameters.ValidateLifetime = false;
 
-            var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validedToken);
+        
+            _tokenValidationParameters.ValidateLifetime = true; // For testing
+
+            var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParameters, out var validedToken);
 
             if (validedToken is JwtSecurityToken jwtSecurityToken)
             {
