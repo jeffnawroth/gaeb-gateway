@@ -40,9 +40,18 @@ new Vue({
     }
     axios.interceptors.response.use(
       (response) => response,
-      (error) => {
-        if (error.response.status === 401) {
-          store.dispatch("authentication/logout");
+      async (error) => {
+        const originalConfig = error.config;
+        if (error.response.status === 401 && !originalConfig._retry) {
+          originalConfig._retry = true;
+          try {
+            await store.dispatch("authentication/refreshToken");
+            //@ts-expect-error: error
+            error.config.headers.Authorization = `Bearer ${store.state.authentication.user.token}`;
+            return axios(error.config);
+          } catch (error) {
+            store.dispatch("authentication/logout");
+          }
         }
         return Promise.reject(error);
       }

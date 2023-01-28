@@ -69,7 +69,7 @@ export default Vue.extend({
   }),
   methods: {
     ...mapActions("authentication", ["login"]),
-    //Logging in the user
+    //Log in the user
     async loginUser() {
       const valid = await (
         this.$refs.observer as InstanceType<typeof ValidationObserver>

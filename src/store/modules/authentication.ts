@@ -72,6 +72,23 @@ export default {
       commit("CLEAR_USER_DATA");
       router.push({ name: "home" });
     },
+    async refreshToken({ commit, state, dispatch }: any) {
+      try {
+        const data =
+          await AuthenticationApi.prototype.apiAuthenticationRefreshTokenPost({
+            token: state.user.token,
+            refreshToken: state.user.refreshToken,
+          });
+        commit("SET_USER_DATA", data.data);
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Die aktuelle Sitzung wurde beendet.",
+        };
+        dispatch("notification/add", notification, { root: true });
+        return Promise.reject(error);
+      }
+    },
     loadDarkMode({ commit }: any) {
       const darkMode = localStorage.getItem("darkMode");
       if (darkMode !== null) {
