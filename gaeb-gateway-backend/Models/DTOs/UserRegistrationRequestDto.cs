@@ -18,6 +18,9 @@ namespace gaeb_gateway_backend.Models.DTOs
 
         [Required]
         public string Password { get; set; }
+        
+        [Required]
+        public string Role { get; set; }
 	}
 }
 
