@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
 using gaeb_gateway_backend.Configurations;
@@ -23,6 +24,7 @@ public class AuthenticationController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly TokenValidationParameters _tokenValidationParameters;
+    private readonly RoleManager<IdentityRole> roleManager;
 
     private readonly ApiDbContext _context;
 
@@ -30,13 +32,15 @@ public class AuthenticationController : ControllerBase
         UserManager<ApplicationUser> userManager,
         IConfiguration configuration,
         ApiDbContext context,
-        TokenValidationParameters tokenValidationParameters
+        TokenValidationParameters tokenValidationParameters,
+        RoleManager<IdentityRole> roleManager
         )
     {
         _context = context;
         _userManager = userManager;
         _configuration = configuration;
         _tokenValidationParameters = tokenValidationParameters;
+        this.roleManager = roleManager;
     }
 
     /// <summary>
@@ -78,7 +82,9 @@ public class AuthenticationController : ControllerBase
                 FirstName = requestDto.FirstName,
                 LastName = requestDto.LastName,
                 Email = requestDto.Email,
-                UserName = requestDto.FirstName + "." + requestDto.LastName
+                UserName = requestDto.FirstName + "." + requestDto.LastName,
+                Role = requestDto.Role
+                
                  
             };
 
@@ -99,9 +105,14 @@ public class AuthenticationController : ControllerBase
 
             if (is_created.Succeeded)
             {
+                
+                // Adding role
+                if (!await roleManager.RoleExistsAsync(requestDto.Role))
+                    await roleManager.CreateAsync(new IdentityRole(requestDto.Role));
+                if (await roleManager.RoleExistsAsync(requestDto.Role))
+                    await _userManager.AddToRoleAsync(new_user ,requestDto.Role);
                 // Generate the token
                 var token = GenerateJwtToken(new_user);
-
                 return Ok(new_user);
             }
 
@@ -339,6 +350,8 @@ public class AuthenticationController : ControllerBase
     // Get key from configuration
     var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
 
+    var userRoles = await _userManager.GetRolesAsync(user);
+    
         // Token descriptor
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
@@ -346,18 +359,24 @@ public class AuthenticationController : ControllerBase
             Audience = _configuration.GetSection("JwtConfig:Audience").Value,
             Subject = new ClaimsIdentity(new[]
             {
-            new Claim("Id", user.Id),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-            new Claim(JwtRegisteredClaimNames.Email, value:user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToUniversalTime().ToString())
-                }),
+                new Claim("Id", user.Id),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, value: user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToUniversalTime().ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+
+            }),
+
 
             // Set expire time for token
             Expires = DateTime.UtcNow.Add(TimeSpan.Parse(_configuration.GetSection("JwtConfig:ExpireTimeFrame").Value)),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-        };
 
+            
+        };
+        
+        
         // Tokenhandler to create Token based on the tokenDescriptor information
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);

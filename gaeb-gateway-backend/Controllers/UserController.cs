@@ -17,6 +17,7 @@ namespace gaeb_gateway_backend.Controllers;
 /// A controller for managing users.
 /// </summary>
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 [ApiController]
     public class UserController : ControllerBase
@@ -89,6 +90,7 @@ namespace gaeb_gateway_backend.Controllers;
             return BadRequest(ModelState);
         }
 
+        
         user.UserName = user.FirstName + "." + user.LastName;
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, user.PasswordHash);
 
@@ -106,6 +108,7 @@ namespace gaeb_gateway_backend.Controllers;
         }
 
         var result = await _userManager.CreateAsync(user);
+        await _userManager.AddToRoleAsync(user, $"{user.Role}");
         if (result.Succeeded)
         {
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
