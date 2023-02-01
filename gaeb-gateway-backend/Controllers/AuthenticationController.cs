@@ -402,6 +402,7 @@ public class AuthenticationController : ControllerBase
             Email = user.Email,
             RefreshToken = refreshToken.Token,
             Token = jwtToken,
+            Role = user.Role
         };
 
     }
