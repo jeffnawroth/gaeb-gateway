@@ -129,6 +129,12 @@ export interface ApplicationUser {
      * @memberof ApplicationUser
      */
     'lastName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ApplicationUser
+     */
+    'role'?: string | null;
 }
 /**
  * 
@@ -237,6 +243,12 @@ export interface UserRegistrationRequestDto {
      * @memberof UserRegistrationRequestDto
      */
     'password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserRegistrationRequestDto
+     */
+    'role': string;
 }
 
 /**

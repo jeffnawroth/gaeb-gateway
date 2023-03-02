@@ -20,6 +20,7 @@
               label="Vorname"
               :error-messages="errors"
               outlined
+              clearable
             />
           </ValidationProvider>
           <ValidationProvider
@@ -32,8 +33,24 @@
               label="Nachname"
               :error-messages="errors"
               outlined
+              clearable
             />
           </ValidationProvider>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="role"
+            rules="required"
+          >
+            <v-select
+              v-model="localUser.role"
+              :items="roles"
+              label="Rolle"
+              :error-messages="errors"
+              outlined
+              clearable
+            />
+          </ValidationProvider>
+
           <ValidationProvider
             v-slot="{ errors }"
             vid="email"
@@ -44,6 +61,7 @@
               label="E-Mail"
               :error-messages="errors"
               outlined
+              clearable
             />
           </ValidationProvider>
           <ValidationProvider
@@ -60,6 +78,7 @@
               :type="showPassword ? 'text' : 'password'"
               outlined
               counter
+              clearable
               @click:append="showPassword = !showPassword"
             />
 
@@ -98,6 +117,7 @@
               :type="showPasswordConfirm ? 'text' : 'password'"
               outlined
               counter
+              clearable
               @click:append="showPasswordConfirm = !showPasswordConfirm"
             />
           </ValidationProvider>
@@ -157,6 +177,7 @@ export default Vue.extend({
     localUser: {
       firstName: "",
       lastName: "",
+      role: "",
       email: "",
       passwordHash: "",
     },
@@ -165,6 +186,7 @@ export default Vue.extend({
     showPasswordConfirm: false,
     dialog: true,
     discardChangesDialog: false,
+    roles: ["admin", "mitarbeiter"],
   }),
   computed: {
     cardTitle() {
