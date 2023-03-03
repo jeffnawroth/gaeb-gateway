@@ -22,7 +22,7 @@ const routes: Array<RouteConfig> = [
     path: "/users",
     component: () =>
       import(/* webpackChunkName: "users" */ "@/views/UserManagement.vue"),
-    meta: { requiresAuth: true },
+    // meta: { requiresAuth: true },
 
     children: [
       {
@@ -68,6 +68,13 @@ const routes: Array<RouteConfig> = [
     path: "/404",
     component: () =>
       import(/* webpackChunkName: "404" */ "@/views/NotFound.vue"),
+  },
+  {
+    name: "create-boq",
+    path: "/create-boq",
+    component: () =>
+      import(/* webpackChunkName: "404" */ "@/views/CreateBoq.vue"),
+    //meta: { requiresAuth: true }
   },
   {
     path: "*",

@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@xbim/viewer": "^2.1.0-pre202302270759",
     "axios": "^1.2.1",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
