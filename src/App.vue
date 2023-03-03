@@ -1,9 +1,11 @@
 <template>
-  <v-app>
-    <NavigationLayout />
-    <v-main>
+  <v-app id="inspire">
+    <AppBar />
+    <v-main class="grey lighten-3">
       <NotificationContainer />
-      <router-view />
+      <MainApp>
+        <router-view />
+      </MainApp>
     </v-main>
   </v-app>
 </template>
@@ -11,12 +13,13 @@
 <script lang="ts">
 import Vue from "vue";
 import NotificationContainer from "@/components/Notifcation/NotificationContainer.vue";
-import NavigationLayout from "@/components/NavigationLayout.vue";
+import AppBar from "@/components/Layout/AppBar.vue";
+import MainApp from "@/views/MainApp.vue";
 export default Vue.extend({
-  name: "App",
   components: {
+    AppBar,
+    MainApp,
     NotificationContainer,
-    NavigationLayout,
   },
   data: () => ({}),
 });

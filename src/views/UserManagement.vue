@@ -8,7 +8,10 @@
       :loading="loading"
     >
       <template #top>
-        <v-toolbar flat>
+        <v-toolbar
+          flat
+          rounded="lg"
+        >
           <v-toolbar-title>Benutzerverwaltung</v-toolbar-title>
           <v-divider
             class="mx-4"
@@ -76,8 +79,11 @@ export default Vue.extend({
     ...mapState("users", ["users"]),
   },
   async created() {
-    await this.getUsers();
-    this.loading = false;
+    try {
+      await this.getUsers();
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     ...mapActions("users", ["getUsers", "deleteUser"]),
