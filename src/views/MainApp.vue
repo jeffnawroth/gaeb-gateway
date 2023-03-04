@@ -20,6 +20,33 @@
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-group
+              v-for="item in boq"
+              :key="item.title"
+              :prepend-icon="item.icon"
+              color="secondary"
+            >
+              <template #activator>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item-content>
+              </template>
+
+              <v-list-item
+                v-for="child in item.items"
+                :key="child.title"
+                :to="child.route"
+              >
+                <v-list-item-icon>
+                  <v-icon>{{ child.icon }}</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{ child.title }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
           </v-list>
         </v-sheet>
       </v-col>
@@ -55,10 +82,24 @@ export default Vue.extend({
         icon: "mdi-file-document-multiple-outline",
         route: "/documents",
       },
+    ],
+
+    boq: [
       {
-        title: "Leistungsverzechnis",
+        title: "LV",
         icon: "mdi-file-table-outline",
-        route: "/create-boq",
+        items: [
+          {
+            title: "LV Erstellen",
+            route: "/create-boq",
+            icon: "mdi-file-document-plus-outline",
+          },
+          {
+            title: "LV Einlesen",
+            route: "/read-boq",
+            icon: "mdi-file-document-edit-outline",
+          },
+        ],
       },
     ],
   }),
