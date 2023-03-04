@@ -1,0 +1,14 @@
+{
+  "name": "@dangl/avacloud-client-fetch",
+  "version": "1.0.0",
+  "description": "AVACloud client",
+  "author": "Dangl IT GmbH",
+  "main": "api.js",
+  "types": "api.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
