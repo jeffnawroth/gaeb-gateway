@@ -72,6 +72,8 @@
         <td :colspan="headers.length">
           <span v-if="item.shortText"><span class="font-weight-bold">Kurztext:</span> {{ item.shortText
           }}<br></span>
+          <span v-else-if="item.label"><span class="font-weight-bold">Kurztext:</span> {{ item.label
+          }}<br></span>
           <span v-if="item.longText"><span class="font-weight-bold">Langtext:</span> {{ item.longText
           }}<br></span>
           <div v-if="showTotalPrice(item)">
@@ -172,6 +174,8 @@ export default Vue.extend({
           return `Leistungsbeschreibung "${item.projectName}"`;
         case "GroupSumTotal":
           return `Summe Leistungsbeschreibung "${item.projectName}"`;
+        case "NoteTextBlock":
+          return "Block";
       }
     },
 
@@ -232,14 +236,17 @@ export default Vue.extend({
     flattenItems(items: any[]): any[] {
       const result = [];
       for (const item of items) {
+        result.push(item);
+        if (item.elements) {
+          result.push(...this.flattenItems(item.elements));
+        }
+        if (item.blocks) {
+          for (const block of item.blocks) {
+            block.elementType = "NoteTextBlock";
+          }
+          result.push(...this.flattenItems(item.blocks));
+        }
         if (item.elementType == "ServiceSpecificationGroupDto") {
-          result.push(item);
-          if (item.elements) {
-            result.push(...this.flattenItems(item.elements));
-          }
-          if (item.blocks) {
-            result.push(...this.flattenItems(item.blocks));
-          }
           result.push({
             id: uuidv4(),
             elementType: "GroupSum",
@@ -249,8 +256,6 @@ export default Vue.extend({
               stringRepresentation: item.itemNumber.stringRepresentation,
             },
           });
-        } else {
-          result.push(item);
         }
       }
       return result;
