@@ -1,5 +1,12 @@
 import axios from "axios";
-import { FileParameter, GaebConversionClient } from "./AVACloudClient/api";
+import {
+  AvaConversionClient,
+  DestinationGaebExchangePhase,
+  DestinationGaebType,
+  FileParameter,
+  GaebConversionClient,
+  ProjectDto,
+} from "./AVACloudClient/api";
 
 const clientId = "13737747-8c15-4e1d-bec8-690e9b61d632";
 const clientSecret = "DBxJi2XLr7fUdRg";
@@ -54,4 +61,65 @@ export async function getAvaProject(file: any) {
   );
 
   return avaProject;
+}
+
+export async function convertAva2Ava(avaProject: ProjectDto) {
+  const client = new AvaConversionClient();
+
+  const avaProjectNew = await client.convertToAva(
+    avaProject,
+    true,
+    undefined,
+    undefined,
+    globalAccessToken
+  );
+
+  return avaProjectNew;
+}
+
+export async function convertGAEB2GAEB(file: any) {
+  const apiClient = new GaebConversionClient();
+  const destinationGaebType = DestinationGaebType.GaebXml_V3_3;
+  const targetExchangePhaseTransform = DestinationGaebExchangePhase.Offer;
+
+  const fileParam: FileParameter = {
+    data: file,
+    fileName: "",
+  };
+
+  const gaebFile = await apiClient.convertToGaeb(
+    fileParam,
+    undefined,
+    destinationGaebType,
+    targetExchangePhaseTransform,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    globalAccessToken
+  );
+
+  return gaebFile;
+}
+
+export async function convertAva2Gaeb(avaProject: ProjectDto) {
+  const apiClient = new AvaConversionClient();
+  const destinationGaebType = DestinationGaebType.GaebXml_V3_3;
+  const targetExchangePhaseTransform = DestinationGaebExchangePhase.Offer;
+
+  const gaebFile = await apiClient.convertToGaeb(
+    avaProject,
+    undefined,
+    destinationGaebType,
+    targetExchangePhaseTransform,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    globalAccessToken
+  );
+
+  return gaebFile;
 }

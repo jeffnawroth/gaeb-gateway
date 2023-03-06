@@ -682,13 +682,15 @@ export class AvaConversionClient {
       tryAutoGenerateItemNumbersAndSchema: boolean | undefined;
       removePlainTextLongTexts: boolean | undefined;
       removeHtmlLongTexts: boolean | undefined;
+      accessToken: string | undefined;
     }
   ): Promise<ProjectDto> {
     return this.convertToAva(
       avaProject,
       options.tryAutoGenerateItemNumbersAndSchema,
       options.removePlainTextLongTexts,
-      options.removeHtmlLongTexts
+      options.removeHtmlLongTexts,
+      options.accessToken
     );
   }
 
@@ -707,7 +709,8 @@ export class AvaConversionClient {
     avaProject: ProjectDto,
     tryAutoGenerateItemNumbersAndSchema: boolean | undefined,
     removePlainTextLongTexts: boolean | undefined,
-    removeHtmlLongTexts: boolean | undefined
+    removeHtmlLongTexts: boolean | undefined,
+    accessToken: string | undefined
   ): Promise<ProjectDto> {
     let url_ = this.baseUrl + "/conversion/ava/ava?";
     if (tryAutoGenerateItemNumbersAndSchema === null)
@@ -745,6 +748,7 @@ export class AvaConversionClient {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/vnd.com.dangl-it.ProjectDto.v1+json",
+        Authorization: `Bearer ${accessToken}`, // add the Authorization header with the access token
       },
     };
 
@@ -812,6 +816,8 @@ export class AvaConversionClient {
       removeUnprintableCharactersFromTexts: boolean | undefined;
       forceIncludeDescriptions: boolean | undefined;
       treatNullItemNumberSchemaAsInvalid: boolean | undefined;
+      accessToken: string | undefined
+
     }
   ): Promise<FileResponse> {
     return this.convertToGaeb(
@@ -823,7 +829,8 @@ export class AvaConversionClient {
       options.exportQuantityDetermination,
       options.removeUnprintableCharactersFromTexts,
       options.forceIncludeDescriptions,
-      options.treatNullItemNumberSchemaAsInvalid
+      options.treatNullItemNumberSchemaAsInvalid,
+      options.accessToken
     );
   }
 
@@ -864,7 +871,9 @@ export class AvaConversionClient {
     exportQuantityDetermination: boolean | undefined,
     removeUnprintableCharactersFromTexts: boolean | undefined,
     forceIncludeDescriptions: boolean | undefined,
-    treatNullItemNumberSchemaAsInvalid: boolean | undefined
+    treatNullItemNumberSchemaAsInvalid: boolean | undefined,
+    accessToken: string | undefined
+
   ): Promise<FileResponse> {
     let url_ = this.baseUrl + "/conversion/ava/gaeb?";
     if (tryAutoGenerateItemNumbersAndSchema === null)
@@ -947,6 +956,7 @@ export class AvaConversionClient {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`
       },
     };
 
@@ -2383,7 +2393,7 @@ export class GaebConversionClient {
     supportSkippedItemNumberLevelsInPositions: boolean | undefined,
     removePlainTextLongTexts: boolean | undefined,
     removeHtmlLongTexts: boolean | undefined,
-    accessToken: string
+    accessToken: string | undefined
   ): Promise<ProjectDto> {
     let url_ = this.baseUrl + "/conversion/gaeb/ava?";
     if (supportSkippedItemNumberLevelsInPositions === null)
@@ -2494,6 +2504,8 @@ export class GaebConversionClient {
       removeUnprintableCharactersFromTexts: boolean | undefined;
       forceIncludeDescriptions: boolean | undefined;
       treatNullItemNumberSchemaAsInvalid: boolean | undefined;
+      accessToken: string | undefined
+
     }
   ): Promise<FileResponse> {
     return this.convertToGaeb(
@@ -2505,7 +2517,8 @@ export class GaebConversionClient {
       options.exportQuantityDetermination,
       options.removeUnprintableCharactersFromTexts,
       options.forceIncludeDescriptions,
-      options.treatNullItemNumberSchemaAsInvalid
+      options.treatNullItemNumberSchemaAsInvalid,
+      options.accessToken
     );
   }
 
@@ -2547,7 +2560,8 @@ export class GaebConversionClient {
     exportQuantityDetermination: boolean | undefined,
     removeUnprintableCharactersFromTexts: boolean | undefined,
     forceIncludeDescriptions: boolean | undefined,
-    treatNullItemNumberSchemaAsInvalid: boolean | undefined
+    treatNullItemNumberSchemaAsInvalid: boolean | undefined,
+    accessToken: string | undefined
   ): Promise<FileResponse> {
     let url_ = this.baseUrl + "/conversion/gaeb/gaeb?";
     if (supportSkippedItemNumberLevelsInPositions === null)
@@ -2635,6 +2649,8 @@ export class GaebConversionClient {
       method: "POST",
       headers: {
         Accept: "application/json",
+        Authorization: `Bearer ${accessToken}`, // add the Authorization header with the access token
+
       },
     };
 

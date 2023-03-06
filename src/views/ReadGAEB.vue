@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-file-input
-      v-model="file"
-      class="mx-3"
-      @change="convert"
-    />
-
     <v-data-table
       :items="flattenItems(items)"
       :headers="headers"
@@ -14,8 +8,40 @@
       show-expand
       disable-sort
       :item-class="itemRowBackground"
-      @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
     >
+      <!-- @click:row="(item, slot) => slot.expand(!slot.isExpanded)" -->
+      <template #top="{ items }">
+        <v-toolbar flat>
+          <v-file-input
+            v-model="file"
+            outlined
+            dense
+            hide-details
+            @change="convertGAEBtoAVA(file)"
+          />
+          <v-spacer />
+          <v-btn
+            class="mr-3"
+            @click="action(items)"
+          >
+            {{ editOffer ? "Preise kalkulieren" : "Angebot bearbeiten" }}
+            <v-icon
+              right
+              dark
+            >
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+          <v-btn @click="exportGaeb(file)">
+            Exportieren<v-icon
+              right
+              dark
+            >
+              mdi-export
+            </v-icon>
+          </v-btn>
+        </v-toolbar>
+      </template>
       <!-- Type -->
       <template #[`item.type`]="{ item }">
         <td :class="groupTextBold(item)">
@@ -42,9 +68,24 @@
 
       <!-- Unit Price -->
       <template #[`item.unitPrice`]="{ item }">
-        <td v-if="checkElementType(item, 'PositionDto')">
-          {{ getFormattedPrice(item.unitPrice) }}
-        </td>
+        <v-edit-dialog
+          :return-value.sync="item.totalPrice"
+          persistent
+          large
+        >
+          <!--  @save="convertAVAtoAVA(item)" -->
+          <td v-if="checkElementType(item, 'PositionDto')">
+            {{ getFormattedPrice(item.unitPrice) }}
+          </td>
+          <template #input>
+            <v-text-field
+              v-model.number="item.unitPrice"
+              label="Edit"
+              single-line
+              counter
+            />
+          </template>
+        </v-edit-dialog>
       </template>
 
       <!-- Total Price -->
@@ -92,11 +133,23 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { getAccessToken, getAvaProject } from "@/AVACloudHelper";
-import { IElementDto, ProjectDto } from "@/AVACloudClient/api";
+import {
+  convertAva2Ava,
+  convertAva2Gaeb,
+  convertGAEB2GAEB,
+  getAccessToken,
+  getAvaProject,
+} from "@/AVACloudHelper";
+import {
+  IElementDto,
+  PositionTypeDto,
+  PriceTypeDto,
+  ProjectDto,
+} from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
 export default Vue.extend({
   data: () => ({
+    editOffer: false,
     file: null,
     items: [] as any[],
     headers: [
@@ -152,6 +205,14 @@ export default Vue.extend({
   },
 
   methods: {
+    action(items: any) {
+      if (!this.editOffer) {
+        this.convertGAEBToX84(this.file);
+        this.editOffer = !this.editOffer;
+      } else {
+        this.convertAVAtoAVA(items);
+      }
+    },
     itemRowBackground({ elementType }: any) {
       return elementType == "GroupSum" || elementType == "GroupSumTotal"
         ? "background-color: grey"
@@ -207,13 +268,13 @@ export default Vue.extend({
       return `${taxRate * 100} %`;
     },
 
-    async convert() {
-      if (!this.file) {
+    async convertGAEBtoAVA(file: any) {
+      if (!file) {
         this.items = [];
         return;
       }
 
-      this.avaProject = await getAvaProject(this.file);
+      this.avaProject = await getAvaProject(file);
       if (this.avaProject.serviceSpecifications) {
         this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
 
@@ -231,6 +292,80 @@ export default Vue.extend({
           totalPriceGrossDeducted: this.totalPriceGrossDeductedProject,
         });
       }
+    },
+
+    async convertAVAtoAVA(items: any) {
+      items.forEach((item: any) => {
+        if (item.unitPrice) {
+          item.priceType = PriceTypeDto.WithTotal;
+          item.unitPriceOverride = item.unitPrice;
+        }
+      });
+
+      const servSpec = this.avaProject.serviceSpecifications;
+      if (servSpec) {
+        if (servSpec[0].priceInformation) {
+          servSpec[0].priceInformation.taxRate = 0.19;
+        }
+        servSpec[0].elements?.splice(0, 1);
+        servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
+      }
+
+      this.avaProject = await convertAva2Ava(this.avaProject);
+
+      if (this.avaProject.serviceSpecifications) {
+        this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
+
+        this.items?.unshift({
+          id: uuidv4(),
+          elementType: "ServiceDescription",
+          projectName: this.projectName ?? "",
+        });
+
+        this.items?.push({
+          id: uuidv4(),
+          elementType: "GroupSumTotal",
+          projectName: this.projectName ?? "",
+          totalPrice: this.totalPriceProject,
+          totalPriceGrossDeducted: this.totalPriceGrossDeductedProject,
+        });
+      }
+    },
+
+    async convertGAEBToX84(file: any) {
+      if (!file) {
+        this.items = [];
+        return;
+      }
+      const gaebFile = await convertGAEB2GAEB(file);
+      this.convertGAEBtoAVA(gaebFile.data);
+    },
+
+    async exportGaeb(file: any) {
+      if (!file) {
+        this.items = [];
+        return;
+      }
+
+      const servSpec = this.avaProject.serviceSpecifications;
+      if (servSpec) {
+        servSpec[0].elements?.splice(0, 1);
+        servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
+      }
+      const gaebFile = await convertAva2Gaeb(this.avaProject);
+
+      const data = window.URL.createObjectURL(gaebFile.data);
+      const link = document.createElement("a");
+      link.href = data;
+      link.download = "Offer.X84";
+      document.body.appendChild(link);
+      link.click();
+
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+        link.remove();
+      }, 100);
     },
 
     flattenItems(items: any[]): any[] {

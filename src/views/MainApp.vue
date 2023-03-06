@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="2">
+    <v-row class="flex-nowrap">
+      <v-col cols="3">
         <v-sheet rounded="lg">
           <v-list
             nav
