@@ -20,26 +20,30 @@
             @change="convertGAEBtoAVA(file)"
           />
           <v-spacer />
-          <v-btn
+          <BaseButton
             class="mr-3"
-            @click="action(items)"
+            @click="convertAVAtoAVA(items)"
           >
-            {{ editOffer ? "Preise kalkulieren" : "Angebot bearbeiten" }}
-            <v-icon
-              right
-              dark
-            >
+            Preise kalkulieren
+            <v-icon right>
               mdi-pencil
             </v-icon>
-          </v-btn>
-          <v-btn @click="exportGaeb(file)">
-            Exportieren<v-icon
-              right
-              dark
-            >
+          </BaseButton>
+          <BaseButton
+            class="mr-3"
+            @click="convertDialog = true"
+          >
+            Konverter
+            <v-icon right>
+              mdi-autorenew
+            </v-icon>
+          </BaseButton>
+
+          <BaseButton @click="exportGaeb(file)">
+            Exportieren<v-icon right>
               mdi-export
             </v-icon>
-          </v-btn>
+          </BaseButton>
         </v-toolbar>
       </template>
       <!-- Type -->
@@ -52,7 +56,7 @@
       <!-- Short Text -->
       <template #[`item.shortText`]="{ item }">
         <span :class="groupTextBold(item)">{{
-          checkElementType(item, "ExecutionDescriptionDto")
+          item.elementType == "ExecutionDescriptionDto"
             ? item.label
             : item.shortText
         }}</span>
@@ -74,7 +78,7 @@
           large
         >
           <!--  @save="convertAVAtoAVA(item)" -->
-          <td v-if="checkElementType(item, 'PositionDto')">
+          <td v-if="item.elementType == 'PositionDto'">
             {{ getFormattedPrice(item.unitPrice) }}
           </td>
           <template #input>
@@ -128,6 +132,13 @@
         </td>
       </template>
     </v-data-table>
+    <GaebConverterDialog
+      v-model="convertDialog"
+      :file="file"
+      @close-converter="convertDialog = false"
+      @convert="convertGaebToGaeb"
+      @click-cancel="convertDialog = false"
+    />
   </div>
 </template>
 
@@ -136,20 +147,17 @@ import Vue from "vue";
 import {
   convertAva2Ava,
   convertAva2Gaeb,
-  convertGAEB2GAEB,
+  convertGaeb2Gaeb,
   getAccessToken,
   getAvaProject,
 } from "@/AVACloudHelper";
-import {
-  IElementDto,
-  PositionTypeDto,
-  PriceTypeDto,
-  ProjectDto,
-} from "@/AVACloudClient/api";
+import { FileResponse, PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
+import GaebConverterDialog from "@/components/GaebConverterDialog.vue";
 export default Vue.extend({
+  components: { GaebConverterDialog },
   data: () => ({
-    editOffer: false,
+    convertDialog: false,
     file: null,
     items: [] as any[],
     headers: [
@@ -205,14 +213,6 @@ export default Vue.extend({
   },
 
   methods: {
-    action(items: any) {
-      if (!this.editOffer) {
-        this.convertGAEBToX84(this.file);
-        this.editOffer = !this.editOffer;
-      } else {
-        this.convertAVAtoAVA(items);
-      }
-    },
     itemRowBackground({ elementType }: any) {
       return elementType == "GroupSum" || elementType == "GroupSumTotal"
         ? "background-color: grey"
@@ -238,10 +238,6 @@ export default Vue.extend({
         case "NoteTextBlock":
           return "Block";
       }
-    },
-
-    checkElementType({ elementType }: any, type: string) {
-      return elementType == type;
     },
 
     groupTextBold({ elementType }: any) {
@@ -275,6 +271,11 @@ export default Vue.extend({
       }
 
       this.avaProject = await getAvaProject(file);
+
+      this.setupItems();
+    },
+
+    setupItems() {
       if (this.avaProject.serviceSpecifications) {
         this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
 
@@ -295,6 +296,7 @@ export default Vue.extend({
     },
 
     async convertAVAtoAVA(items: any) {
+      if (items.length == 0) return;
       items.forEach((item: any) => {
         if (item.unitPrice) {
           item.priceType = PriceTypeDto.WithTotal;
@@ -303,42 +305,37 @@ export default Vue.extend({
       });
 
       const servSpec = this.avaProject.serviceSpecifications;
-      if (servSpec) {
-        if (servSpec[0].priceInformation) {
-          servSpec[0].priceInformation.taxRate = 0.19;
-        }
+      if (servSpec && servSpec[0].priceInformation) {
+        servSpec[0].priceInformation.taxRate = 0.19;
         servSpec[0].elements?.splice(0, 1);
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
 
       this.avaProject = await convertAva2Ava(this.avaProject);
 
-      if (this.avaProject.serviceSpecifications) {
-        this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
-
-        this.items?.unshift({
-          id: uuidv4(),
-          elementType: "ServiceDescription",
-          projectName: this.projectName ?? "",
-        });
-
-        this.items?.push({
-          id: uuidv4(),
-          elementType: "GroupSumTotal",
-          projectName: this.projectName ?? "",
-          totalPrice: this.totalPriceProject,
-          totalPriceGrossDeducted: this.totalPriceGrossDeductedProject,
-        });
-      }
+      this.setupItems();
     },
 
-    async convertGAEBToX84(file: any) {
+    /* async convertGAEBToX84(file: any) {
       if (!file) {
         this.items = [];
         return;
       }
-      const gaebFile = await convertGAEB2GAEB(file);
+      const gaebFile = await convertGaeb2Gaeb(
+        file,
+        DestinationGaebType.GaebXml_V3_3,
+        DestinationGaebExchangePhase.Offer
+      );
       this.convertGAEBtoAVA(gaebFile.data);
+    }, */
+
+    async convertGaebToGaeb(selectedItem: any) {
+      const gaebFile = await convertGaeb2Gaeb(
+        this.file,
+        selectedItem.destinationType,
+        selectedItem.targetPhase
+      );
+      this.downloadFile(gaebFile);
     },
 
     async exportGaeb(file: any) {
@@ -347,22 +344,26 @@ export default Vue.extend({
         return;
       }
 
+      const avaProject = this.avaProject;
       const servSpec = this.avaProject.serviceSpecifications;
       if (servSpec) {
         servSpec[0].elements?.splice(0, 1);
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
       const gaebFile = await convertAva2Gaeb(this.avaProject);
+      this.downloadFile(gaebFile);
+    },
 
+    downloadFile({ gaebFile, fileName }: any) {
       const data = window.URL.createObjectURL(gaebFile.data);
+
       const link = document.createElement("a");
       link.href = data;
-      link.download = "Offer.X84";
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
 
       setTimeout(() => {
-        // For Firefox it is necessary to delay revoking the ObjectURL
         window.URL.revokeObjectURL(data);
         link.remove();
       }, 100);

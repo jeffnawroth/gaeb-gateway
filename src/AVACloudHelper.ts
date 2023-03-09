@@ -77,21 +77,25 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
   return avaProjectNew;
 }
 
-export async function convertGAEB2GAEB(file: any) {
+export async function convertGaeb2Gaeb(
+  file: any,
+  destinationType: DestinationGaebType,
+  targetPhase: DestinationGaebExchangePhase
+) {
   const apiClient = new GaebConversionClient();
-  const destinationGaebType = DestinationGaebType.GaebXml_V3_3;
-  const targetExchangePhaseTransform = DestinationGaebExchangePhase.Offer;
 
   const fileParam: FileParameter = {
     data: file,
-    fileName: "",
+    fileName: "gaebFile",
   };
+
+  const fileName = getFileName(file, destinationType, targetPhase)
 
   const gaebFile = await apiClient.convertToGaeb(
     fileParam,
     undefined,
-    destinationGaebType,
-    targetExchangePhaseTransform,
+    destinationType,
+    targetPhase,
     undefined,
     undefined,
     undefined,
@@ -100,7 +104,29 @@ export async function convertGAEB2GAEB(file: any) {
     globalAccessToken
   );
 
-  return gaebFile;
+  return {gaebFile, fileName};
+}
+
+export function getFileName(
+  file: File,
+  destinationType: DestinationGaebType,
+  targetPhase: DestinationGaebExchangePhase
+) {
+  const extensionMap = {
+    GaebXml_V3_3: {
+      OfferRequest: ".X83",
+      Offer: ".X84"
+    },
+    GaebXml_V3_3_Commerce: {
+      OfferRequest: ".X93",
+      Offer: ".X94"
+    }
+  } as any;
+
+  const extension = extensionMap[destinationType][targetPhase];
+  const fileNameWithoutExtension = file.name.split(".")[0];
+
+  return `${fileNameWithoutExtension}${extension}`;
 }
 
 export async function convertAva2Gaeb(avaProject: ProjectDto) {
