@@ -73,14 +73,14 @@ const routes: Array<RouteConfig> = [
     name: "create-boq",
     path: "/create-boq",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/CreateBoq.vue"),
+      import(/* webpackChunkName: "404" */ "@/views/CreateGaeb.vue"),
     //meta: { requiresAuth: true }
   },
   {
     name: "read-boq",
     path: "/read-boq",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/ReadGAEB.vue"),
+      import(/* webpackChunkName: "404" */ "@/views/ReadGaeb.vue"),
     //meta: { requiresAuth: true }
   },
   {

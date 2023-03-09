@@ -153,7 +153,7 @@ import {
 } from "@/AVACloudHelper";
 import { FileResponse, PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
-import GaebConverterDialog from "@/components/GaebConverterDialog.vue";
+import GaebConverterDialog from "@/components/ReadGaeb/GaebConverterDialog.vue";
 export default Vue.extend({
   components: { GaebConverterDialog },
   data: () => ({
