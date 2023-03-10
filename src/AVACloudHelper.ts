@@ -89,7 +89,7 @@ export async function convertGaeb2Gaeb(
     fileName: "gaebFile",
   };
 
-  const fileName = getFileName(file, destinationType, targetPhase)
+  const fileName = getFileName(file, destinationType, targetPhase);
 
   const gaebFile = await apiClient.convertToGaeb(
     fileParam,
@@ -104,7 +104,7 @@ export async function convertGaeb2Gaeb(
     globalAccessToken
   );
 
-  return {gaebFile, fileName};
+  return { gaebFile, fileName };
 }
 
 export function getFileName(
@@ -115,30 +115,39 @@ export function getFileName(
   const extensionMap = {
     GaebXml_V3_3: {
       OfferRequest: ".X83",
-      Offer: ".X84"
+      Offer: ".X84",
     },
     GaebXml_V3_3_Commerce: {
       OfferRequest: ".X93",
-      Offer: ".X94"
-    }
+      Offer: ".X94",
+    },
   } as any;
 
-  const extension = extensionMap[destinationType][targetPhase];
-  const fileNameWithoutExtension = file.name.split(".")[0];
+  if (destinationType && targetPhase) {
+    const extension = extensionMap[destinationType][targetPhase];
+    const fileNameWithoutExtension = file.name.split(".")[0];
 
-  return `${fileNameWithoutExtension}${extension}`;
+    return `${fileNameWithoutExtension}${extension}`;
+  }
+
+  return file.name;
 }
 
-export async function convertAva2Gaeb(avaProject: ProjectDto) {
+export async function convertAva2Gaeb(
+  avaProject: ProjectDto,
+  file: File,
+  destinationType: DestinationGaebType,
+  targetPhase: DestinationGaebExchangePhase
+) {
   const apiClient = new AvaConversionClient();
-  const destinationGaebType = DestinationGaebType.GaebXml_V3_3;
-  const targetExchangePhaseTransform = DestinationGaebExchangePhase.Offer;
+
+  const fileName = getFileName(file, destinationType, targetPhase);
 
   const gaebFile = await apiClient.convertToGaeb(
     avaProject,
     undefined,
-    destinationGaebType,
-    targetExchangePhaseTransform,
+    destinationType,
+    targetPhase,
     undefined,
     undefined,
     undefined,
@@ -147,5 +156,5 @@ export async function convertAva2Gaeb(avaProject: ProjectDto) {
     globalAccessToken
   );
 
-  return gaebFile;
+  return { gaebFile, fileName };
 }

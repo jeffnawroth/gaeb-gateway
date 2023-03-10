@@ -4,7 +4,7 @@
     @click-cancel="closeDialog"
   >
     <template #card-title>
-      GAEB konvertieren
+      GAEB exportieren
     </template>
     <template #card-text>
       <v-select
@@ -31,7 +31,7 @@
         large
         @click="$emit('convert', selectedItem)"
       >
-        Konvertieren
+        Exportieren
       </BaseButton>
     </template>
   </BaseDialog>
@@ -46,8 +46,8 @@ import {
 
 interface ConvertItem {
   name: string;
-  destinationType: DestinationGaebType;
-  targetPhase: DestinationGaebExchangePhase;
+  destinationType: DestinationGaebType | undefined;
+  targetPhase: DestinationGaebExchangePhase | undefined;
 }
 export default Vue.extend({
   props: {
@@ -58,6 +58,11 @@ export default Vue.extend({
   },
   data: () => ({
     converterItems: [
+      {
+        name: "Keine Transformation",
+        destinationType: undefined,
+        targetPhase: undefined,
+      },
       {
         name: "Angebotsaufforderung (83)",
         destinationType: DestinationGaebType.GaebXml_V3_3,
@@ -79,7 +84,11 @@ export default Vue.extend({
         targetPhase: DestinationGaebExchangePhase.Offer,
       },
     ] as ConvertItem[],
-    selectedItem: {} as ConvertItem,
+    selectedItem: {
+      name: "Keine Transformation",
+      destinationType: undefined,
+      targetPhase: undefined,
+    } as ConvertItem,
     convertDialog: false,
   }),
   methods: {

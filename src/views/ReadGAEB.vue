@@ -9,42 +9,13 @@
       disable-sort
       :item-class="itemRowBackground"
     >
-      <!-- @click:row="(item, slot) => slot.expand(!slot.isExpanded)" -->
       <template #top="{ items }">
-        <v-toolbar flat>
-          <v-file-input
-            v-model="file"
-            outlined
-            dense
-            hide-details
-            @change="convertGAEBtoAVA(file)"
-          />
-          <v-spacer />
-          <BaseButton
-            class="mr-3"
-            @click="convertAVAtoAVA(items)"
-          >
-            Preise kalkulieren
-            <v-icon right>
-              mdi-pencil
-            </v-icon>
-          </BaseButton>
-          <BaseButton
-            class="mr-3"
-            @click="convertDialog = true"
-          >
-            Konverter
-            <v-icon right>
-              mdi-autorenew
-            </v-icon>
-          </BaseButton>
-
-          <BaseButton @click="exportGaeb(file)">
-            Exportieren<v-icon right>
-              mdi-export
-            </v-icon>
-          </BaseButton>
-        </v-toolbar>
+        <TableToolbar
+          v-model="file"
+          @gaeb-2-ava="convertGAEBtoAVA"
+          @ava-2-ava="convertAVAtoAVA(items)"
+          @open-converter="convertDialog = true"
+        />
       </template>
       <!-- Type -->
       <template #[`item.type`]="{ item }">
@@ -134,10 +105,9 @@
     </v-data-table>
     <GaebConverterDialog
       v-model="convertDialog"
-      :file="file"
       @close-converter="convertDialog = false"
-      @convert="convertGaebToGaeb"
       @click-cancel="convertDialog = false"
+      @convert="(selectedItem) => exportGaeb(selectedItem)"
     />
   </div>
 </template>
@@ -147,15 +117,16 @@ import Vue from "vue";
 import {
   convertAva2Ava,
   convertAva2Gaeb,
-  convertGaeb2Gaeb,
   getAccessToken,
   getAvaProject,
 } from "@/AVACloudHelper";
 import { FileResponse, PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
+import _ from "lodash";
 import GaebConverterDialog from "@/components/ReadGaeb/GaebConverterDialog.vue";
+import TableToolbar from "@/components/ReadGaeb/TableToolbar.vue";
 export default Vue.extend({
-  components: { GaebConverterDialog },
+  components: { GaebConverterDialog, TableToolbar },
   data: () => ({
     convertDialog: false,
     file: null,
@@ -264,14 +235,12 @@ export default Vue.extend({
       return `${taxRate * 100} %`;
     },
 
-    async convertGAEBtoAVA(file: any) {
-      if (!file) {
+    async convertGAEBtoAVA() {
+      if (!this.file) {
         this.items = [];
         return;
       }
-
-      this.avaProject = await getAvaProject(file);
-
+      this.avaProject = await getAvaProject(this.file);
       this.setupItems();
     },
 
@@ -316,41 +285,28 @@ export default Vue.extend({
       this.setupItems();
     },
 
-    /* async convertGAEBToX84(file: any) {
-      if (!file) {
-        this.items = [];
-        return;
-      }
-      const gaebFile = await convertGaeb2Gaeb(
-        file,
-        DestinationGaebType.GaebXml_V3_3,
-        DestinationGaebExchangePhase.Offer
-      );
-      this.convertGAEBtoAVA(gaebFile.data);
-    }, */
-
-    async convertGaebToGaeb(selectedItem: any) {
-      const gaebFile = await convertGaeb2Gaeb(
-        this.file,
-        selectedItem.destinationType,
-        selectedItem.targetPhase
-      );
-      this.downloadFile(gaebFile);
-    },
-
-    async exportGaeb(file: any) {
-      if (!file) {
+    async exportGaeb(selectedItem: any) {
+      if (!this.file) {
         this.items = [];
         return;
       }
 
-      const avaProject = this.avaProject;
-      const servSpec = this.avaProject.serviceSpecifications;
+      let avaProjectCopy = _.cloneDeep(this.avaProject);
+
+      const servSpec = avaProjectCopy.serviceSpecifications;
       if (servSpec) {
         servSpec[0].elements?.splice(0, 1);
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
-      const gaebFile = await convertAva2Gaeb(this.avaProject);
+
+      const gaebFile = await convertAva2Gaeb(
+        avaProjectCopy,
+        this.file as unknown as File,
+        selectedItem.destinationType,
+        selectedItem.targetPhase
+      );
+
+      this.convertDialog = false;
       this.downloadFile(gaebFile);
     },
 
