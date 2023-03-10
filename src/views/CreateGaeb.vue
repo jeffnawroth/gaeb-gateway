@@ -1,10 +1,14 @@
 <template>
   <div class="d-flex">
     <v-col>
-      <canvas id="viewer" />
-      <v-btn @click="clearSelection">
+      <ModelViewer
+        ref="modelViewer"
+        @toggle-list-element="toggleListElement"
+        @reset-selected-items="selectedItems = []"
+      />
+      <!-- <v-btn @click="clearSelection">
         Reset
-      </v-btn>
+      </v-btn> -->
     </v-col>
     <v-col class="d-flex flex-column">
       <v-card>
@@ -43,10 +47,10 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { State, Viewer, ViewType } from "@xbim/viewer";
 import { mapActions } from "vuex";
-var viewer: Viewer;
+import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 export default Vue.extend({
+  components: { ModelViewer },
   data: () => ({
     selectedItems: [] as any,
     items: [
@@ -72,56 +76,9 @@ export default Vue.extend({
       },
     ] as any,
   }),
-  mounted() {
-    this.initViewer();
-  },
+
   methods: {
     ...mapActions("notification", ["add"]),
-
-    initViewer() {
-      viewer = new Viewer("viewer");
-      const sheet = document.getElementById("sheet");
-      const check = Viewer.check();
-
-      if (check.noErrors) {
-        //Load
-        viewer.load("FourWallsDoorWindowsRoof.wexbim");
-        //Add Actions
-        this.initViewerActions();
-        //Set up Viewer
-        viewer.canvas.height = sheet?.offsetHeight as number;
-        viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
-        //Start viewer
-        viewer.start();
-      } else {
-        const notification = {
-          type: "error",
-          message: "Die Viewer konnte nicht geladen werden.",
-        };
-        this.add(notification);
-      }
-    },
-
-    initViewerActions() {
-      viewer.on("loaded", () => {
-        viewer.show(ViewType.DEFAULT);
-      });
-
-      viewer.on("pick", (args) => {
-        if (args == null || args.id == null) return;
-
-        this.toggleListElement(args.id);
-        this.highlightModelElement(args.id);
-      });
-    },
-
-    highlightModelElement(id: number) {
-      if (viewer.getState(id) === 253) {
-        viewer.setState(State.UNDEFINED, [id]);
-      } else {
-        viewer.setState(State.HIGHLIGHTED, [id]);
-      }
-    },
 
     toggleListElement(modelId: number) {
       const listItemIndex = this.items.findIndex(
@@ -136,9 +93,10 @@ export default Vue.extend({
           )
         : this.selectedItems.push(listItemIndex);
     },
-    clearSelection() {
-      viewer.clearHighlighting();
-      this.selectedItems = [];
+    highlightModelElement(id: number) {
+      (
+        this.$refs.modelViewer as InstanceType<typeof ModelViewer>
+      ).highlightModelElement(id);
     },
   },
 });
