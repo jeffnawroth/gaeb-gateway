@@ -14,7 +14,10 @@
       />
       <v-spacer />
       <div class="d-flex justify-end">
-        <v-btn width="350">
+        <v-btn
+          width="350"
+          @click="createGaeb"
+        >
           Leistungsverzeichnis erstellen
         </v-btn>
       </div>
@@ -27,9 +30,34 @@ import Vue from "vue";
 
 import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 import ListOfPositions from "@/components/CreateGaeb/ListOfPositions.vue";
+import { convertAva2Gaeb, getAccessToken } from "@/AVACloudHelper";
+import {
+  DestinationGaebExchangePhase,
+  DestinationGaebType,
+  IElementDto,
+  ProjectDto,
+} from "@/AVACloudClient/api";
 export default Vue.extend({
   components: { ModelViewer, ListOfPositions },
-  data: () => ({}),
+  data: () => ({
+    avaProject: {
+      projectInformation: {
+        name: "FourWallsDoorWindowsRoof",
+        currencyShort: "€",
+      },
+      serviceSpecifications: [
+        {
+          priceInformation: {
+            taxRate: 0.19,
+          },
+          elements: [] as IElementDto[],
+        },
+      ],
+    } as ProjectDto,
+  }),
+  async created() {
+    await getAccessToken();
+  },
   methods: {
     highlightModelElement(id: number) {
       (
@@ -45,6 +73,33 @@ export default Vue.extend({
       (
         this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
       ).selectedItems = [];
+    },
+    async createGaeb() {
+      const selectedItems = (
+        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
+      ).getSelectedItems();
+
+      selectedItems.forEach((item) => {
+        this.avaProject.serviceSpecifications?.[0].elements?.push({
+          //@ts-expect-error: error
+          elementTypeDiscriminator: "PositionDto",
+          shortText: item.shortText,
+          unitTag: item.unit,
+          quantityComponents: [
+            {
+              formula: item.quantity,
+            },
+          ],
+        });
+      });
+
+      const destinationType = DestinationGaebType.GaebXml_V3_3;
+      const targetPhase = DestinationGaebExchangePhase.OfferRequest;
+      /* const gaebFile = await convertAva2Gaeb(
+        this.avaProject,
+        destinationType,
+        targetPhase
+      ); */
     },
   },
 });

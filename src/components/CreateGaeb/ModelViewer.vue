@@ -1,5 +1,11 @@
 <template>
   <div>
+    <v-file-input
+      dense
+      outlined
+      placeholder="Durchsuchen..."
+      accept=".ifc"
+    />
     <canvas id="viewer" />
     <v-btn @click="clearSelection">
       Reset
