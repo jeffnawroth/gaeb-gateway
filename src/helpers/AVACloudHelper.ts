@@ -6,7 +6,7 @@ import {
   GaebConversionClient,
   ProjectDto,
 } from "../AVACloudClient/api";
-import { getGlobalAccessToken } from "./DanglIdentity";
+import { getGlobalAccessTokenAvaCloud } from "./DanglIdentity";
 import { fileDownload } from "./HelperMethods";
 
 export async function getAvaProject(file: any) {
@@ -22,7 +22,7 @@ export async function getAvaProject(file: any) {
     undefined,
     undefined,
     undefined,
-    getGlobalAccessToken()
+    getGlobalAccessTokenAvaCloud()
   );
 
   return avaProject;
@@ -36,7 +36,7 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
     undefined,
     undefined,
     undefined,
-    getGlobalAccessToken()
+    getGlobalAccessTokenAvaCloud()
   );
 
   return avaProjectNew;
@@ -93,7 +93,7 @@ export async function convertAva2Gaeb(
     undefined,
     undefined,
     undefined,
-    getGlobalAccessToken()
+    getGlobalAccessTokenAvaCloud()
   );
 
   fileDownload(gaebFile.data, newfileName);

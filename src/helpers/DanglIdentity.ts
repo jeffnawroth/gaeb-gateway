@@ -5,9 +5,26 @@ const clientSecret = "DBxJi2XLr7fUdRg";
 const identityTokenUrl = "https://identity.dangl-it.com/connect/token";
 //const avacloudBaseUrl = "https://avacloud-api.dangl-it.com";
 
-let globalAccessToken: string;
+let globalAccessTokenAvaCloud: string;
+let globalAccessTokenOpenCde: string;
 
-export async function getAccessToken() {
+export async function getAccessTokenAvaCloud() {
+  globalAccessTokenAvaCloud = await getAccessToken("avacloud");
+}
+
+export async function getAccessTokenOpenCDE() {
+  globalAccessTokenOpenCde = await getAccessToken("dangl_opencde");
+}
+
+export function getGlobalAccessTokenAvaCloud() {
+  return globalAccessTokenAvaCloud;
+}
+
+export function getGlobalAccessTokenOpenCde() {
+  return globalAccessTokenOpenCde;
+}
+
+async function getAccessToken(scope: string) {
   try {
     const authHeader = `Basic ${btoa(`${clientId}:${clientSecret}`)}`;
     const requestConfig = {
@@ -18,7 +35,7 @@ export async function getAccessToken() {
     };
     const requestBody = new URLSearchParams({
       grant_type: "client_credentials",
-      scope: "avacloud",
+      scope: scope,
     });
 
     const response = await axios.post(
@@ -27,15 +44,11 @@ export async function getAccessToken() {
       requestConfig
     );
 
-    globalAccessToken = response.data.access_token;
+    return response.data.access_token;
   } catch (error) {
     console.error(error);
     alert(
       "Failed to obtain an access token. Have you read the documentation and set up your OAuth2 client?"
     );
   }
-}
-
-export function getGlobalAccessToken() {
-  return globalAccessToken;
 }

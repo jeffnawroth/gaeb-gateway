@@ -15,7 +15,11 @@ import Vue from "vue";
 import NotificationContainer from "@/components/Notifcation/NotificationContainer.vue";
 import AppBar from "@/components/Layout/AppBar.vue";
 import MainApp from "@/views/MainApp.vue";
-import { getAccessToken } from "./helpers/DanglIdentity";
+import {
+  getAccessTokenAvaCloud,
+  getAccessTokenOpenCDE,
+} from "./helpers/DanglIdentity";
+import { check } from "./helpers/openCDEHelper";
 export default Vue.extend({
   components: {
     AppBar,
@@ -24,7 +28,9 @@ export default Vue.extend({
   },
   data: () => ({}),
   async created() {
-    await getAccessToken();
+    await getAccessTokenAvaCloud();
+    await getAccessTokenOpenCDE();
+    await check();
   },
 });
 </script>
