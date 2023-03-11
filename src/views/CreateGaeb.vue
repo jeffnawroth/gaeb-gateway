@@ -40,7 +40,7 @@ import Vue from "vue";
 
 import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 import ListOfPositions from "@/components/CreateGaeb/ListOfPositions.vue";
-import { convertAva2Gaeb, getAccessToken } from "@/AVACloudHelper";
+import { convertAva2Gaeb } from "@/helpers/AVACloudHelper";
 import {
   DestinationGaebExchangePhase,
   DestinationGaebType,
@@ -66,9 +66,6 @@ export default Vue.extend({
       ],
     } as ProjectDto,
   }),
-  async created() {
-    await getAccessToken();
-  },
   methods: {
     clearSelection() {
       bus.$emit("clear-selection");

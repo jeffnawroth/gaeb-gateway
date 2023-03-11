@@ -119,9 +119,8 @@ import Vue from "vue";
 import {
   convertAva2Ava,
   convertAva2Gaeb,
-  getAccessToken,
   getAvaProject,
-} from "@/AVACloudHelper";
+} from "@/helpers/AVACloudHelper";
 import { PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
@@ -180,9 +179,6 @@ export default Vue.extend({
         ? this.avaProject.serviceSpecifications[0].totalPriceGrossDeducted
         : 0;
     },
-  },
-  async created() {
-    await getAccessToken();
   },
 
   methods: {

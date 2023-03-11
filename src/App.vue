@@ -15,6 +15,7 @@ import Vue from "vue";
 import NotificationContainer from "@/components/Notifcation/NotificationContainer.vue";
 import AppBar from "@/components/Layout/AppBar.vue";
 import MainApp from "@/views/MainApp.vue";
+import { getAccessToken } from "./helpers/DanglIdentity";
 export default Vue.extend({
   components: {
     AppBar,
@@ -22,5 +23,8 @@ export default Vue.extend({
     NotificationContainer,
   },
   data: () => ({}),
+  async created() {
+    await getAccessToken();
+  },
 });
 </script>
