@@ -47,6 +47,8 @@
           :return-value.sync="item.totalPrice"
           persistent
           large
+          cancel-text="Abbrechen"
+          save-text="Speichern"
         >
           <!--  @save="convertAVAtoAVA(item)" -->
           <td v-if="item.elementType == 'PositionDto'">
@@ -55,7 +57,7 @@
           <template #input>
             <v-text-field
               v-model.number="item.unitPrice"
-              label="Edit"
+              label="Bearbeiten"
               single-line
               counter
             />
@@ -120,7 +122,7 @@ import {
   getAccessToken,
   getAvaProject,
 } from "@/AVACloudHelper";
-import { FileResponse, PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
+import { PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import GaebConverterDialog from "@/components/ReadGaeb/GaebConverterDialog.vue";
@@ -273,14 +275,16 @@ export default Vue.extend({
         }
       });
 
-      const servSpec = this.avaProject.serviceSpecifications;
+      let avaProjectCopy = _.cloneDeep(this.avaProject);
+
+      const servSpec = avaProjectCopy.serviceSpecifications;
       if (servSpec && servSpec[0].priceInformation) {
         servSpec[0].priceInformation.taxRate = 0.19;
         servSpec[0].elements?.splice(0, 1);
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
 
-      this.avaProject = await convertAva2Ava(this.avaProject);
+      this.avaProject = await convertAva2Ava(avaProjectCopy);
 
       this.setupItems();
     },
