@@ -6,22 +6,31 @@
 import Vue from "vue";
 import { State, Viewer, ViewType } from "@xbim/viewer";
 import { mapActions } from "vuex";
+import { bus } from "@/main";
 var viewer: Viewer;
 
 export default Vue.extend({
   mounted() {
     this.initViewer();
     window.addEventListener("resize", this.setViewerSize);
+    this.emitBus();
   },
   destroyed() {
     window.removeEventListener("resize", this.setViewerSize);
   },
   methods: {
     ...mapActions("notification", ["add"]),
+    emitBus() {
+      bus.$on("zoom-to", (id: number) => viewer.zoomTo(id));
+      bus.$on("highlight-model-element", (id: number) =>
+        this.highlightModelElement(id)
+      );
+      bus.$on("clear-selection", () => viewer.clearHighlighting());
+    },
     setViewerSize() {
       const sheet = document.getElementById("sheet");
 
-      viewer.canvas.height = window.innerHeight * 0.69;
+      viewer.canvas.height = window.innerHeight * 0.6;
       viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
     },
     initViewer() {
@@ -53,13 +62,9 @@ export default Vue.extend({
       viewer.on("pick", (args) => {
         if (args == null || args.id == null) return;
 
-        this.$emit("toggle-list-element", args.id);
+        bus.$emit("toggle-list-element", args.id);
         this.highlightModelElement(args.id);
       });
-    },
-
-    clearSelection() {
-      viewer.clearHighlighting();
     },
 
     highlightModelElement(id: number) {

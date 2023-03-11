@@ -16,19 +16,13 @@
         Leistungsverzeichnis erstellen
       </BaseButton>
     </v-toolbar>
+
     <v-row no-gutters>
       <v-col class="px-3">
-        <ModelViewer
-          ref="modelViewer"
-          @toggle-list-element="toggleListElement"
-          @reset-selected-items="resetSelectedItems"
-        />
+        <ModelViewer ref="modelViewer" />
       </v-col>
       <v-col class="px-3">
-        <ListOfPositions
-          ref="listOfPositions"
-          @highlight-model-element="highlightModelElement"
-        />
+        <ListOfPositions ref="listOfPositions" />
         <BaseButton
           class="my-3"
           block
@@ -53,6 +47,7 @@ import {
   IElementDto,
   ProjectDto,
 } from "@/AVACloudClient/api";
+import { bus } from "@/main";
 export default Vue.extend({
   components: { ModelViewer, ListOfPositions },
   data: () => ({
@@ -76,23 +71,7 @@ export default Vue.extend({
   },
   methods: {
     clearSelection() {
-      (
-        this.$refs.modelViewer as InstanceType<typeof ModelViewer>
-      ).clearSelection();
-
-      (
-        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
-      ).selectedItems = [];
-    },
-    highlightModelElement(id: number) {
-      (
-        this.$refs.modelViewer as InstanceType<typeof ModelViewer>
-      ).highlightModelElement(id);
-    },
-    toggleListElement(id: number) {
-      (
-        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
-      ).toggleListElement(id);
+      bus.$emit("clear-selection");
     },
     async createGaeb() {
       const selectedItems = (

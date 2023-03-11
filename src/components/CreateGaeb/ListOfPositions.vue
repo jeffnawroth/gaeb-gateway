@@ -1,6 +1,6 @@
 <template>
   <v-card
-    style="max-height: 69vh"
+    style="max-height: 60vh"
     class="overflow-y-auto"
   >
     <v-list>
@@ -11,7 +11,8 @@
         <v-list-item
           v-for="item in items"
           :key="item.id"
-          @click="$emit('highlight-model-element', item.id)"
+          @click="highlightModelElement(item.id)"
+          @dblclick="zoomTo(item.id)"
         >
           <v-list-item-content>
             <v-list-item-title>
@@ -28,6 +29,7 @@
 </template>
 
 <script lang="ts">
+import { bus } from "@/main";
 import Vue from "vue";
 export default Vue.extend({
   data: () => ({
@@ -61,120 +63,12 @@ export default Vue.extend({
         quantity: 40,
         unit: "m²",
       },
-      {
-        id: 65146,
-        name: "Door",
-        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 4811,
-        name: "Wall",
-        shortText: "Betonwand",
-        quantity: 20,
-        unit: "m²",
-      },
-      {
-        id: 72190,
-        name: "Window",
-        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 71482,
-        name: "Roof",
-        shortText: "Flachdach; 10000x6000mm",
-        quantity: 40,
-        unit: "m²",
-      },
-      {
-        id: 65246,
-        name: "Door",
-        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 4821,
-        name: "Wall",
-        shortText: "Betonwand",
-        quantity: 20,
-        unit: "m²",
-      },
-      {
-        id: 72920,
-        name: "Window",
-        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 74282,
-        name: "Roof",
-        shortText: "Flachdach; 10000x6000mm",
-        quantity: 40,
-        unit: "m²",
-      },
-      {
-        id: 65446,
-        name: "Door",
-        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 4841,
-        name: "Wall",
-        shortText: "Betonwand",
-        quantity: 20,
-        unit: "m²",
-      },
-      {
-        id: 72940,
-        name: "Window",
-        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 74842,
-        name: "Roof",
-        shortText: "Flachdach; 10000x6000mm",
-        quantity: 40,
-        unit: "m²",
-      },
-      {
-        id: 65546,
-        name: "Door",
-        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 4861,
-        name: "Wall",
-        shortText: "Betonwand",
-        quantity: 20,
-        unit: "m²",
-      },
-      {
-        id: 72790,
-        name: "Window",
-        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 78482,
-        name: "Roof",
-        shortText: "Flachdach; 10000x6000mm",
-        quantity: 40,
-        unit: "m²",
-      },
     ] as any,
   }),
+  mounted() {
+    bus.$on("toggle-list-element", (id: number) => this.toggleListElement(id));
+    bus.$on("clear-selection", () => (this.selectedItems = []));
+  },
   methods: {
     toggleListElement(modelId: number) {
       const listItemIndex = this.items.findIndex(
@@ -197,6 +91,12 @@ export default Vue.extend({
       });
 
       return selectedItems;
+    },
+    zoomTo(id: number) {
+      bus.$emit("zoom-to", id);
+    },
+    highlightModelElement(id: number) {
+      bus.$emit("highlight-model-element", id);
     },
   },
 });

@@ -27,6 +27,8 @@ requireComponent.keys().forEach((fileName) => {
 
 Vue.config.productionTip = false;
 
+export const bus = new Vue();
+
 new Vue({
   router,
   store,
