@@ -15,7 +15,7 @@
               {{ item.name }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ item.description }}
+              {{ item.shortText }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -33,22 +33,30 @@ export default Vue.extend({
       {
         id: 6546,
         name: "Door",
-        description: "Lorem Ipsum",
+        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
+        quantity: 1,
+        unit: "Stck",
       },
       {
         id: 481,
         name: "Wall",
-        description: "Lorem Ipsum",
+        shortText: "Betonwand",
+        quantity: 20,
+        unit: "m²",
       },
       {
         id: 7290,
         name: "Window",
-        description: "Lorem Ipsum",
+        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
+        quantity: 1,
+        unit: "Stck",
       },
       {
         id: 7482,
         name: "Roof",
-        description: "Lorem Ipsum",
+        shortText: "Flachdach; 10000x6000mm",
+        quantity: 40,
+        unit: "m²",
       },
     ] as any,
   }),
@@ -65,6 +73,15 @@ export default Vue.extend({
             1
           )
         : this.selectedItems.push(listItemIndex);
+    },
+
+    getSelectedItems() {
+      const selectedItems: any[] = [];
+      this.selectedItems.forEach((index: number) => {
+        selectedItems.push(this.items[index]);
+      });
+
+      return selectedItems;
     },
   },
 });
