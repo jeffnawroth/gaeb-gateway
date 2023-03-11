@@ -1,27 +1,43 @@
 <template>
-  <div class="d-flex">
-    <v-col>
-      <ModelViewer
-        ref="modelViewer"
-        @toggle-list-element="toggleListElement"
-        @reset-selected-items="resetSelectedItems"
-      />
-    </v-col>
-    <v-col class="d-flex flex-column">
-      <ListOfPositions
-        ref="listOfPositions"
-        @highlight-model-element="highlightModelElement"
+  <div>
+    <v-toolbar
+      flat
+      rounded="lg"
+    >
+      <v-file-input
+        dense
+        outlined
+        placeholder="Durchsuchen..."
+        hide-details="auto"
+        accept=".ifc"
       />
       <v-spacer />
-      <div class="d-flex justify-end">
-        <v-btn
-          width="350"
-          @click="createGaeb"
+      <BaseButton @click="createGaeb">
+        Leistungsverzeichnis erstellen
+      </BaseButton>
+    </v-toolbar>
+    <v-row no-gutters>
+      <v-col class="px-3">
+        <ModelViewer
+          ref="modelViewer"
+          @toggle-list-element="toggleListElement"
+          @reset-selected-items="resetSelectedItems"
+        />
+      </v-col>
+      <v-col class="px-3">
+        <ListOfPositions
+          ref="listOfPositions"
+          @highlight-model-element="highlightModelElement"
+        />
+        <BaseButton
+          class="my-3"
+          block
+          @click="clearSelection"
         >
-          Leistungsverzeichnis erstellen
-        </v-btn>
-      </div>
-    </v-col>
+          Reset
+        </BaseButton>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -59,6 +75,15 @@ export default Vue.extend({
     await getAccessToken();
   },
   methods: {
+    clearSelection() {
+      (
+        this.$refs.modelViewer as InstanceType<typeof ModelViewer>
+      ).clearSelection();
+
+      (
+        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
+      ).selectedItems = [];
+    },
     highlightModelElement(id: number) {
       (
         this.$refs.modelViewer as InstanceType<typeof ModelViewer>
@@ -68,11 +93,6 @@ export default Vue.extend({
       (
         this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
       ).toggleListElement(id);
-    },
-    resetSelectedItems() {
-      (
-        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
-      ).selectedItems = [];
     },
     async createGaeb() {
       const selectedItems = (

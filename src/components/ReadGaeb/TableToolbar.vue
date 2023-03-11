@@ -5,7 +5,7 @@
       placeholder="Durchsuchen..."
       outlined
       dense
-      hide-details
+      hide-details="auto"
       @change="updateValue"
     />
     <v-spacer />

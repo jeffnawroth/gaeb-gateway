@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <v-file-input
-      dense
-      outlined
-      placeholder="Durchsuchen..."
-      accept=".ifc"
-    />
-    <canvas id="viewer" />
-    <v-btn @click="clearSelection">
-      Reset
-    </v-btn>
-  </div>
+  <canvas id="viewer" />
 </template>
 
 <script lang="ts">
@@ -22,12 +11,21 @@ var viewer: Viewer;
 export default Vue.extend({
   mounted() {
     this.initViewer();
+    window.addEventListener("resize", this.setViewerSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.setViewerSize);
   },
   methods: {
     ...mapActions("notification", ["add"]),
+    setViewerSize() {
+      const sheet = document.getElementById("sheet");
+
+      viewer.canvas.height = window.innerHeight * 0.69;
+      viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
+    },
     initViewer() {
       viewer = new Viewer("viewer");
-      const sheet = document.getElementById("sheet");
       const check = Viewer.check();
 
       if (check.noErrors) {
@@ -36,8 +34,7 @@ export default Vue.extend({
         //Add Actions
         this.initViewerActions();
         //Set up Viewer
-        viewer.canvas.height = sheet?.offsetHeight as number;
-        viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
+        this.setViewerSize();
         //Start viewer
         viewer.start();
       } else {
@@ -63,8 +60,6 @@ export default Vue.extend({
 
     clearSelection() {
       viewer.clearHighlighting();
-      this.$emit("reset-selected-items");
-      /* this.selectedItems = []; */
     },
 
     highlightModelElement(id: number) {
