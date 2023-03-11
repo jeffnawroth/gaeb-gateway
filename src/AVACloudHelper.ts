@@ -7,6 +7,7 @@ import {
   GaebConversionClient,
   ProjectDto,
 } from "./AVACloudClient/api";
+import { fileDownload } from "./HelperMethods";
 
 const clientId = "13737747-8c15-4e1d-bec8-690e9b61d632";
 const clientSecret = "DBxJi2XLr7fUdRg";
@@ -68,7 +69,7 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
 
   const avaProjectNew = await client.convertToAva(
     avaProject,
-    true,
+    undefined,
     undefined,
     undefined,
     globalAccessToken
@@ -77,7 +78,7 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
   return avaProjectNew;
 }
 
-export async function convertGaeb2Gaeb(
+/* export async function convertGaeb2Gaeb(
   file: any,
   destinationType: DestinationGaebType,
   targetPhase: DestinationGaebExchangePhase
@@ -105,43 +106,18 @@ export async function convertGaeb2Gaeb(
   );
 
   return { gaebFile, fileName };
-}
-
-export function getFileName(
-  file: File,
-  destinationType: DestinationGaebType,
-  targetPhase: DestinationGaebExchangePhase
-) {
-  const extensionMap = {
-    GaebXml_V3_3: {
-      OfferRequest: ".X83",
-      Offer: ".X84",
-    },
-    GaebXml_V3_3_Commerce: {
-      OfferRequest: ".X93",
-      Offer: ".X94",
-    },
-  } as any;
-
-  if (destinationType && targetPhase) {
-    const extension = extensionMap[destinationType][targetPhase];
-    const fileNameWithoutExtension = file.name.split(".")[0];
-
-    return `${fileNameWithoutExtension}${extension}`;
-  }
-
-  return file.name;
-}
+} */
 
 export async function convertAva2Gaeb(
   avaProject: ProjectDto,
-  file: File,
   destinationType: DestinationGaebType,
-  targetPhase: DestinationGaebExchangePhase
+  targetPhase: DestinationGaebExchangePhase,
+  phaseId: number,
+  fileName?: string
 ) {
   const apiClient = new AvaConversionClient();
 
-  const fileName = getFileName(file, destinationType, targetPhase);
+  const newfileName = getFileName(phaseId, fileName);
 
   const gaebFile = await apiClient.convertToGaeb(
     avaProject,
@@ -156,5 +132,20 @@ export async function convertAva2Gaeb(
     globalAccessToken
   );
 
-  return { gaebFile, fileName };
+  fileDownload(gaebFile.data, newfileName);
+}
+
+export function getFileName(phaseId: number, fileName?: string | undefined) {
+  const extensionMap = {
+    83: ".X83",
+    84: ".X84",
+    93: ".X93",
+    94: ".X94",
+  } as any;
+
+  const defaultExtension = ".X00";
+  const extension = extensionMap[phaseId] || defaultExtension;
+
+  const fileNameWithoutExtension = fileName?.split(".")[0] ?? "gaebFile";
+  return `${fileNameWithoutExtension}${extension}`;
 }

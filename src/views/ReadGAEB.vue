@@ -299,30 +299,15 @@ export default Vue.extend({
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
 
-      const gaebFile = await convertAva2Gaeb(
+      await convertAva2Gaeb(
         avaProjectCopy,
-        this.file as unknown as File,
         selectedItem.destinationType,
-        selectedItem.targetPhase
+        selectedItem.targetPhase,
+        selectedItem.phaseId,
+        (this.file as File).name
       );
 
       this.convertDialog = false;
-      this.downloadFile(gaebFile);
-    },
-
-    downloadFile({ gaebFile, fileName }: any) {
-      const data = window.URL.createObjectURL(gaebFile.data);
-
-      const link = document.createElement("a");
-      link.href = data;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-
-      setTimeout(() => {
-        window.URL.revokeObjectURL(data);
-        link.remove();
-      }, 100);
     },
 
     flattenItems(items: any[]): any[] {

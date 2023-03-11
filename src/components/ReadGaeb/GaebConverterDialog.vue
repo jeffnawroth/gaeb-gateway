@@ -48,6 +48,7 @@ interface ConvertItem {
   name: string;
   destinationType: DestinationGaebType | undefined;
   targetPhase: DestinationGaebExchangePhase | undefined;
+  phaseId: number;
 }
 export default Vue.extend({
   props: {
@@ -58,30 +59,34 @@ export default Vue.extend({
   },
   data: () => ({
     converterItems: [
-      {
+      /*  {
         name: "Keine Transformation",
         destinationType: undefined,
         targetPhase: undefined,
-      },
+      }, */
       {
         name: "Angebotsaufforderung (83)",
         destinationType: DestinationGaebType.GaebXml_V3_3,
         targetPhase: DestinationGaebExchangePhase.OfferRequest,
+        phaseId: 83,
       },
       {
         name: "Angebot (84)",
         destinationType: DestinationGaebType.GaebXml_V3_3,
         targetPhase: DestinationGaebExchangePhase.Offer,
+        phaseId: 84,
       },
       {
         name: "Preisanfrage (93)",
         destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
-        targetPhase: DestinationGaebExchangePhase.OfferRequest,
+        targetPhase: undefined,
+        phaseId: 93,
       },
       {
         name: "Preisangebot (94)",
         destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
-        targetPhase: DestinationGaebExchangePhase.Offer,
+        targetPhase: undefined,
+        phaseId: 94,
       },
     ] as ConvertItem[],
     selectedItem: {

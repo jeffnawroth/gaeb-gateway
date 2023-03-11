@@ -95,11 +95,13 @@ export default Vue.extend({
 
       const destinationType = DestinationGaebType.GaebXml_V3_3;
       const targetPhase = DestinationGaebExchangePhase.OfferRequest;
-      /* const gaebFile = await convertAva2Gaeb(
+      await convertAva2Gaeb(
         this.avaProject,
         destinationType,
-        targetPhase
-      ); */
+        targetPhase,
+        83,
+        this.avaProject.projectInformation?.name
+      );
     },
   },
 });
