@@ -4,10 +4,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { State, Viewer, ViewType } from "@xbim/viewer";
+import { Grid, NavigationCube, State, Viewer, ViewType } from "@xbim/viewer";
 import { mapActions } from "vuex";
 import { bus } from "@/main";
 var viewer: Viewer;
+var cube: NavigationCube;
 
 export default Vue.extend({
   mounted() {
@@ -34,7 +35,15 @@ export default Vue.extend({
       viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
     },
     initViewer() {
+      cube = new NavigationCube();
       viewer = new Viewer("viewer");
+      const grid = new Grid();
+
+      cube.ratio = 0.05;
+      cube.stopped = false;
+      cube.passiveAlpha = 1.0;
+      cube.trueNorth = 0;
+
       const check = Viewer.check();
 
       if (check.noErrors) {
@@ -44,6 +53,8 @@ export default Vue.extend({
         this.initViewerActions();
         //Set up Viewer
         this.setViewerSize();
+        viewer.addPlugin(cube);
+        viewer.addPlugin(grid);
         //Start viewer
         viewer.start();
       } else {
