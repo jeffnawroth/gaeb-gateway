@@ -53,7 +53,7 @@ export default Vue.extend({
       {
         title: "Projektverwaltung",
         icon: "mdi-file-document-multiple-outline",
-        route: "/documents",
+        route: "/projects",
       },
       {
         title: "IFC-Konvertierung",

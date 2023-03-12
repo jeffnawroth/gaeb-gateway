@@ -84,6 +84,13 @@ const routes: Array<RouteConfig> = [
     //meta: { requiresAuth: true }
   },
   {
+    name: "projects",
+    path: "/projects",
+    component: () =>
+      import(/* webpackChunkName: "404" */ "@/views/OpenCDE.vue"),
+    //meta: { requiresAuth: true }
+  },
+  {
     path: "*",
     redirect: { name: "404" },
   },
