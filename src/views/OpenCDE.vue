@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { getAllProjects } from "@/helpers/OpenCDEHelper";
+import { getAllProjects } from "@/helpers/CDEHelper";
 import { ProjectGet } from "@/openCDE API";
 import { getAccessTokenOpenCDE } from "@/helpers/DanglIdentity";
 export default Vue.extend({

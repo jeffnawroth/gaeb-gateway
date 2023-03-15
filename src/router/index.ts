@@ -80,7 +80,7 @@ const routes: Array<RouteConfig> = [
     name: "read-boq",
     path: "/read-boq",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/ReadGaeb.vue"),
+      import(/* webpackChunkName: "404" */ "@/views/GaebReader.vue"),
     //meta: { requiresAuth: true }
   },
   {
