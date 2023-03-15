@@ -19,7 +19,6 @@ import {
   getAccessTokenAvaCloud,
   getAccessTokenOpenCDE,
 } from "./helpers/DanglIdentity";
-import { check } from "./helpers/openCDEHelper";
 export default Vue.extend({
   components: {
     AppBar,
@@ -30,7 +29,6 @@ export default Vue.extend({
   async created() {
     await getAccessTokenAvaCloud();
     await getAccessTokenOpenCDE();
-    await check();
   },
 });
 </script>
