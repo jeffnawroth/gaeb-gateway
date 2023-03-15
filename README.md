@@ -1,5 +1,12 @@
 # gaeb-gateway-frontend
 
+## Getting Started
+
+This project requires the backend to be fully functional: https://github.com/JeffNawroth/gaeb-gateway-backend
+
+To use Dangl IT services, you need to create a developer account on their website, https://identity.dangl-it.com/. After that, you need to add the `ClientId` and `ClientSecret` to the `DanglIdentity.ts` file in this project. 
+
+
 ## Project setup
 ```
 npm install
