@@ -28,7 +28,7 @@
           block
           @click="clearSelection"
         >
-          Reset
+          Auswahl zurücksetzen
         </BaseButton>
       </v-col>
     </v-row>

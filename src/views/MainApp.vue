@@ -56,7 +56,7 @@ export default Vue.extend({
         route: "/projects",
       },
       {
-        title: "IFC-Konvertierung",
+        title: "IFC-Konverter",
         route: "/create-boq",
         icon: "mdi-file-document-plus-outline",
       },
