@@ -7,9 +7,15 @@
     @input="updateValue"
   >
     <v-card>
-      <v-card-title> <slot name="card-title" /> </v-card-title>
+      <v-card-title>
+        <slot name="card-title">
+          {{ cardTitle }}
+        </slot>
+      </v-card-title>
       <v-card-text>
-        <slot name="card-text" />
+        <slot name="card-text">
+          {{ cardText }}
+        </slot>
       </v-card-text>
       <v-card-actions class="justify-space-around">
         <slot name="card-actions" />
@@ -25,6 +31,14 @@ export default Vue.extend({
     value: {
       type: Boolean,
       default: false,
+    },
+    cardTitle: {
+      type: String,
+      default: "",
+    },
+    cardText: {
+      type: String,
+      default: "",
     },
   },
   methods: {

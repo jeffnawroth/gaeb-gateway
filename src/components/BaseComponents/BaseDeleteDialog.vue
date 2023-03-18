@@ -4,10 +4,10 @@
     @click-cancel="$emit('click-cancel')"
   >
     <template #card-title>
-      Nutzer Löschen
+      {{ itemToDeleteTitle }} Löschen
     </template>
     <template #card-text>
-      Sind Sie sicher, dass Sie den Nutzer
+      Sind Sie sicher, dass Sie {{ itemToDeleteText }}
       <!--  {{ user.firstName + " " + user.lastName }}  -->
       löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.
     </template>
@@ -33,6 +33,14 @@ export default Vue.extend({
     value: {
       type: Boolean,
       default: false,
+    },
+    itemToDeleteTitle: {
+      type: String,
+      required: true,
+    },
+    itemToDeleteText: {
+      type: String,
+      required: true,
     },
   },
 });

@@ -50,6 +50,8 @@
 
     <BaseDeleteDialog
       v-model="deleteDialog"
+      item-to-delete-title="Nutzer"
+      :item-to-delete-text="`den Nutzer'${user.firstName}${user.lastName}'`"
       @click-cancel="closeDelete"
       @click-delete="deleteConfirm"
     />
