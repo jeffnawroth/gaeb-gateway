@@ -32,7 +32,7 @@ export async function createProjectApi(projectPost: ProjectPost) {
       },
     }
   );
-  return projectGet;
+  return projectGet.data;
 }
 
 export async function getAllDocumentsForProject(projectId: string) {
@@ -51,7 +51,7 @@ export async function getAllDocumentsForProject(projectId: string) {
       }
     );
 
-  return documents;
+  return documents.data.data;
 }
 
 export async function uploadDocument(

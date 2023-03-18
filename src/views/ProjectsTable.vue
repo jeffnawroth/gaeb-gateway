@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       :headers="projectsTableHeaders"
-      :items="projects"
+      :items="filteredProjects"
       :search="search"
       class="pa-2 cursor-pointer"
       @click:row="openProject"
@@ -58,6 +58,14 @@ export default Vue.extend({
     showProjectDialog: false,
     search: "",
   }),
+
+  computed: {
+    filteredProjects() {
+      return this.projects.filter((project) => {
+        return project.id.endsWith("-28187834537b");
+      });
+    },
+  },
 
   async mounted() {
     await getAccessTokenOpenCDE();

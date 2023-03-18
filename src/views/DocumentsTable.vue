@@ -52,6 +52,7 @@
 
     <DocumentDialog
       v-model="showDocumentDialog"
+      :project-id="id"
       @document-to-table="addDocumentToTable"
     />
     <BaseDeleteDialog
@@ -112,7 +113,7 @@ export default Vue.extend({
     documentToDelete: {} as DocumentGet,
   }),
   async mounted() {
-    this.documents = (await getAllDocumentsForProject(this.id)).data.data ?? [];
+    this.documents = (await getAllDocumentsForProject(this.id)) ?? [];
   },
   methods: {
     openDocumentDialog() {
