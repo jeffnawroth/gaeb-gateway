@@ -68,7 +68,6 @@ export default Vue.extend({
   },
 
   async mounted() {
-    await getAccessTokenOpenCDE();
     this.projects = (await getAllProjects()) ?? [];
   },
 

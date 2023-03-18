@@ -38,15 +38,22 @@
         {{ convertToLocale(item.createdAtUtc) }}
       </template>
       <template #[`item.actions`]="{ item }">
-        <v-icon
-          class="mr-2"
-          @click="downloadFile(item)"
-        >
-          mdi-download
-        </v-icon>
-        <v-icon @click="toggleDeleteDocumentDialog(item)">
-          mdi-delete
-        </v-icon>
+        <TableDownloadButton :document="item" />
+
+        <v-tooltip right>
+          <template #activator="{ on, attrs }">
+            <v-btn icon>
+              <v-icon
+                v-bind="attrs"
+                @click="toggleDeleteDocumentDialog(item)"
+                v-on="on"
+              >
+                mdi-delete
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>Löschen</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -66,16 +73,13 @@
 </template>
 
 <script lang="ts">
-import {
-  deleteDocument,
-  downloadDocument,
-  getAllDocumentsForProject,
-} from "@/helpers/CDEHelper";
+import { deleteDocument, getAllDocumentsForProject } from "@/helpers/CDEHelper";
 import { DocumentGet } from "@/openCDE API";
 import Vue from "vue";
 import DocumentDialog from "@/components/OpenCDE/DocumentDialog.vue";
+import TableDownloadButton from "@/components/OpenCDE/TableDownloadButton.vue";
 export default Vue.extend({
-  components: { DocumentDialog },
+  components: { DocumentDialog, TableDownloadButton },
   props: {
     id: {
       type: String,
@@ -143,13 +147,6 @@ export default Vue.extend({
       this.documents.splice(index, 1);
 
       this.showDeleteDocumentDialog = false;
-    },
-
-    async downloadFile(document: DocumentGet) {
-      await downloadDocument(this.id, document.id, document.fileName!);
-    },
-    backToProjects() {
-      this.$router.go(-1);
     },
   },
 });
