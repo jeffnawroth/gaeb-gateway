@@ -7,7 +7,7 @@ import {
 import { getGlobalAccessTokenOpenCde } from "./DanglIdentity";
 import { fileDownload } from "./HelperMethods";
 
-export async function getAllProjects() {
+/* export async function getAllProjects() {
   const projects = await ProjectsApi.prototype.projectsGetAllProjects(
     undefined,
     undefined,
@@ -21,9 +21,9 @@ export async function getAllProjects() {
     }
   );
   return projects.data.data;
-}
+} */
 
-export async function createProjectApi(projectPost: ProjectPost) {
+/* export async function createProjectApi(projectPost: ProjectPost) {
   const projectGet = await ProjectsApi.prototype.projectsCreateProject(
     projectPost,
     {
@@ -33,7 +33,7 @@ export async function createProjectApi(projectPost: ProjectPost) {
     }
   );
   return projectGet.data;
-}
+} */
 
 export async function getAllDocumentsForProject(projectId: string) {
   const documents =

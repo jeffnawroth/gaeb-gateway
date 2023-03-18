@@ -26,19 +26,15 @@
       </template>
     </v-data-table>
 
-    <CreateProjectDialog v-model="showProjectDialog" />
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { ProjectGet } from "@/openCDE API";
-import CreateProjectDialog from "@/components/OpenCDE/CreateProjectDialog.vue";
 import { mapActions, mapGetters } from "vuex";
 export default Vue.extend({
-  components: {
-    CreateProjectDialog,
-  },
   data: () => ({
     projectsTableHeaders: [
       {
@@ -50,7 +46,6 @@ export default Vue.extend({
         value: "description",
       },
     ],
-    showProjectDialog: false,
     search: "",
   }),
 
@@ -65,7 +60,7 @@ export default Vue.extend({
   methods: {
     ...mapActions("projects", ["getAllProjects"]),
     openProjectDialog() {
-      this.showProjectDialog = true;
+      this.$router.push({ name: "create-project" });
     },
     openProject(project: ProjectGet) {
       this.$router.push({ name: "documents", params: { id: project.id } });

@@ -4,9 +4,8 @@
     v-slot="{ invalid }"
   >
     <BaseDialog
-      :value="value"
+      v-model="showProjectDialog"
       card-title="Projekt erstellen"
-      @input="updateValue"
       @click-cancel="closeDialog"
     >
       <template #card-text>
@@ -54,34 +53,24 @@ import Vue from "vue";
 import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
-  props: {
-    value: {
-      type: Boolean,
-    },
-  },
+
   data: () => ({
     project: {
       name: "",
       description: "",
     } as ProjectPost,
+    showProjectDialog: true,
   }),
   methods: {
     ...mapActions("projects", ["createProject"]),
-    updateValue(event: boolean) {
-      this.$emit("input", event);
-    },
+
     async saveProject() {
       await this.createProject(this.project);
       this.closeDialog();
     },
     closeDialog() {
-      this.updateValue(false);
+      this.$router.push({ name: "projects" });
       this.project = {};
-      requestAnimationFrame(() => {
-        (
-          this.$refs.observer as InstanceType<typeof ValidationObserver>
-        ).reset();
-      });
     },
   },
 });

@@ -89,6 +89,16 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "404" */ "@/views/ProjectsTable.vue"),
     //meta: { requiresAuth: true },
+    children: [
+      {
+        name: "create-project",
+        path: "create",
+        component: () =>
+          import(
+            /* weppackChunkName: "create-project" */ "@/components/OpenCDE/CreateProjectDialog.vue"
+          ),
+      },
+    ],
   },
   {
     name: "documents",
