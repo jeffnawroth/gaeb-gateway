@@ -87,8 +87,16 @@ const routes: Array<RouteConfig> = [
     name: "projects",
     path: "/projects",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/OpenCDE.vue"),
-    //meta: { requiresAuth: true }
+      import(/* webpackChunkName: "404" */ "@/views/ProjectsTable.vue"),
+    //meta: { requiresAuth: true },
+  },
+  {
+    name: "documents",
+    path: "/projects/:id",
+    component: () =>
+      import(/* webpackChunkName: "404" */ "@/views/DocumentsTable.vue"),
+    props: true,
+    //meta: { requiresAuth: true },
   },
   {
     path: "*",
