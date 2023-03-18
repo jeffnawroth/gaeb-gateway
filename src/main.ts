@@ -7,6 +7,10 @@ import "./vee-validate";
 import axios from "axios";
 import upperFirst from "lodash/upperFirst";
 import camelCase from "lodash/camelCase";
+import {
+  getAccessTokenAvaCloud,
+  getAccessTokenOpenCDE,
+} from "./helpers/DanglIdentity";
 
 const requireComponent = require.context(
   "./components/BaseComponents", //Directory to search within,
@@ -29,11 +33,14 @@ Vue.config.productionTip = false;
 
 export const bus = new Vue();
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  created() {
+(async () => {
+  await getAccessTokenAvaCloud();
+  await getAccessTokenOpenCDE();
+  new Vue({
+    router,
+    store,
+    vuetify,
+    /* created() {
     store.dispatch("authentication/loadDarkMode");
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -57,7 +64,8 @@ new Vue({
         }
         return Promise.reject(error);
       }
-    );
-  },
-  render: (h) => h(App),
-}).$mount("#app");
+    ); 
+  },*/
+    render: (h) => h(App),
+  }).$mount("#app");
+})();
