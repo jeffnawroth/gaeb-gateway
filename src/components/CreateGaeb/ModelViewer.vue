@@ -78,7 +78,7 @@ export default Vue.extend({
       viewer.on("pick", (args) => {
         if (args == null || args.id == null) return;
 
-        bus.$emit("toggle-list-element", args.id);
+        this.$emit("toggle-list-element", args.id);
         this.highlightModelElement(args.id);
       });
     },

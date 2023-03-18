@@ -12,20 +12,31 @@
         accept=".ifc"
       />
       <v-spacer />
-      <BaseButton @click="createGaeb">
+      <BaseButton
+        :disabled="selectedElements.length < 1"
+        @click="createGaeb"
+      >
         Leistungsverzeichnis erstellen
       </BaseButton>
     </v-toolbar>
 
     <v-row no-gutters>
       <v-col class="px-3">
-        <ModelViewer ref="modelViewer" />
+        <ModelViewer
+          ref="modelViewer"
+          @toggle-list-element="toggleListElement"
+        />
       </v-col>
       <v-col class="px-3">
-        <ListOfPositions ref="listOfPositions" />
+        <ListOfPositions
+          ref="listOfPositions"
+          v-model="selectedElements"
+          :items="items"
+        />
         <BaseButton
           class="my-3"
           block
+          :disabled="selectedElements.length < 1"
           @click="clearSelection"
         >
           Auswahl zurücksetzen
@@ -65,17 +76,61 @@ export default Vue.extend({
         },
       ],
     } as ProjectDto,
+    selectedElements: [] as any,
+    items: [
+      {
+        id: 6546,
+        name: "Door",
+        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
+        quantity: 1,
+        unit: "Stck",
+      },
+      {
+        id: 481,
+        name: "Wall",
+        shortText: "Betonwand",
+        quantity: 20,
+        unit: "m²",
+      },
+      {
+        id: 7290,
+        name: "Window",
+        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
+        quantity: 1,
+        unit: "Stck",
+      },
+      {
+        id: 7482,
+        name: "Roof",
+        shortText: "Flachdach; 10000x6000mm",
+        quantity: 40,
+        unit: "m²",
+      },
+    ] as any,
   }),
   methods: {
     clearSelection() {
       bus.$emit("clear-selection");
+      this.selectedElements = [];
     },
-    async createGaeb() {
-      const selectedItems = (
-        this.$refs.listOfPositions as InstanceType<typeof ListOfPositions>
-      ).getSelectedItems();
 
-      selectedItems.forEach((item) => {
+    toggleListElement(modelId: number) {
+      const listItemIndex = this.items.findIndex(
+        (item: any) => item.id == modelId
+      );
+      if (listItemIndex === -1) return;
+
+      this.selectedElements.includes(listItemIndex)
+        ? this.selectedElements.splice(
+            this.selectedElements.indexOf(listItemIndex),
+            1
+          )
+        : this.selectedElements.push(listItemIndex);
+    },
+
+    async createGaeb() {
+      const selectedElements = this.getSelectedItems();
+      selectedElements.forEach((item: any) => {
         this.avaProject.serviceSpecifications?.[0].elements?.push({
           //@ts-expect-error: error
           elementTypeDiscriminator: "PositionDto",
@@ -98,6 +153,15 @@ export default Vue.extend({
         83,
         this.avaProject.projectInformation?.name
       );
+    },
+
+    getSelectedItems() {
+      const selectedItems: any[] = [];
+      this.selectedElements.forEach((index: number) => {
+        selectedItems.push(this.items[index]);
+      });
+
+      return selectedItems;
     },
   },
 });
