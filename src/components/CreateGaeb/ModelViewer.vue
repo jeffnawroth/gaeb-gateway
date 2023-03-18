@@ -19,6 +19,11 @@ export default Vue.extend({
   destroyed() {
     window.removeEventListener("resize", this.setViewerSize);
   },
+  beforeDestroy() {
+    bus.$off("zoom-to");
+    bus.$off("highlight-model-element");
+    bus.$off("clear-selection");
+  },
   methods: {
     ...mapActions("notification", ["add"]),
     emitBus() {

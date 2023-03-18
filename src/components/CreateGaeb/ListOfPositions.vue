@@ -65,9 +65,13 @@ export default Vue.extend({
       },
     ] as any,
   }),
-  mounted() {
+  created() {
     bus.$on("toggle-list-element", (id: number) => this.toggleListElement(id));
     bus.$on("clear-selection", () => (this.selectedItems = []));
+  },
+  beforeDestroy() {
+    bus.$off("toggle-list-element");
+    bus.$off("clear-selection");
   },
   methods: {
     toggleListElement(modelId: number) {
