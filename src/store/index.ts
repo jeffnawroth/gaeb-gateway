@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import authentication from "@/store/modules/authentication";
 import notification from "@/store/modules/notification";
 import users from "@/store/modules/users";
+import projects from "./modules/projects";
 
 Vue.use(Vuex);
 
@@ -21,5 +22,6 @@ export default new Vuex.Store({
     authentication,
     notification,
     users,
+    projects,
   },
 });

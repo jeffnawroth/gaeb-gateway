@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       :headers="projectsTableHeaders"
-      :items="filteredProjects"
+      :items="getFilteredProjects"
       :search="search"
       class="pa-2 cursor-pointer"
       @click:row="openProject"
@@ -26,19 +26,15 @@
       </template>
     </v-data-table>
 
-    <CreateProjectDialog
-      v-model="showProjectDialog"
-      @project-to-table="projectToTable"
-    />
+    <CreateProjectDialog v-model="showProjectDialog" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { getAllProjects } from "@/helpers/CDEHelper";
 import { ProjectGet } from "@/openCDE API";
-import { getAccessTokenOpenCDE } from "@/helpers/DanglIdentity";
 import CreateProjectDialog from "@/components/OpenCDE/CreateProjectDialog.vue";
+import { mapActions, mapGetters } from "vuex";
 export default Vue.extend({
   components: {
     CreateProjectDialog,
@@ -54,29 +50,22 @@ export default Vue.extend({
         value: "description",
       },
     ],
-    projects: [] as ProjectGet[],
     showProjectDialog: false,
     search: "",
   }),
 
   computed: {
-    filteredProjects() {
-      return this.projects.filter((project) => {
-        return project.id.endsWith("-28187834537b");
-      });
-    },
+    ...mapGetters("projects", ["getFilteredProjects"]),
   },
 
   async mounted() {
-    this.projects = (await getAllProjects()) ?? [];
+    await this.getAllProjects();
   },
 
   methods: {
+    ...mapActions("projects", ["getAllProjects"]),
     openProjectDialog() {
       this.showProjectDialog = true;
-    },
-    projectToTable(project: ProjectGet) {
-      this.projects.push(project);
     },
     openProject(project: ProjectGet) {
       this.$router.push({ name: "documents", params: { id: project.id } });

@@ -48,10 +48,10 @@
 </template>
 
 <script lang="ts">
-import { createProjectApi } from "@/helpers/CDEHelper";
 import { ProjectPost } from "@/openCDE API";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import Vue from "vue";
+import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   props: {
@@ -66,12 +66,12 @@ export default Vue.extend({
     } as ProjectPost,
   }),
   methods: {
+    ...mapActions("projects", ["createProject"]),
     updateValue(event: boolean) {
       this.$emit("input", event);
     },
     async saveProject() {
-      const projectGet = await createProjectApi(this.project);
-      this.$emit("project-to-table", projectGet);
+      await this.createProject(this.project);
       this.closeDialog();
     },
     closeDialog() {
