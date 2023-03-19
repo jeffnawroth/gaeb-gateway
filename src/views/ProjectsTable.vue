@@ -5,6 +5,7 @@
       :items="getFilteredProjects"
       :search="search"
       class="pa-2 cursor-pointer"
+      :loading="loading"
       @click:row="openProject"
     >
       <template #top>
@@ -47,6 +48,7 @@ export default Vue.extend({
       },
     ],
     search: "",
+    loading: true,
   }),
 
   computed: {
@@ -55,6 +57,7 @@ export default Vue.extend({
 
   async mounted() {
     await this.getAllProjects();
+    this.loading = false;
   },
 
   methods: {

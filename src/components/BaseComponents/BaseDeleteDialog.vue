@@ -17,6 +17,7 @@
       </BaseButton>
 
       <BaseButton
+        :loading="loading"
         class="error"
         @click="$emit('click-delete')"
       >
@@ -41,6 +42,9 @@ export default Vue.extend({
     itemToDeleteText: {
       type: String,
       required: true,
+    },
+    loading: {
+      type: Boolean,
     },
   },
 });

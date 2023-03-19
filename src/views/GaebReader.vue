@@ -12,6 +12,7 @@
       <template #top="{ items }">
         <TableToolbar
           v-model="file"
+          :calculating="calculating"
           @gaeb-2-ava="convertGAEBtoAVA"
           @ava-2-ava="convertAVAtoAVA(items)"
           @open-converter="convertDialog = true"
@@ -107,6 +108,7 @@
     </v-data-table>
     <GaebConverterDialog
       v-model="convertDialog"
+      :exporting="exporting"
       @close-converter="convertDialog = false"
       @click-cancel="convertDialog = false"
       @convert="(selectedItem) => exportGaeb(selectedItem)"
@@ -160,6 +162,8 @@ export default Vue.extend({
       { text: "", value: "data-table-expand" },
     ],
     avaProject: {} as ProjectDto,
+    calculating: false,
+    exporting: false,
   }),
 
   computed: {
@@ -264,6 +268,7 @@ export default Vue.extend({
 
     async convertAVAtoAVA(items: any) {
       if (items.length == 0) return;
+      this.calculating = true;
       items.forEach((item: any) => {
         if (item.unitPrice) {
           item.priceType = PriceTypeDto.WithTotal;
@@ -283,6 +288,7 @@ export default Vue.extend({
       this.avaProject = await convertAva2Ava(avaProjectCopy);
 
       this.setupItems();
+      this.calculating = false;
     },
 
     async exportGaeb(selectedItem: any) {
@@ -290,6 +296,8 @@ export default Vue.extend({
         this.items = [];
         return;
       }
+
+      this.exporting = true;
 
       let avaProjectCopy = _.cloneDeep(this.avaProject);
 
@@ -306,7 +314,7 @@ export default Vue.extend({
         selectedItem.phaseId,
         (this.file as File).name
       );
-
+      this.exporting = false;
       this.convertDialog = false;
     },
 

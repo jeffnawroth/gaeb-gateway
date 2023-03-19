@@ -12,6 +12,7 @@
     <BaseButton
       class="mr-3"
       :disabled="!value"
+      :loading="calculating"
       @click="$emit('ava-2-ava')"
     >
       Preise kalkulieren
@@ -41,6 +42,9 @@ export default Vue.extend({
       default: () => {
         null;
       },
+    },
+    calculating: {
+      type: Boolean,
     },
   },
   methods: {

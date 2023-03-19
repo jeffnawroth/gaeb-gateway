@@ -4,6 +4,7 @@
       :headers="documentsTableHeaders"
       :items="documents"
       :search="search"
+      :loading="loading"
       class="pa-2"
     >
       <template #top>
@@ -61,8 +62,9 @@
 
     <BaseDeleteDialog
       v-model="showDeleteDocumentDialog"
-      item-to-delete-title="Dokument"
       :item-to-delete-text="`das Dokument '${documentToDelete.name}'`"
+      :loading="deleting"
+      item-to-delete-title="Dokument"
       @click-cancel="toggleDeleteDocumentDialog"
       @click-delete="deleteDocumentConfirm"
     />
@@ -109,12 +111,16 @@ export default Vue.extend({
     search: "",
     showDeleteDocumentDialog: false,
     documentToDelete: {} as DocumentGet,
+    loading: true,
+    deleting: false,
   }),
   computed: {
     ...mapState("documents", ["documents"]),
   },
+
   async mounted() {
     await this.getAllDocumentsForProject(this.id);
+    this.loading = false;
   },
   methods: {
     ...mapActions("documents", ["getAllDocumentsForProject", "deleteDocument"]),
@@ -135,10 +141,12 @@ export default Vue.extend({
     },
 
     async deleteDocumentConfirm() {
+      this.deleting = true;
       await this.deleteDocument({
         projectId: this.id,
         documentId: this.documentToDelete.id,
       });
+      this.deleting = false;
       this.showDeleteDocumentDialog = false;
     },
   },

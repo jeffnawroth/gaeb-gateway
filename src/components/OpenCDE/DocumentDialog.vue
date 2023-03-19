@@ -47,8 +47,10 @@
           Abbrechen
         </BaseButton>
         <BaseButton
-          large
           :disabled="invalid"
+          :loading="loading"
+          large
+          color="success"
           @click="saveDocument"
         >
           Speichern
@@ -72,15 +74,18 @@ export default Vue.extend({
     } as DocumentPost,
     file: null,
     showDocumentDialog: true,
+    loading: false,
   }),
   methods: {
     ...mapActions("documents", ["uploadDocument"]),
     async saveDocument() {
+      this.loading = true;
       await this.uploadDocument({
         projectId: this.$route.params.id,
         documentPost: this.document,
         file: this.file,
       });
+      this.loading = false;
 
       this.closeDialog();
     },

@@ -51,7 +51,6 @@ export default {
           message: "Beim Laden der Dokumente ist ein Problem aufgetreten.",
         };
         dispatch("notification/add", notification, { root: true });
-        //return Promise.reject(error);
       }
     },
     async uploadDocumentMetadata(

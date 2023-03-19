@@ -28,6 +28,8 @@
       </BaseButton>
 
       <BaseButton
+        :loading="exporting"
+        color="success"
         large
         @click="$emit('convert', selectedItem)"
       >
@@ -55,6 +57,9 @@ export default Vue.extend({
     value: {
       type: Boolean,
       default: false,
+    },
+    exporting: {
+      type: Boolean,
     },
   },
   data: () => ({

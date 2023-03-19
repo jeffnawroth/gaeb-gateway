@@ -14,6 +14,7 @@
       <v-spacer />
       <BaseButton
         :disabled="selectedElements.length < 1"
+        :loading="creating"
         @click="createGaeb"
       >
         Leistungsverzeichnis erstellen
@@ -107,6 +108,7 @@ export default Vue.extend({
         unit: "m²",
       },
     ] as any,
+    creating: false,
   }),
   methods: {
     clearSelection() {
@@ -129,6 +131,7 @@ export default Vue.extend({
     },
 
     async createGaeb() {
+      this.creating = true;
       const selectedElements = this.getSelectedItems();
       selectedElements.forEach((item: any) => {
         this.avaProject.serviceSpecifications?.[0].elements?.push({
@@ -153,6 +156,7 @@ export default Vue.extend({
         83,
         this.avaProject.projectInformation?.name
       );
+      this.creating = false;
     },
 
     getSelectedItems() {

@@ -35,8 +35,10 @@
           Abbrechen
         </BaseButton>
         <BaseButton
-          large
           :disabled="invalid"
+          :loading="loading"
+          large
+          color="success"
           @click="saveProject"
         >
           Speichern
@@ -60,17 +62,20 @@ export default Vue.extend({
       description: "",
     } as ProjectPost,
     showProjectDialog: true,
+    loading: false,
   }),
+
   methods: {
     ...mapActions("projects", ["createProject"]),
 
     async saveProject() {
+      this.loading = true;
       await this.createProject(this.project);
+      this.loading = false;
       this.closeDialog();
     },
     closeDialog() {
       this.$router.push({ name: "projects" });
-      this.project = {};
     },
   },
 });
