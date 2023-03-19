@@ -1,11 +1,11 @@
-import {
+/* import {
   DocumentPost,
   DocumentsApi,
   ProjectPost,
   ProjectsApi,
 } from "@/openCDE API";
 import { getGlobalAccessTokenOpenCde } from "./DanglIdentity";
-import { fileDownload } from "./HelperMethods";
+import { fileDownload } from "./HelperMethods"; */
 
 /* export async function getAllProjects() {
   const projects = await ProjectsApi.prototype.projectsGetAllProjects(
@@ -35,7 +35,7 @@ import { fileDownload } from "./HelperMethods";
   return projectGet.data;
 } */
 
-export async function getAllDocumentsForProject(projectId: string) {
+/* export async function getAllDocumentsForProject(projectId: string) {
   const documents =
     await DocumentsApi.prototype.documentsGetAllDocumentsForProject(
       projectId,
@@ -52,9 +52,9 @@ export async function getAllDocumentsForProject(projectId: string) {
     );
 
   return documents.data.data;
-}
+} */
 
-export async function uploadDocument(
+/* export async function uploadDocument(
   projectId: string,
   documentPost: DocumentPost,
   document: File
@@ -97,17 +97,17 @@ export async function uploadDocumentContent(
     );
 
   return documentGet;
-}
+} */
 
-export async function deleteDocument(projectId: string, documentId: string) {
+/* export async function deleteDocument(projectId: string, documentId: string) {
   await DocumentsApi.prototype.documentsDeleteDocument(projectId, documentId, {
     headers: {
       Authorization: `Bearer ${getGlobalAccessTokenOpenCde()}`,
     },
   });
-}
+} */
 
-export async function downloadDocument(
+/* export async function downloadDocument(
   projectId: string,
   documentId: string,
   fileName: string
@@ -124,3 +124,4 @@ export async function downloadDocument(
   const blob = new Blob([file.data]);
   fileDownload(blob, fileName);
 }
+ */

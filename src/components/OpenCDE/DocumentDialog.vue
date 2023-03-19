@@ -60,10 +60,10 @@
 </template>
 
 <script lang="ts">
-import { uploadDocument } from "@/helpers/CDEHelper";
 import { DocumentPost } from "@/openCDE API";
 import Vue from "vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   props: {
@@ -83,17 +83,17 @@ export default Vue.extend({
     file: null,
   }),
   methods: {
+    ...mapActions("documents", ["uploadDocument"]),
     updateValue(event: boolean) {
       this.$emit("input", event);
     },
     async saveDocument() {
-      const documentGet = await uploadDocument(
-        this.projectId,
-        this.document,
-        this.file!
-      );
+      await this.uploadDocument({
+        projectId: this.projectId,
+        documentPost: this.document,
+        file: this.file,
+      });
 
-      this.$emit("document-to-table", documentGet);
       this.closeDialog();
     },
     closeDialog() {

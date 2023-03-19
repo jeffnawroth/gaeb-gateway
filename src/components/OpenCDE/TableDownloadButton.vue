@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts">
-import { downloadDocument } from "@/helpers/CDEHelper";
 import { DocumentGet } from "@/openCDE API";
 import Vue from "vue";
 import { PropType } from "vue/types/v3-component-props";
+import { mapActions } from "vuex";
 export default Vue.extend({
   props: {
     document: {
@@ -34,13 +34,15 @@ export default Vue.extend({
     downloading: false,
   }),
   methods: {
+    ...mapActions("documents", ["downloadDocument"]),
     async downloadFile() {
       this.downloading = true;
-      await downloadDocument(
-        this.$route.params.id,
-        this.document.id,
-        this.document.fileName!
-      );
+
+      await this.downloadDocument({
+        projectId: this.$route.params.id,
+        documentId: this.document.id,
+        fileName: this.document.fileName,
+      });
       this.downloading = false;
     },
   },

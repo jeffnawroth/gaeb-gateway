@@ -60,8 +60,9 @@
     <DocumentDialog
       v-model="showDocumentDialog"
       :project-id="id"
-      @document-to-table="addDocumentToTable"
     />
+    <!--       @document-to-table="addDocumentToTable"
+ -->
     <BaseDeleteDialog
       v-model="showDeleteDocumentDialog"
       item-to-delete-title="Dokument"
@@ -73,11 +74,11 @@
 </template>
 
 <script lang="ts">
-import { deleteDocument, getAllDocumentsForProject } from "@/helpers/CDEHelper";
 import { DocumentGet } from "@/openCDE API";
 import Vue from "vue";
 import DocumentDialog from "@/components/OpenCDE/DocumentDialog.vue";
 import TableDownloadButton from "@/components/OpenCDE/TableDownloadButton.vue";
+import { mapActions, mapState } from "vuex";
 export default Vue.extend({
   components: { DocumentDialog, TableDownloadButton },
   props: {
@@ -111,15 +112,18 @@ export default Vue.extend({
       { value: "actions", sortable: false, width: "10%" },
     ],
     search: "",
-    documents: [] as DocumentGet[],
     showDocumentDialog: false,
     showDeleteDocumentDialog: false,
     documentToDelete: {} as DocumentGet,
   }),
+  computed: {
+    ...mapState("documents", ["documents"]),
+  },
   async mounted() {
-    this.documents = (await getAllDocumentsForProject(this.id)) ?? [];
+    await this.getAllDocumentsForProject(this.id);
   },
   methods: {
+    ...mapActions("documents", ["getAllDocumentsForProject", "deleteDocument"]),
     openDocumentDialog() {
       this.showDocumentDialog = true;
     },
@@ -131,21 +135,16 @@ export default Vue.extend({
       }
     },
 
-    addDocumentToTable(document: DocumentGet) {
-      this.documents.push(document);
-    },
-
     convertToLocale(utc: string) {
       const date = new Date(utc);
       return date.toLocaleString();
     },
 
     async deleteDocumentConfirm() {
-      await deleteDocument(this.id, this.documentToDelete.id);
-
-      const index = this.documents.indexOf(this.documentToDelete);
-      this.documents.splice(index, 1);
-
+      await this.deleteDocument({
+        projectId: this.id,
+        documentId: this.documentToDelete.id,
+      });
       this.showDeleteDocumentDialog = false;
     },
   },
