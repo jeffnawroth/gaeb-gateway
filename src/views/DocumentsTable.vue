@@ -57,12 +57,8 @@
       </template>
     </v-data-table>
 
-    <DocumentDialog
-      v-model="showDocumentDialog"
-      :project-id="id"
-    />
-    <!--       @document-to-table="addDocumentToTable"
- -->
+    <router-view />
+
     <BaseDeleteDialog
       v-model="showDeleteDocumentDialog"
       item-to-delete-title="Dokument"
@@ -76,11 +72,10 @@
 <script lang="ts">
 import { DocumentGet } from "@/openCDE API";
 import Vue from "vue";
-import DocumentDialog from "@/components/OpenCDE/DocumentDialog.vue";
 import TableDownloadButton from "@/components/OpenCDE/TableDownloadButton.vue";
 import { mapActions, mapState } from "vuex";
 export default Vue.extend({
-  components: { DocumentDialog, TableDownloadButton },
+  components: { TableDownloadButton },
   props: {
     id: {
       type: String,
@@ -112,7 +107,6 @@ export default Vue.extend({
       { value: "actions", sortable: false, width: "10%" },
     ],
     search: "",
-    showDocumentDialog: false,
     showDeleteDocumentDialog: false,
     documentToDelete: {} as DocumentGet,
   }),
@@ -125,7 +119,7 @@ export default Vue.extend({
   methods: {
     ...mapActions("documents", ["getAllDocumentsForProject", "deleteDocument"]),
     openDocumentDialog() {
-      this.showDocumentDialog = true;
+      this.$router.push({ name: "upload-document" });
     },
 
     toggleDeleteDocumentDialog(document: DocumentGet) {

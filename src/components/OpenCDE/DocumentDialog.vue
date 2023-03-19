@@ -4,9 +4,8 @@
     v-slot="{ invalid }"
   >
     <BaseDialog
-      :value="value"
+      v-model="showDocumentDialog"
       card-title="Dokument erstellen"
-      @input="updateValue"
       @click-cancel="closeDialog"
     >
       <template #card-text>
@@ -66,30 +65,19 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
-  props: {
-    value: {
-      type: Boolean,
-    },
-    projectId: {
-      type: String,
-      required: true,
-    },
-  },
   data: () => ({
     document: {
       name: "",
       description: "",
     } as DocumentPost,
     file: null,
+    showDocumentDialog: true,
   }),
   methods: {
     ...mapActions("documents", ["uploadDocument"]),
-    updateValue(event: boolean) {
-      this.$emit("input", event);
-    },
     async saveDocument() {
       await this.uploadDocument({
-        projectId: this.projectId,
+        projectId: this.$route.params.id,
         documentPost: this.document,
         file: this.file,
       });
@@ -97,14 +85,7 @@ export default Vue.extend({
       this.closeDialog();
     },
     closeDialog() {
-      this.updateValue(false);
-      this.document = { name: "", description: "" };
-      this.file = null;
-      requestAnimationFrame(() => {
-        (
-          this.$refs.observer as InstanceType<typeof ValidationObserver>
-        ).reset();
-      });
+      this.$router.push({ name: "documents" });
     },
   },
 });

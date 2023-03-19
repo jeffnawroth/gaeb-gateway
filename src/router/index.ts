@@ -107,6 +107,16 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "404" */ "@/views/DocumentsTable.vue"),
     props: true,
     //meta: { requiresAuth: true },
+    children: [
+      {
+        name: "upload-document",
+        path: "upload",
+        component: () =>
+          import(
+            /* weppackChunkName: "upload-document" */ "@/components/OpenCDE/DocumentDialog.vue"
+          ),
+      },
+    ],
   },
   {
     path: "*",
