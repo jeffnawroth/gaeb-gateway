@@ -90,7 +90,10 @@ export default Vue.extend({
       this.closeDialog();
     },
     closeDialog() {
-      this.$router.push({ name: "documents" });
+      this.showDocumentDialog = false;
+      setTimeout(() => {
+        this.$router.push({ name: "documents" });
+      }, 100);
     },
   },
 });

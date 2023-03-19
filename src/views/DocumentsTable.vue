@@ -9,13 +9,20 @@
     >
       <template #top>
         <v-toolbar flat>
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <BaseButton
+                v-bind="attrs"
+                icon
+                v-on="on"
+                @click="returnToProjects"
+              >
+                <v-icon> mdi-arrow-left </v-icon>
+              </BaseButton>
+            </template>
+            <span>Zurück</span>
+          </v-tooltip>
           <v-toolbar-title>Dokumente</v-toolbar-title>
-          <!--  <BaseButton
-            class="mx-4"
-            @click="backToProjects"
-          >
-            Zurück
-          </BaseButton> -->
           <v-spacer />
           <v-text-field
             v-model="search"
@@ -138,6 +145,10 @@ export default Vue.extend({
     convertToLocale(utc: string) {
       const date = new Date(utc);
       return date.toLocaleString();
+    },
+
+    returnToProjects() {
+      this.$router.push({ name: "projects" });
     },
 
     async deleteDocumentConfirm() {

@@ -3,11 +3,12 @@
     <v-data-table
       :items="flattenItems(items)"
       :headers="headers"
-      class="ma-2 grey-rows"
+      :item-class="itemRowBackground"
       :items-per-page="-1"
+      :loading="loading"
+      class="ma-2 grey-rows"
       show-expand
       disable-sort
-      :item-class="itemRowBackground"
     >
       <template #top="{ items }">
         <TableToolbar
@@ -164,6 +165,7 @@ export default Vue.extend({
     avaProject: {} as ProjectDto,
     calculating: false,
     exporting: false,
+    loading: false,
   }),
 
   computed: {
@@ -242,8 +244,10 @@ export default Vue.extend({
         this.items = [];
         return;
       }
+      this.loading = true;
       this.avaProject = await getAvaProject(this.file);
       this.setupItems();
+      this.loading = false;
     },
 
     setupItems() {

@@ -55,7 +55,6 @@ import Vue from "vue";
 import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
-
   data: () => ({
     project: {
       name: "",
@@ -75,7 +74,10 @@ export default Vue.extend({
       this.closeDialog();
     },
     closeDialog() {
-      this.$router.push({ name: "projects" });
+      this.showProjectDialog = false;
+      setTimeout(() => {
+        this.$router.push({ name: "projects" });
+      }, 100);
     },
   },
 });
