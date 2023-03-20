@@ -119,12 +119,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { PriceTypeDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import GaebConverterDialog from "@/components/ReadGaeb/GaebConverterDialog.vue";
 import TableToolbar from "@/components/ReadGaeb/TableToolbar.vue";
 import { mapActions, mapGetters, mapState } from "vuex";
+import { PriceTypeDto } from "@/AVACloud API";
 export default Vue.extend({
   components: { GaebConverterDialog, TableToolbar },
   data: () => ({

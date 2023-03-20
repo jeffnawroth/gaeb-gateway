@@ -40,11 +40,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import {
   DestinationGaebExchangePhase,
   DestinationGaebType,
-} from "@/AVACloudClient/api";
+} from "@/AVACloud API";
+import Vue from "vue";
 
 interface ConvertItem {
   name: string;
@@ -71,25 +71,25 @@ export default Vue.extend({
       }, */
       {
         name: "Angebotsaufforderung (83)",
-        destinationType: DestinationGaebType.GaebXml_V3_3,
+        destinationType: DestinationGaebType.GaebXmlV33,
         targetPhase: DestinationGaebExchangePhase.OfferRequest,
         phaseId: 83,
       },
       {
         name: "Angebot (84)",
-        destinationType: DestinationGaebType.GaebXml_V3_3,
+        destinationType: DestinationGaebType.GaebXmlV33,
         targetPhase: DestinationGaebExchangePhase.Offer,
         phaseId: 84,
       },
       {
         name: "Preisanfrage (93)",
-        destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
-        targetPhase: DestinationGaebExchangePhase.OfferRequest,
+        destinationType: DestinationGaebType.GaebXmlV33Commerce,
+        targetPhase: undefined,
         phaseId: 93,
       },
       {
         name: "Preisangebot (94)",
-        destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
+        destinationType: DestinationGaebType.GaebXmlV33Commerce,
         targetPhase: DestinationGaebExchangePhase.Offer,
         phaseId: 94,
       },

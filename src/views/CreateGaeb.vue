@@ -52,14 +52,15 @@ import Vue from "vue";
 
 import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 import ListOfPositions from "@/components/CreateGaeb/ListOfPositions.vue";
+import { bus } from "@/main";
+import { mapActions } from "vuex";
 import {
   DestinationGaebExchangePhase,
   DestinationGaebType,
   IElementDto,
   ProjectDto,
-} from "@/AVACloudClient/api";
-import { bus } from "@/main";
-import { mapActions } from "vuex";
+} from "@/AVACloud API";
+
 export default Vue.extend({
   components: { ModelViewer, ListOfPositions },
   data: () => ({
@@ -136,8 +137,8 @@ export default Vue.extend({
       const selectedElements = this.getSelectedItems();
       selectedElements.forEach((item: any) => {
         this.avaProject.serviceSpecifications?.[0].elements?.push({
-          //@ts-expect-error: error
           elementTypeDiscriminator: "PositionDto",
+          //@ts-expect-error: Error
           shortText: item.shortText,
           unitTag: item.unit,
           quantityComponents: [
@@ -148,7 +149,7 @@ export default Vue.extend({
         });
       });
 
-      const destinationType = DestinationGaebType.GaebXml_V3_3;
+      const destinationType = DestinationGaebType.GaebXmlV33;
       const targetPhase = DestinationGaebExchangePhase.OfferRequest;
       await this.convertAvaToGaeb({
         avaProject: this.avaProject,
