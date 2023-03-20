@@ -52,7 +52,6 @@ import Vue from "vue";
 
 import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 import ListOfPositions from "@/components/CreateGaeb/ListOfPositions.vue";
-import { convertAva2Gaeb } from "@/helpers/AVACloudHelper";
 import {
   DestinationGaebExchangePhase,
   DestinationGaebType,
@@ -60,6 +59,7 @@ import {
   ProjectDto,
 } from "@/AVACloudClient/api";
 import { bus } from "@/main";
+import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ModelViewer, ListOfPositions },
   data: () => ({
@@ -111,6 +111,7 @@ export default Vue.extend({
     creating: false,
   }),
   methods: {
+    ...mapActions("avacloud", ["convertAvaToGaeb"]),
     clearSelection() {
       bus.$emit("clear-selection");
       this.selectedElements = [];
@@ -149,13 +150,13 @@ export default Vue.extend({
 
       const destinationType = DestinationGaebType.GaebXml_V3_3;
       const targetPhase = DestinationGaebExchangePhase.OfferRequest;
-      await convertAva2Gaeb(
-        this.avaProject,
+      await this.convertAvaToGaeb({
+        avaProject: this.avaProject,
         destinationType,
         targetPhase,
-        83,
-        this.avaProject.projectInformation?.name
-      );
+        phaseId: 83,
+        fileName: this.avaProject.projectInformation?.name,
+      });
       this.creating = false;
     },
 

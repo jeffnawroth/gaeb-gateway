@@ -12,3 +12,18 @@ export function fileDownload(blob: Blob, filename: string) {
     link.remove();
   }, 100);
 }
+
+export function getFileName(phaseId: number, fileName?: string | undefined) {
+  const extensionMap = {
+    83: ".X83",
+    84: ".X84",
+    93: ".X93",
+    94: ".X94",
+  } as any;
+
+  const defaultExtension = ".X00";
+  const extension = extensionMap[phaseId] || defaultExtension;
+
+  const fileNameWithoutExtension = fileName?.split(".")[0] ?? "gaebFile";
+  return `${fileNameWithoutExtension}${extension}`;
+}

@@ -1,4 +1,4 @@
-import {
+/* import {
   AvaConversionClient,
   DestinationGaebExchangePhase,
   DestinationGaebType,
@@ -7,9 +7,9 @@ import {
   ProjectDto,
 } from "../AVACloudClient/api";
 import { getGlobalAccessTokenAvaCloud } from "./DanglIdentity";
-import { fileDownload } from "./HelperMethods";
+import { fileDownload } from "./HelperMethods"; */
 
-export async function getAvaProject(file: any) {
+/* export async function getAvaProject(file: any) {
   const apiClient = new GaebConversionClient();
 
   const fileParam: FileParameter = {
@@ -26,9 +26,9 @@ export async function getAvaProject(file: any) {
   );
 
   return avaProject;
-}
+} */
 
-export async function convertAva2Ava(avaProject: ProjectDto) {
+/* export async function convertAva2Ava(avaProject: ProjectDto) {
   const client = new AvaConversionClient();
 
   const avaProjectNew = await client.convertToAva(
@@ -40,7 +40,7 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
   );
 
   return avaProjectNew;
-}
+} */
 
 /* export async function convertGaeb2Gaeb(
   file: any,
@@ -72,7 +72,7 @@ export async function convertAva2Ava(avaProject: ProjectDto) {
   return { gaebFile, fileName };
 } */
 
-export async function convertAva2Gaeb(
+/* export async function convertAva2Gaeb(
   avaProject: ProjectDto,
   destinationType: DestinationGaebType,
   targetPhase: DestinationGaebExchangePhase,
@@ -112,4 +112,4 @@ export function getFileName(phaseId: number, fileName?: string | undefined) {
 
   const fileNameWithoutExtension = fileName?.split(".")[0] ?? "gaebFile";
   return `${fileNameWithoutExtension}${extension}`;
-}
+} */

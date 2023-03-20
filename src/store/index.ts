@@ -5,6 +5,7 @@ import notification from "@/store/modules/notification";
 import users from "@/store/modules/users";
 import projects from "./modules/projects";
 import documents from "./modules/documents";
+import avacloud from "./modules/avacloud";
 
 Vue.use(Vuex);
 
@@ -25,5 +26,6 @@ export default new Vuex.Store({
     users,
     projects,
     documents,
+    avacloud,
   },
 });

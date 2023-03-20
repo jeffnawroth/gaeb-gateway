@@ -84,13 +84,13 @@ export default Vue.extend({
       {
         name: "Preisanfrage (93)",
         destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
-        targetPhase: undefined,
+        targetPhase: DestinationGaebExchangePhase.OfferRequest,
         phaseId: 93,
       },
       {
         name: "Preisangebot (94)",
         destinationType: DestinationGaebType.GaebXml_V3_3_Commerce,
-        targetPhase: undefined,
+        targetPhase: DestinationGaebExchangePhase.Offer,
         phaseId: 94,
       },
     ] as ConvertItem[],

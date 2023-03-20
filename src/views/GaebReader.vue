@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-data-table
-      :items="flattenItems(items)"
+      :items="getFlattenedPositions(items)"
       :headers="headers"
       :item-class="itemRowBackground"
       :items-per-page="-1"
@@ -14,7 +14,7 @@
         <TableToolbar
           v-model="file"
           :calculating="calculating"
-          @gaeb-2-ava="convertGAEBtoAVA"
+          @gaeb-2-ava="convertGaeb2AVA"
           @ava-2-ava="convertAVAtoAVA(items)"
           @open-converter="convertDialog = true"
         />
@@ -119,16 +119,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {
-  convertAva2Ava,
-  convertAva2Gaeb,
-  getAvaProject,
-} from "@/helpers/AVACloudHelper";
-import { PriceTypeDto, ProjectDto } from "@/AVACloudClient/api";
+import { PriceTypeDto } from "@/AVACloudClient/api";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import GaebConverterDialog from "@/components/ReadGaeb/GaebConverterDialog.vue";
 import TableToolbar from "@/components/ReadGaeb/TableToolbar.vue";
+import { mapActions, mapGetters, mapState } from "vuex";
 export default Vue.extend({
   components: { GaebConverterDialog, TableToolbar },
   data: () => ({
@@ -162,25 +158,28 @@ export default Vue.extend({
       },
       { text: "", value: "data-table-expand" },
     ],
-    avaProject: {} as ProjectDto,
     calculating: false,
     exporting: false,
     loading: false,
   }),
 
   computed: {
-    currency() {
+    ...mapState("avacloud", {
+      avaProject: "avaProject",
+    }),
+    ...mapGetters("avacloud", ["getFlattenedPositions"]),
+    currency(): string {
       return this.avaProject.projectInformation?.currencyShort ?? "";
     },
-    projectName() {
+    projectName(): string {
       return this.avaProject.projectInformation?.name ?? "";
     },
-    totalPriceProject() {
+    totalPriceProject(): number {
       return this.avaProject.serviceSpecifications
         ? this.avaProject.serviceSpecifications[0].totalPrice
         : 0;
     },
-    totalPriceGrossDeductedProject() {
+    totalPriceGrossDeductedProject(): number {
       return this.avaProject.serviceSpecifications
         ? this.avaProject.serviceSpecifications[0].totalPriceGrossDeducted
         : 0;
@@ -188,12 +187,17 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapActions("avacloud", [
+      "convertGaebToAva",
+      "convertAvaToAva",
+      "convertAvaToGaeb",
+    ]),
+
     itemRowBackground({ elementType }: any) {
       return elementType == "GroupSum" || elementType == "GroupSumTotal"
         ? "background-color: grey"
         : "";
     },
-
     getElementTypeLabel(item: any) {
       switch (item.elementType) {
         case "NoteTextDto":
@@ -239,40 +243,41 @@ export default Vue.extend({
       return `${taxRate * 100} %`;
     },
 
-    async convertGAEBtoAVA() {
+    async convertGaeb2AVA() {
       if (!this.file) {
         this.items = [];
         return;
       }
+
       this.loading = true;
-      this.avaProject = await getAvaProject(this.file);
+      await this.convertGaebToAva(this.file);
+      //this.avaProject = await getAvaProject(this.file);
       this.setupItems();
       this.loading = false;
     },
 
     setupItems() {
-      if (this.avaProject.serviceSpecifications) {
-        this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
+      if (!this.avaProject.serviceSpecifications) return;
 
-        this.items?.unshift({
-          id: uuidv4(),
-          elementType: "ServiceDescription",
-          projectName: this.projectName ?? "",
-        });
+      this.items = this.avaProject.serviceSpecifications[0].elements ?? [];
 
-        this.items?.push({
-          id: uuidv4(),
-          elementType: "GroupSumTotal",
-          projectName: this.projectName ?? "",
-          totalPrice: this.totalPriceProject,
-          totalPriceGrossDeducted: this.totalPriceGrossDeductedProject,
-        });
-      }
+      this.items?.unshift({
+        id: uuidv4(),
+        elementType: "ServiceDescription",
+        projectName: this.projectName ?? "",
+      });
+
+      this.items?.push({
+        id: uuidv4(),
+        elementType: "GroupSumTotal",
+        projectName: this.projectName ?? "",
+        totalPrice: this.totalPriceProject,
+        totalPriceGrossDeducted: this.totalPriceGrossDeductedProject,
+      });
     },
 
     async convertAVAtoAVA(items: any) {
       if (items.length == 0) return;
-      this.calculating = true;
       items.forEach((item: any) => {
         if (item.unitPrice) {
           item.priceType = PriceTypeDto.WithTotal;
@@ -289,10 +294,14 @@ export default Vue.extend({
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
 
-      this.avaProject = await convertAva2Ava(avaProjectCopy);
-
-      this.setupItems();
-      this.calculating = false;
+      //this.avaProject = await convertAva2Ava(avaProjectCopy);
+      try {
+        this.calculating = true;
+        await this.convertAvaToAva(avaProjectCopy);
+        this.setupItems();
+      } finally {
+        this.calculating = false;
+      }
     },
 
     async exportGaeb(selectedItem: any) {
@@ -311,18 +320,18 @@ export default Vue.extend({
         servSpec[0].elements?.splice(servSpec[0].elements.length - 1, 1);
       }
 
-      await convertAva2Gaeb(
-        avaProjectCopy,
-        selectedItem.destinationType,
-        selectedItem.targetPhase,
-        selectedItem.phaseId,
-        (this.file as File).name
-      );
+      await this.convertAvaToGaeb({
+        avaProject: avaProjectCopy,
+        destinationType: selectedItem.destinationType,
+        targetPhase: selectedItem.targetPhase,
+        phaseId: selectedItem.phaseId,
+        fileName: (this.file as File).name,
+      });
       this.exporting = false;
       this.convertDialog = false;
     },
 
-    flattenItems(items: any[]): any[] {
+    /* flattenItems(items: any[]): any[] {
       const result = [];
       for (const item of items) {
         result.push(item);
@@ -348,7 +357,7 @@ export default Vue.extend({
         }
       }
       return result;
-    },
+    }, */
   },
 });
 </script>
