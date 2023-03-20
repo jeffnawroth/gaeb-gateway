@@ -13,13 +13,15 @@
  */
 
 
-import { Configuration } from './configuration';
-import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { Configuration } from './configuration';
+import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
+import type { RequestArgs } from './base';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 
 /**
  * 
@@ -498,6 +500,108 @@ export class AuthenticationApi extends BaseAPI {
      */
     public apiAuthenticationRegisterPost(userRegistrationRequestDto?: UserRegistrationRequestDto, options?: AxiosRequestConfig) {
         return AuthenticationApiFp(this.configuration).apiAuthenticationRegisterPost(userRegistrationRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * IfcApi - axios parameter creator
+ * @export
+ */
+export const IfcApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Gets a list of elements with their properties.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiIfcGet: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Ifc`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * IfcApi - functional programming interface
+ * @export
+ */
+export const IfcApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = IfcApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Gets a list of elements with their properties.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiIfcGet(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<object>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiIfcGet(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * IfcApi - factory interface
+ * @export
+ */
+export const IfcApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = IfcApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Gets a list of elements with their properties.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiIfcGet(options?: any): AxiosPromise<Array<object>> {
+            return localVarFp.apiIfcGet(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * IfcApi - object-oriented interface
+ * @export
+ * @class IfcApi
+ * @extends {BaseAPI}
+ */
+export class IfcApi extends BaseAPI {
+    /**
+     * 
+     * @summary Gets a list of elements with their properties.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof IfcApi
+     */
+    public apiIfcGet(options?: AxiosRequestConfig) {
+        return IfcApiFp(this.configuration).apiIfcGet(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
