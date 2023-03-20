@@ -70,4 +70,9 @@
     <Folder Include="Controllers\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xbim.Ifc">
+      <HintPath>bin\Debug\net7.0\Xbim.Ifc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
