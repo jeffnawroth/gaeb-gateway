@@ -4,10 +4,10 @@ namespace gaeb_gateway_backend.Models;
 
 public class Wall: BuildingElement
 {
-    public string Höhe;
-    public string Länge;
-    public string Volumen;
-    public string Wärmekoeffizient;
+    public string height;
+    public string length;
+    public string volume;
+    public string thermaltransmittance;
     
     
 

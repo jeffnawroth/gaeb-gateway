@@ -4,6 +4,7 @@ namespace gaeb_gateway_backend.Models;
 
 public class BuildingElement
 {
-    public int EntityLabel;
-    public string Name;
+    public int id;
+    public string name;
+    public string description;
 }

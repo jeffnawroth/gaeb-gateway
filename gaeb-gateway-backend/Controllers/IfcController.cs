@@ -6,7 +6,6 @@ using Xbim.Ifc4.Interfaces;
 using Xbim.ModelGeometry.Scene;
 
 
-
 namespace gaeb_gateway_backend.Controllers;
 
 [Route("api/[controller]")]
@@ -34,8 +33,8 @@ public class IfcController : ControllerBase
            
             foreach (var product in products)
             {
-                int entityLabel = product.EntityLabel;
-                var name = product.Name;
+                int id = product.EntityLabel;
+                var description = product.Name;
 
                 if (product is IIfcWall wall)
                 {
@@ -44,7 +43,7 @@ public class IfcController : ControllerBase
                         .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
                         .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
                         .OfType<IIfcPropertySingleValue>();
-                    
+
                     IIfcValue height = null;
                     IIfcValue length = null;
                     IIfcValue volume = null;
@@ -68,11 +67,10 @@ public class IfcController : ControllerBase
                         {
                             thermalTransmittance = property.NominalValue;
                         }
-
-                        Console.WriteLine($" Wall Property: {property.Name}, Value: {property.NominalValue}");
+                        
                     }
                     
-                    resultList.Add(new Wall{EntityLabel = entityLabel, Name = name, Höhe = height.ToString(), Länge = length.ToString(), Volumen = volume.ToString(), Wärmekoeffizient = thermalTransmittance.ToString()});
+                    resultList.Add(new Wall{id = id, description = description, name = "Wall", height = height.ToString(), length = length.ToString(), volume = volume.ToString(), thermaltransmittance = thermalTransmittance.ToString()});
                 }
                 else if (product is IIfcDoor door)
                 {
@@ -81,7 +79,7 @@ public class IfcController : ControllerBase
                         .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
                         .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
                         .OfType<IIfcPropertySingleValue>();
-                    
+
                     IIfcValue maß = null;
                     IIfcValue volume = null;
                     IIfcValue area = null;
@@ -100,14 +98,13 @@ public class IfcController : ControllerBase
                         {
                             area = property.NominalValue;
                         }
-
-                        Console.WriteLine($" Door Property: {property.Name}, Value: {property.NominalValue}");
+                        
                     }
                     
                     var height = door.OverallHeight;
                     var width = door.OverallWidth;
                     
-                    resultList.Add(new Door{EntityLabel = entityLabel,  Name = name, Maß = maß.ToString(), Höhe = height.ToString(), Weite = width.ToString(), Volumen = volume.ToString()});
+                    resultList.Add(new Door{id = id,  description = description, name = "Door", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString()});
                     
                 }
                 else if (product is IIfcWindow window)
@@ -142,14 +139,151 @@ public class IfcController : ControllerBase
                             thermal = property.NominalValue;
                         }
                         
-                        Console.WriteLine($"Window Property: {property.Name}, Value: {property.NominalValue}");
                     }
                     
                     var height = window.OverallHeight;
                     var width = window.OverallWidth;
-                    resultList.Add(new Window{EntityLabel = entityLabel, Name = name, Maß = maß.ToString(), Höhe = height.ToString(), Weite = width.ToString(), Volumen = volume.ToString(), Wärmekoeffizient = thermal.ToString()});
+                    resultList.Add(new Window{id = id, description = description, name = "Window", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString(), thermaltransmittance = thermal.ToString()});
                     
                 }
+                else if (product is IIfcFurniture furniture)
+                {
+                    // get single-value properties of the windows
+                    var properties = product.IsDefinedBy
+                        .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
+                        .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
+                        .OfType<IIfcPropertySingleValue>();
+
+                    IIfcValue volume = null;
+                    IIfcValue level = null;
+
+                    foreach (var property in properties)
+                    {
+                        if (property.Name == "Volume")
+                        {
+                            volume = property.NominalValue;
+                        }
+                        if (property.Name == "Level")
+                        {
+                            level = property.NominalValue;
+                        }
+                    }
+                    
+                    resultList.Add(new Furniture{id = id, description = description, name = "Furniture", volume = volume.ToString(), level = level.ToString()});
+                    
+                }
+                else if (product is IIfcRoof roof)
+                {
+                    // get single-value properties of the windows
+                    var properties = product.IsDefinedBy
+                        .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
+                        .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
+                        .OfType<IIfcPropertySingleValue>();
+
+                    IIfcValue area = null;
+                    IIfcValue thickness = null;
+                    IIfcValue volume = null;
+                    IIfcValue roughness = null;
+                    IIfcValue thermalResistance = null;
+
+                    foreach (var property in properties)
+                    {
+                        if (property.Name == "Area")
+                        {
+                            area = property.NominalValue;
+                        }
+                        if (property.Name == "Thickness")
+                        {
+                            thickness = property.NominalValue;
+                        }
+                        if (property.Name == "Volume")
+                        {
+                            volume = property.NominalValue;
+                        }
+                        if (property.Name == "Roughness")
+                        {
+                            roughness = property.NominalValue;
+                        }
+                        if (property.Name == "Thermal Resistance (R)")
+                        {
+                            thermalResistance = property.NominalValue;
+                        }
+                        
+                    }
+                    
+                    resultList.Add(new Roof{id = id, description = description, name = "Roof", area = area.ToString(), thickness = thickness.ToString(), volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString()});
+                    
+                }
+                else if (product is IIfcPlate plate)
+                {
+                    // get single-value properties of the windows
+                    var properties = product.IsDefinedBy
+                        .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
+                        .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
+                        .OfType<IIfcPropertySingleValue>();
+
+                    IIfcValue area = null;
+                    IIfcValue volume = null;
+                    IIfcValue type = null;
+
+                    foreach (var property in properties)
+                    {
+                        if (property.Name == "Area")
+                        {
+                            area = property.NominalValue;
+                        }
+                        if (property.Name == "Volume")
+                        {
+                            volume = property.NominalValue;
+                        }
+                        if (property.Name == "Reference")
+                        {
+                            type = property.NominalValue;
+                        }
+                        
+                    }
+                    
+                    resultList.Add(new Plate{id = id, description = description, name = "Plate", area = area.ToString(), volume = volume.ToString(), type = type.ToString()});
+                    
+                }
+                else if (product is IIfcCovering covering)
+                {
+                    // get single-value properties of the windows
+                    var properties = product.IsDefinedBy
+                        .Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
+                        .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
+                        .OfType<IIfcPropertySingleValue>();
+                    
+                    IIfcValue volume = null;
+                    IIfcValue roughness = null;
+                    IIfcValue thermalResistance = null;
+                    IIfcValue thickness = null;
+
+                    foreach (var property in properties)
+                    {
+                        if (property.Name == "Volume")
+                        {
+                            volume = property.NominalValue;
+                        }
+                        if (property.Name == "Roughness")
+                        {
+                            roughness = property.NominalValue;
+                        }
+                        if (property.Name == "Thermal Resistance (R)")
+                        {
+                            thermalResistance = property.NominalValue;
+                        }
+                        if (property.Name == "Thickness")
+                        {
+                            thickness = property.NominalValue;
+                        }
+                        Console.WriteLine($"Covering Property: {property.Name}, Value: {property.NominalValue}");
+                    }
+                    
+                    resultList.Add(new Covering{id = id, description = description, name = "Covering", volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString(), thickness = thickness.ToString()});
+                    
+                }
+                
                 
             }
             
@@ -184,6 +318,7 @@ public class IfcController : ControllerBase
         using var wexBimBinarywriter = new BinaryWriter(wexBimFile);
         model.SaveAsWexBim(wexBimBinarywriter);
     }
+    
 
     
     
