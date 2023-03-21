@@ -80,7 +80,7 @@ public class IfcController : ControllerBase
                         .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
                         .OfType<IIfcPropertySingleValue>();
 
-                    IIfcValue maß = null;
+                    IIfcValue measure = null;
                     IIfcValue volume = null;
                     IIfcValue area = null;
                     
@@ -88,7 +88,7 @@ public class IfcController : ControllerBase
                     {
                         if (property.Name == "Reference")
                         {
-                            maß = property.NominalValue;
+                            measure = property.NominalValue;
                         }
                         if (property.Name == "Volume")
                         {
@@ -104,7 +104,7 @@ public class IfcController : ControllerBase
                     var height = door.OverallHeight;
                     var width = door.OverallWidth;
                     
-                    resultList.Add(new Door{id = id,  description = description, name = "Door", unit = "m³", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString()});
+                    resultList.Add(new Door{id = id,  description = description, name = "Door", unit = "mm", measure = measure.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString()});
                     
                 }
                 else if (product is IIfcWindow window)
@@ -115,7 +115,7 @@ public class IfcController : ControllerBase
                         .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
                         .OfType<IIfcPropertySingleValue>();
 
-                    IIfcValue maß = null;
+                    IIfcValue measure = null;
                     IIfcValue volume = null;
                     IIfcValue area = null;
                     IIfcValue thermal = null;
@@ -124,7 +124,7 @@ public class IfcController : ControllerBase
                     {
                         if (property.Name == "Reference")
                         {
-                            maß = property.NominalValue;
+                            measure = property.NominalValue;
                         }
                         if (property.Name == "Volume")
                         {
@@ -143,7 +143,7 @@ public class IfcController : ControllerBase
                     
                     var height = window.OverallHeight;
                     var width = window.OverallWidth;
-                    resultList.Add(new Window{id = id, description = description, name = "Window", unit = "m³", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString(), thermaltransmittance = thermal.ToString()});
+                    resultList.Add(new Window{id = id, description = description, name = "Window", unit = "mm", measure = measure.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString(), thermaltransmittance = thermal.ToString()});
                     
                 }
                 else if (product is IIfcFurniture furniture)
