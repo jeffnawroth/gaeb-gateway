@@ -70,7 +70,7 @@ public class IfcController : ControllerBase
                         
                     }
                     
-                    resultList.Add(new Wall{id = id, description = description, name = "Wall", height = height.ToString(), length = length.ToString(), volume = volume.ToString(), thermaltransmittance = thermalTransmittance.ToString()});
+                    resultList.Add(new Wall{id = id, description = description, name = "Wall", unit = "m³", height = height.ToString(), length = length.ToString(), volume = volume.ToString(), thermaltransmittance = thermalTransmittance.ToString()});
                 }
                 else if (product is IIfcDoor door)
                 {
@@ -104,7 +104,7 @@ public class IfcController : ControllerBase
                     var height = door.OverallHeight;
                     var width = door.OverallWidth;
                     
-                    resultList.Add(new Door{id = id,  description = description, name = "Door", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString()});
+                    resultList.Add(new Door{id = id,  description = description, name = "Door", unit = "m³", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString()});
                     
                 }
                 else if (product is IIfcWindow window)
@@ -143,7 +143,7 @@ public class IfcController : ControllerBase
                     
                     var height = window.OverallHeight;
                     var width = window.OverallWidth;
-                    resultList.Add(new Window{id = id, description = description, name = "Window", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString(), thermaltransmittance = thermal.ToString()});
+                    resultList.Add(new Window{id = id, description = description, name = "Window", unit = "m³", measure = maß.ToString(), height = height.ToString(), width = width.ToString(), volume = volume.ToString(), thermaltransmittance = thermal.ToString()});
                     
                 }
                 else if (product is IIfcFurniture furniture)
@@ -169,7 +169,7 @@ public class IfcController : ControllerBase
                         }
                     }
                     
-                    resultList.Add(new Furniture{id = id, description = description, name = "Furniture", volume = volume.ToString(), level = level.ToString()});
+                    resultList.Add(new Furniture{id = id, description = description, name = "Furniture", unit = "m³", volume = volume.ToString(), level = level.ToString()});
                     
                 }
                 else if (product is IIfcRoof roof)
@@ -211,7 +211,7 @@ public class IfcController : ControllerBase
                         
                     }
                     
-                    resultList.Add(new Roof{id = id, description = description, name = "Roof", area = area.ToString(), thickness = thickness.ToString(), volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString()});
+                    resultList.Add(new Roof{id = id, description = description, name = "Roof", unit = "m³", area = area.ToString(), thickness = thickness.ToString(), volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString()});
                     
                 }
                 else if (product is IIfcPlate plate)
@@ -243,7 +243,7 @@ public class IfcController : ControllerBase
                         
                     }
                     
-                    resultList.Add(new Plate{id = id, description = description, name = "Plate", area = area.ToString(), volume = volume.ToString(), type = type.ToString()});
+                    resultList.Add(new Plate{id = id, description = description, name = "Plate", unit = "m³", area = area.ToString(), volume = volume.ToString(), type = type.ToString()});
                     
                 }
                 else if (product is IIfcCovering covering)
@@ -280,7 +280,7 @@ public class IfcController : ControllerBase
                         Console.WriteLine($"Covering Property: {property.Name}, Value: {property.NominalValue}");
                     }
                     
-                    resultList.Add(new Covering{id = id, description = description, name = "Covering", volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString(), thickness = thickness.ToString()});
+                    resultList.Add(new Covering{id = id, description = description, name = "Covering", unit = "m³", volume = volume.ToString(), roughness = roughness.ToString(), thermalResistance = thermalResistance.ToString(), thickness = thickness.ToString()});
                     
                 }
                 
