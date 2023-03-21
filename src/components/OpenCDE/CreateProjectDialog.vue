@@ -1,51 +1,59 @@
 <template>
-  <ValidationObserver
-    ref="observer"
-    v-slot="{ invalid }"
-  >
-    <BaseDialog
-      v-model="showProjectDialog"
-      card-title="Projekt erstellen"
-      @click-cancel="closeDialog"
+  <div>
+    <ValidationObserver
+      ref="observer"
+      v-slot="{ invalid, dirty }"
     >
-      <template #card-text>
-        <ValidationProvider
-          v-slot="{ errors }"
-          vid="name"
-          rules="required"
-        >
-          <v-text-field
-            v-model="project.name"
+      <BaseDialog
+        v-model="showProjectDialog"
+        card-title="Projekt erstellen"
+        @click-cancel="closeDialog(dirty)"
+      >
+        <template #card-text>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="name"
+            rules="required"
+          >
+            <v-text-field
+              v-model="project.name"
+              outlined
+              label="Name"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+          <v-textarea
+            v-model="project.description"
             outlined
-            label="Name"
-            :error-messages="errors"
+            label="Beschreibung"
           />
-        </ValidationProvider>
-        <v-textarea
-          v-model="project.description"
-          outlined
-          label="Beschreibung"
-        />
-      </template>
-      <template #card-actions>
-        <BaseButton
-          large
-          @click="closeDialog"
-        >
-          Abbrechen
-        </BaseButton>
-        <BaseButton
-          :disabled="invalid"
-          :loading="loading"
-          large
-          color="success"
-          @click="saveProject"
-        >
-          Speichern
-        </BaseButton>
-      </template>
-    </BaseDialog>
-  </ValidationObserver>
+        </template>
+        <template #card-actions>
+          <BaseButton
+            large
+            @click="closeDialog(dirty)"
+          >
+            Abbrechen
+          </BaseButton>
+          <BaseButton
+            :disabled="invalid"
+            :loading="loading"
+            large
+            color="success"
+            @click="saveProject"
+          >
+            Speichern
+          </BaseButton>
+        </template>
+      </BaseDialog>
+    </ValidationObserver>
+
+    <BaseDiscardDialog
+      v-model="showDiscardDialog"
+      @click-discard="close()"
+      @click-cancel="toggleDialogs()"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,6 +70,7 @@ export default Vue.extend({
     } as ProjectPost,
     showProjectDialog: true,
     loading: false,
+    showDiscardDialog: false,
   }),
 
   methods: {
@@ -73,7 +82,18 @@ export default Vue.extend({
       this.loading = false;
       this.closeDialog();
     },
-    closeDialog() {
+    closeDialog(dirty?: boolean) {
+      if (dirty) {
+        this.toggleDialogs();
+      } else {
+        this.close();
+      }
+    },
+    toggleDialogs() {
+      this.showProjectDialog = !this.showProjectDialog;
+      this.showDiscardDialog = !this.showDiscardDialog;
+    },
+    close() {
       this.showProjectDialog = false;
       setTimeout(() => {
         this.$router.push({ name: "projects" });
