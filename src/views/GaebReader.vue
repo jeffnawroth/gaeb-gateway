@@ -143,6 +143,7 @@ export default Vue.extend({
       {
         text: "Menge",
         value: "quantityUnit",
+        width: "10%",
       },
       {
         text: "Einheitspreis",

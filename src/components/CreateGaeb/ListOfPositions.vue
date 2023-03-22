@@ -51,7 +51,7 @@ export default Vue.extend({
     highlightModelElement(id: number) {
       bus.$emit("highlight-model-element", id);
     },
-    updateValue(value: any) {
+    updateValue(value: number[]) {
       this.$emit("input", value);
     },
   },

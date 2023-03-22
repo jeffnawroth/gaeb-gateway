@@ -91,6 +91,7 @@ export default Vue.extend({
   methods: {
     ...mapActions("avacloud", ["convertAvaToGaeb"]),
     ...mapActions("ifc", ["getBuildingElements"]),
+
     clearSelection() {
       bus.$emit("clear-selection");
       this.selectedElements = [];
@@ -120,10 +121,10 @@ export default Vue.extend({
           elementTypeDiscriminator: "PositionDto",
           //@ts-expect-error: Error
           shortText: item.description,
-          unitTag: item.unit,
+          unitTag: item.unit == "mm" ? "Stck." : item.unit,
           quantityComponents: [
             {
-              formula: 1,
+              formula: item.unit == "mm" ? 1 : item.volume,
             },
           ],
         });
