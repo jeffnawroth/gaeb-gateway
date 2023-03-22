@@ -19,7 +19,7 @@ export function getFileName(phaseId: number, fileName?: string | undefined) {
     84: ".X84",
     93: ".X93",
     94: ".X94",
-  } as any;
+  } as ExtensionMap;
 
   const defaultExtension = ".X00";
   const extension = extensionMap[phaseId] || defaultExtension;
