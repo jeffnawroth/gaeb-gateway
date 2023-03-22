@@ -1,63 +1,70 @@
 <template>
-  <ValidationObserver
-    ref="observer"
-    v-slot="{ invalid }"
-  >
-    <BaseDialog
-      v-model="showDocumentDialog"
-      card-title="Dokument erstellen"
-      @click-cancel="closeDialog"
+  <div>
+    <ValidationObserver
+      ref="observer"
+      v-slot="{ invalid, dirty }"
     >
-      <template #card-text>
-        <ValidationProvider
-          v-slot="{ errors }"
-          vid="name"
-          rules="required"
-        >
-          <v-text-field
-            v-model="document.name"
+      <BaseDialog
+        v-model="showDocumentDialog"
+        card-title="Dokument erstellen"
+        @click-cancel="closeDialog(dirty)"
+      >
+        <template #card-text>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="name"
+            rules="required"
+          >
+            <v-text-field
+              v-model="document.name"
+              outlined
+              :error-messages="errors"
+              label="Name"
+            />
+          </ValidationProvider>
+          <v-textarea
+            v-model="document.description"
             outlined
-            :error-messages="errors"
-            label="Name"
+            label="Beschreibung"
           />
-        </ValidationProvider>
-        <v-textarea
-          v-model="document.description"
-          outlined
-          label="Beschreibung"
-        />
-        <ValidationProvider
-          v-slot="{ errors }"
-          vid="file"
-          rules="required"
-        >
-          <v-file-input
-            v-model="file"
-            outlined
-            label="Durchsuchen..."
-            :error-messages="errors"
-          />
-        </ValidationProvider>
-      </template>
-      <template #card-actions>
-        <BaseButton
-          large
-          @click="closeDialog"
-        >
-          Abbrechen
-        </BaseButton>
-        <BaseButton
-          :disabled="invalid"
-          :loading="loading"
-          large
-          color="success"
-          @click="saveDocument"
-        >
-          Speichern
-        </BaseButton>
-      </template>
-    </BaseDialog>
-  </ValidationObserver>
+          <ValidationProvider
+            v-slot="{ errors }"
+            vid="file"
+            rules="required"
+          >
+            <v-file-input
+              v-model="file"
+              outlined
+              label="Durchsuchen..."
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </template>
+        <template #card-actions>
+          <BaseButton
+            large
+            @click="closeDialog(dirty)"
+          >
+            Abbrechen
+          </BaseButton>
+          <BaseButton
+            :disabled="invalid"
+            :loading="loading"
+            large
+            color="success"
+            @click="saveDocument"
+          >
+            Speichern
+          </BaseButton>
+        </template>
+      </BaseDialog>
+    </ValidationObserver>
+    <BaseDiscardDialog
+      v-model="showDiscardDialog"
+      @click-discard="close()"
+      @click-cancel="toggleDialogs()"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -74,6 +81,7 @@ export default Vue.extend({
     } as DocumentPost,
     file: null,
     showDocumentDialog: true,
+    showDiscardDialog: false,
     loading: false,
   }),
   methods: {
@@ -89,7 +97,19 @@ export default Vue.extend({
 
       this.closeDialog();
     },
-    closeDialog() {
+    closeDialog(dirty?: boolean) {
+      if (dirty) {
+        this.toggleDialogs();
+      } else {
+        this.close();
+      }
+    },
+    toggleDialogs() {
+      this.showDocumentDialog = !this.showDocumentDialog;
+      this.showDiscardDialog = !this.showDiscardDialog;
+    },
+
+    close() {
       this.showDocumentDialog = false;
       setTimeout(() => {
         this.$router.push({ name: "documents" });
