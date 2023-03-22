@@ -32,7 +32,7 @@
         <ListOfPositions
           ref="listOfPositions"
           v-model="selectedElements"
-          :items="items"
+          :items="getSortedElements"
         />
         <BaseButton
           class="my-3"
@@ -53,7 +53,7 @@ import Vue from "vue";
 import ModelViewer from "@/components/CreateGaeb/ModelViewer.vue";
 import ListOfPositions from "@/components/CreateGaeb/ListOfPositions.vue";
 import { bus } from "@/main";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import {
   DestinationGaebExchangePhase,
   DestinationGaebType,
@@ -79,50 +79,30 @@ export default Vue.extend({
       ],
     } as ProjectDto,
     selectedElements: [] as any,
-    items: [
-      {
-        id: 6546,
-        name: "Door",
-        shortText: "Holztür; 2000x700mm; Rechtsöffnend",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 481,
-        name: "Wall",
-        shortText: "Betonwand",
-        quantity: 20,
-        unit: "m²",
-      },
-      {
-        id: 7290,
-        name: "Window",
-        shortText: "Doppeltes Fenster; 150x150mm; Weiß hochglanz",
-        quantity: 1,
-        unit: "Stck",
-      },
-      {
-        id: 7482,
-        name: "Roof",
-        shortText: "Flachdach; 10000x6000mm",
-        quantity: 40,
-        unit: "m²",
-      },
-    ] as any,
     creating: false,
   }),
+  computed: {
+    ...mapState("ifc", ["elements"]),
+    ...mapGetters("ifc", ["getSortedElements"]),
+  },
+  async created() {
+    await this.getBuildingElements();
+  },
   methods: {
     ...mapActions("avacloud", ["convertAvaToGaeb"]),
+    ...mapActions("ifc", ["getBuildingElements"]),
     clearSelection() {
       bus.$emit("clear-selection");
       this.selectedElements = [];
     },
 
     toggleListElement(modelId: number) {
-      const listItemIndex = this.items.findIndex(
+      const listItemIndex = this.elements.findIndex(
         (item: any) => item.id == modelId
       );
       if (listItemIndex === -1) return;
+
+      document.getElementById(modelId.toString())?.scrollIntoView();
 
       this.selectedElements.includes(listItemIndex)
         ? this.selectedElements.splice(
@@ -139,11 +119,11 @@ export default Vue.extend({
         this.avaProject.serviceSpecifications?.[0].elements?.push({
           elementTypeDiscriminator: "PositionDto",
           //@ts-expect-error: Error
-          shortText: item.shortText,
+          shortText: item.description,
           unitTag: item.unit,
           quantityComponents: [
             {
-              formula: item.quantity,
+              formula: 1,
             },
           ],
         });
@@ -164,7 +144,7 @@ export default Vue.extend({
     getSelectedItems() {
       const selectedItems: any[] = [];
       this.selectedElements.forEach((index: number) => {
-        selectedItems.push(this.items[index]);
+        selectedItems.push(this.elements[index]);
       });
 
       return selectedItems;

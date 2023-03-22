@@ -6,6 +6,7 @@ import users from "@/store/modules/users";
 import projects from "./modules/projects";
 import documents from "./modules/documents";
 import avacloud from "./modules/avacloud";
+import ifc from "./modules/ifc";
 
 Vue.use(Vuex);
 
@@ -27,5 +28,6 @@ export default new Vuex.Store({
     projects,
     documents,
     avacloud,
+    ifc,
   },
 });

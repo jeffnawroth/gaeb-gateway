@@ -11,6 +11,7 @@
       >
         <v-list-item
           v-for="item in items"
+          :id="item.id"
           :key="item.id"
           @click="highlightModelElement(item.id)"
           @dblclick="zoomTo(item.id)"
@@ -20,7 +21,7 @@
               {{ item.name }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ item.shortText }}
+              {{ item.description }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

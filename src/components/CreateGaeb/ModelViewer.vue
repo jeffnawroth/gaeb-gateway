@@ -53,7 +53,7 @@ export default Vue.extend({
 
       if (check.noErrors) {
         //Load
-        viewer.load("FourWallsDoorWindowsRoof.wexbim");
+        viewer.load("SampleHouse.wexbim");
         //Add Actions
         this.initViewerActions();
         //Set up Viewer
