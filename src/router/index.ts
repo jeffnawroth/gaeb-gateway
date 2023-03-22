@@ -22,7 +22,7 @@ const routes: Array<RouteConfig> = [
     path: "/users",
     component: () =>
       import(/* webpackChunkName: "users" */ "@/views/UserManagement.vue"),
-    // meta: { requiresAuth: true },
+    meta: { requiresAuth: true },
 
     children: [
       {
@@ -73,22 +73,22 @@ const routes: Array<RouteConfig> = [
     name: "create-boq",
     path: "/create-boq",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/CreateGaeb.vue"),
-    //meta: { requiresAuth: true }
+      import(/* webpackChunkName: "create-gaeb" */ "@/views/CreateGaeb.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "read-boq",
     path: "/read-boq",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/GaebReader.vue"),
-    //meta: { requiresAuth: true }
+      import(/* webpackChunkName: "gaeb-reader" */ "@/views/GaebReader.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "projects",
     path: "/projects",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/ProjectsTable.vue"),
-    //meta: { requiresAuth: true },
+      import(/* webpackChunkName: "projects" */ "@/views/ProjectsTable.vue"),
+    meta: { requiresAuth: true },
     children: [
       {
         name: "create-project",
@@ -104,9 +104,9 @@ const routes: Array<RouteConfig> = [
     name: "documents",
     path: "/projects/:id",
     component: () =>
-      import(/* webpackChunkName: "404" */ "@/views/DocumentsTable.vue"),
+      import(/* webpackChunkName: "documents" */ "@/views/DocumentsTable.vue"),
     props: true,
-    //meta: { requiresAuth: true },
+    meta: { requiresAuth: true },
     children: [
       {
         name: "upload-document",

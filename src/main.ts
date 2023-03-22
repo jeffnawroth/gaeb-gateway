@@ -40,32 +40,32 @@ export const bus = new Vue();
     router,
     store,
     vuetify,
-    /* created() {
-    store.dispatch("authentication/loadDarkMode");
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      const userData = JSON.parse(userString);
-      store.commit("authentication/SET_USER_DATA", userData);
-    }
-    axios.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalConfig = error.config;
-        if (error.response.status === 401 && !originalConfig._retry) {
-          originalConfig._retry = true;
-          try {
-            await store.dispatch("authentication/refreshToken");
-            //@ts-expect-error: error
-            error.config.headers.Authorization = `Bearer ${store.state.authentication.user.token}`;
-            return axios(error.config);
-          } catch (error) {
-            store.dispatch("authentication/logout");
-          }
-        }
-        return Promise.reject(error);
+    created() {
+      store.dispatch("authentication/loadDarkMode");
+      const userString = localStorage.getItem("user");
+      if (userString) {
+        const userData = JSON.parse(userString);
+        store.commit("authentication/SET_USER_DATA", userData);
       }
-    ); 
-  },*/
+      axios.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          const originalConfig = error.config;
+          if (error.response.status === 401 && !originalConfig._retry) {
+            originalConfig._retry = true;
+            try {
+              await store.dispatch("authentication/refreshToken");
+              //@ts-expect-error: error
+              error.config.headers.Authorization = `Bearer ${store.state.authentication.user.token}`;
+              return axios(error.config);
+            } catch (error) {
+              store.dispatch("authentication/logout");
+            }
+          }
+          return Promise.reject(error);
+        }
+      );
+    },
     render: (h) => h(App),
   }).$mount("#app");
 })();
