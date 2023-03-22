@@ -108,18 +108,22 @@ export default {
     },
   },
   getters: {
-    getFlattenedPositions: (state: State, dispatch: any) => (items: any) => {
+    getFlattenedPositions: (state: any, getters: any) => (items: any) => {
       const result = [];
       for (const item of items) {
         result.push(item);
         if (item.elements) {
-          result.push(...dispatch("getPositions", items.elements));
+          const flattenedElements = getters.getFlattenedPositions(
+            item.elements
+          );
+          result.push(...flattenedElements);
         }
         if (item.blocks) {
           for (const block of item.blocks) {
             block.elementType = "NoteTextBlock";
           }
-          result.push(...dispatch("getPositions", items.block));
+          const flattenedBlocks = getters.getFlattenedPositions(item.blocks);
+          result.push(...flattenedBlocks);
         }
         if (item.elementType == "ServiceSpecificationGroupDto") {
           result.push({
