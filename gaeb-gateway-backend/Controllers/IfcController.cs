@@ -169,7 +169,7 @@ public class IfcController : ControllerBase
                         }
                     }
                     
-                    resultList.Add(new Furniture{id = id, description = description, name = "Furniture", unit = "m³", volume = volume.ToString(), level = level.ToString()});
+                    resultList.Add(new Furniture{id = id, description = description, name = "Furniture", unit = "mm", volume = volume.ToString(), level = level.ToString()});
                     
                 }
                 else if (product is IIfcRoof roof)
