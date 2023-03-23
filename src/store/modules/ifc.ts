@@ -1,8 +1,6 @@
 import { IfcApi } from "@/api";
-
-interface State {
-  elements: any[];
-}
+import { ActionContext } from "vuex";
+import { IfcState, RootState } from "../types";
 
 export default {
   namespaced: true,
@@ -10,26 +8,29 @@ export default {
     elements: [],
   },
   mutations: {
-    SET_ELEMENTS(state: State, elements: any[]) {
+    SET_ELEMENTS(state: IfcState, elements: any[]) {
       state.elements = elements;
     },
   },
   actions: {
-    async getBuildingElements({ commit, dispatch }: any) {
+    async getBuildingElements({
+      commit,
+      dispatch,
+    }: ActionContext<RootState, RootState>) {
       try {
         const elements = await IfcApi.prototype.apiIfcGet();
         commit("SET_ELEMENTS", elements.data);
       } catch (error) {
         const notification = {
           type: "error",
-          message: "Beim Exportieren der GAEB ist ein Problem aufgetreten.",
+          message: "Beim Laden der Bauelemente ist ein Problem aufgetreten.",
         };
         dispatch("notification/add", notification, { root: true });
       }
     },
   },
   getters: {
-    getSortedElements: (state: State) => {
+    getSortedElements: (state: IfcState) => {
       return state.elements.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });

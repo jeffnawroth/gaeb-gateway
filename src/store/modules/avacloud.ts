@@ -6,10 +6,8 @@ import {
 import { getGlobalAccessTokenAvaCloud } from "@/helpers/DanglIdentity";
 import { fileDownload, getFileName } from "@/helpers/HelperMethods";
 import { v4 as uuidv4 } from "uuid";
-
-interface State {
-  avaProject: ProjectDto;
-}
+import { ActionContext } from "vuex";
+import { AvaCloudState, RootState } from "../types";
 
 export default {
   namespaced: true,
@@ -18,12 +16,15 @@ export default {
     positions: [],
   },
   mutations: {
-    SET_AVA_PROJECT(state: State, avaProject: ProjectDto) {
+    SET_AVA_PROJECT(state: AvaCloudState, avaProject: ProjectDto) {
       state.avaProject = avaProject;
     },
   },
   actions: {
-    async convertGaebToAva({ dispatch, commit }: any, file: File) {
+    async convertGaebToAva(
+      { dispatch, commit }: ActionContext<RootState, RootState>,
+      file: File
+    ) {
       try {
         const avaProject =
           await GaebConversionApi.prototype.gaebConversionConvertToAva(
@@ -38,6 +39,11 @@ export default {
             }
           );
         commit("SET_AVA_PROJECT", avaProject.data);
+        const notification = {
+          type: "success",
+          message: "Dokument erfolgreich geladen.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         commit("SET_AVA_PROJECT", {});
         const notification = {
@@ -47,7 +53,10 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
-    async convertAvaToAva({ dispatch, commit }: any, avaProject: ProjectDto) {
+    async convertAvaToAva(
+      { dispatch, commit }: ActionContext<RootState, RootState>,
+      avaProject: ProjectDto
+    ) {
       try {
         const avaProjectNew =
           await AvaConversionApi.prototype.avaConversionConvertToAva(
@@ -62,6 +71,11 @@ export default {
             }
           );
         commit("SET_AVA_PROJECT", avaProjectNew.data);
+        const notification = {
+          type: "success",
+          message: "Kosten erfolgreich kalkuliert.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         const notification = {
           type: "error",
@@ -72,7 +86,7 @@ export default {
       }
     },
     async convertAvaToGaeb(
-      { dispatch }: any,
+      { dispatch }: ActionContext<RootState, RootState>,
       { avaProject, destinationType, targetPhase, phaseId, fileName }: any
     ) {
       try {
@@ -98,6 +112,11 @@ export default {
 
         const blob = new Blob([gaebFile.data]);
         fileDownload(blob, newfileName);
+        const notification = {
+          type: "success",
+          message: "Datei erfolgreich konvertiert.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         const notification = {
           type: "error",
@@ -108,36 +127,37 @@ export default {
     },
   },
   getters: {
-    getFlattenedPositions: (state: any, getters: any) => (items: any) => {
-      const result = [];
-      for (const item of items) {
-        result.push(item);
-        if (item.elements) {
-          const flattenedElements = getters.getFlattenedPositions(
-            item.elements
-          );
-          result.push(...flattenedElements);
-        }
-        if (item.blocks) {
-          for (const block of item.blocks) {
-            block.elementType = "NoteTextBlock";
+    getFlattenedPositions:
+      (state: AvaCloudState, getters: any) => (items: any) => {
+        const result = [];
+        for (const item of items) {
+          result.push(item);
+          if (item.elements) {
+            const flattenedElements = getters.getFlattenedPositions(
+              item.elements
+            );
+            result.push(...flattenedElements);
           }
-          const flattenedBlocks = getters.getFlattenedPositions(item.blocks);
-          result.push(...flattenedBlocks);
+          if (item.blocks) {
+            for (const block of item.blocks) {
+              block.elementType = "NoteTextBlock";
+            }
+            const flattenedBlocks = getters.getFlattenedPositions(item.blocks);
+            result.push(...flattenedBlocks);
+          }
+          if (item.elementType == "ServiceSpecificationGroupDto") {
+            result.push({
+              id: uuidv4(),
+              elementType: "GroupSum",
+              totalPrice: item.totalPrice,
+              totalPriceGrossDeducted: item.totalPriceGrossDeducted,
+              itemNumber: {
+                stringRepresentation: item.itemNumber.stringRepresentation,
+              },
+            });
+          }
         }
-        if (item.elementType == "ServiceSpecificationGroupDto") {
-          result.push({
-            id: uuidv4(),
-            elementType: "GroupSum",
-            totalPrice: item.totalPrice,
-            totalPriceGrossDeducted: item.totalPriceGrossDeducted,
-            itemNumber: {
-              stringRepresentation: item.itemNumber.stringRepresentation,
-            },
-          });
-        }
-      }
-      return result;
-    },
+        return result;
+      },
   },
 };

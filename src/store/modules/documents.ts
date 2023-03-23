@@ -1,10 +1,8 @@
 import { getGlobalAccessTokenOpenCde } from "@/helpers/DanglIdentity";
 import { fileDownload } from "@/helpers/HelperMethods";
 import { DocumentGet, DocumentsApi } from "@/openCDE API";
-
-interface State {
-  documents: DocumentGet[];
-}
+import { ActionContext } from "vuex";
+import { DocumentState, RootState } from "../types";
 
 export default {
   namespaced: true,
@@ -12,13 +10,13 @@ export default {
     documents: [] as DocumentGet[],
   },
   mutations: {
-    SET_DOCUMENTS(state: State, documents: DocumentGet[]) {
+    SET_DOCUMENTS(state: DocumentState, documents: DocumentGet[]) {
       state.documents = documents;
     },
-    DOCUMENT_TO_TABLE(state: State, document: DocumentGet) {
+    DOCUMENT_TO_TABLE(state: DocumentState, document: DocumentGet) {
       state.documents.push(document);
     },
-    REMOVE_DOCUMENT(state: State, documentId: string) {
+    REMOVE_DOCUMENT(state: DocumentState, documentId: string) {
       state.documents = state.documents.filter(
         (document) => document.id !== documentId
       );
@@ -26,7 +24,7 @@ export default {
   },
   actions: {
     async getAllDocumentsForProject(
-      { commit, dispatch }: any,
+      { commit, dispatch }: ActionContext<RootState, RootState>,
       projectId: string
     ) {
       try {
@@ -54,7 +52,8 @@ export default {
       }
     },
     async uploadDocumentMetadata(
-      { commit }: any,
+      // eslint-disable-next-line no-empty-pattern
+      {}: ActionContext<RootState, RootState>,
       { projectId, documentPost }: any
     ) {
       const documentGet =
@@ -71,7 +70,8 @@ export default {
       return documentGet.data;
     },
     async uploadDocumentContent(
-      { commit }: any,
+      // eslint-disable-next-line no-empty-pattern
+      {}: ActionContext<RootState, RootState>,
       { projectId, documentId, file }: any
     ) {
       const documentGet =
@@ -89,7 +89,7 @@ export default {
       return documentGet.data;
     },
     async uploadDocument(
-      { commit, dispatch }: any,
+      { commit, dispatch }: ActionContext<RootState, RootState>,
       { projectId, documentPost, file }: any
     ) {
       try {
@@ -104,6 +104,11 @@ export default {
           file,
         });
         commit("DOCUMENT_TO_TABLE", documentGetContent);
+        const notification = {
+          type: "success",
+          message: "Dokument erfolgreich erstellt.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         const notification = {
           type: "error",
@@ -114,7 +119,7 @@ export default {
       }
     },
     async deleteDocument(
-      { commit, dispatch }: any,
+      { commit, dispatch }: ActionContext<RootState, RootState>,
       { projectId, documentId }: any
     ) {
       try {
@@ -128,6 +133,11 @@ export default {
           }
         );
         commit("REMOVE_DOCUMENT", documentId);
+        const notification = {
+          type: "success",
+          message: "Dokument erfolgreich gelöscht.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         const notification = {
           type: "error",
@@ -137,7 +147,7 @@ export default {
       }
     },
     async downloadDocument(
-      { commit, dispatch }: any,
+      { dispatch }: ActionContext<RootState, RootState>,
       { projectId, documentId, fileName }: any
     ) {
       try {
@@ -152,6 +162,11 @@ export default {
         );
         const blob = new Blob([file.data]);
         fileDownload(blob, fileName);
+        const notification = {
+          type: "success",
+          message: "Dokument erfolgreich heruntergeladen.",
+        };
+        dispatch("notification/add", notification, { root: true });
       } catch (error) {
         const notification = {
           type: "error",

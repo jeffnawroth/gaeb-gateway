@@ -1,7 +1,10 @@
 import router from "@/router";
 import axios from "axios";
-import { AuthenticationApi } from "@/api";
+import { AuthenticationApi, UserLoginRequestDto } from "@/api";
 import vuetify from "@/plugins/vuetify";
+import { ActionContext } from "vuex";
+import { AuthUserState, RootState } from "../types";
+import { User } from "@/helpers/Interfaces";
 
 export default {
   namespaced: true,
@@ -11,24 +14,24 @@ export default {
   },
   mutations: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SET_USER_DATA(state: any, userData: any) {
+    SET_USER_DATA(state: AuthUserState, userData: User) {
       state.user = userData;
       localStorage.setItem("user", JSON.stringify(userData));
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${userData.token}`;
     },
-    CLEAR_USER_DATA(state: any) {
+    CLEAR_USER_DATA(state: AuthUserState) {
       localStorage.removeItem("user");
       state.user = null;
       axios.defaults.headers.common["Authorization"] = null;
     },
-    TOGGLE_DARK_MODE(state: any) {
+    TOGGLE_DARK_MODE(state: AuthUserState) {
       state.darkMode = !state.darkMode;
       vuetify.framework.theme.dark = state.darkMode;
-      localStorage.setItem("darkMode", state.darkMode);
+      localStorage.setItem("darkMode", JSON.stringify(state.darkMode));
     },
-    SET_DARK_MODE(state: any, value: boolean) {
+    SET_DARK_MODE(state: AuthUserState, value: boolean) {
       state.darkMode = value;
       vuetify.framework.theme.dark = state.darkMode;
     },
@@ -52,7 +55,10 @@ export default {
       }
     }, */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async login({ commit, dispatch }: any, credentials: any) {
+    async login(
+      { commit, dispatch }: ActionContext<RootState, RootState>,
+      credentials: UserLoginRequestDto
+    ) {
       try {
         const data =
           await AuthenticationApi.prototype.apiAuthenticationLoginPost(
@@ -68,16 +74,20 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
-    logout({ commit }: any) {
+    logout({ commit }: ActionContext<RootState, RootState>) {
       commit("CLEAR_USER_DATA");
       router.push({ name: "home" });
     },
-    async refreshToken({ commit, state, dispatch }: any) {
+    async refreshToken({
+      commit,
+      state,
+      dispatch,
+    }: ActionContext<RootState, RootState>) {
       try {
         const data =
           await AuthenticationApi.prototype.apiAuthenticationRefreshTokenPost({
-            token: state.user.token,
-            refreshToken: state.user.refreshToken,
+            token: state.authUser.user?.token,
+            refreshToken: state.authUser.user?.refreshToken,
           });
         commit("SET_USER_DATA", data.data);
       } catch (error) {
@@ -89,7 +99,7 @@ export default {
         return Promise.reject(error);
       }
     },
-    loadDarkMode({ commit }: any) {
+    loadDarkMode({ commit }: ActionContext<RootState, RootState>) {
       const darkMode = localStorage.getItem("darkMode");
       if (darkMode !== null) {
         commit("SET_DARK_MODE", darkMode === "true");
@@ -98,7 +108,7 @@ export default {
   },
   getters: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    loggedIn(state: any) {
+    loggedIn(state: AuthUserState) {
       return !!state.user;
     },
   },

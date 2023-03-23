@@ -7,13 +7,14 @@ import projects from "./modules/projects";
 import documents from "./modules/documents";
 import avacloud from "./modules/avacloud";
 import ifc from "./modules/ifc";
+import { RootState } from "./types";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     loadingGlobal: false,
-  },
+  } as RootState,
   getters: {},
   mutations: {
     SET_LOADING_GLOBAL(state, value: boolean) {

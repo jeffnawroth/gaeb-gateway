@@ -1,3 +1,7 @@
+import { CustomNotification } from "@/helpers/Interfaces";
+import { ActionContext } from "vuex";
+import { NotificationState, RootState } from "../types";
+
 let nextId = 1;
 export default {
   namespaced: true,
@@ -6,22 +10,28 @@ export default {
   },
 
   mutations: {
-    PUSH(state: any, notification: any) {
+    PUSH(state: NotificationState, notification: CustomNotification) {
       state.notifications.push({
         ...notification,
         id: nextId++,
       });
     },
-    DELETE(state: any, notification: any) {
+    DELETE(state: NotificationState, notification: CustomNotification) {
       const index = state.notifications.indexOf(notification);
       state.notifications.splice(index, 1);
     },
   },
   actions: {
-    add({ commit }: any, notification: any) {
+    add(
+      { commit }: ActionContext<RootState, RootState>,
+      notification: CustomNotification
+    ) {
       commit("PUSH", notification);
     },
-    remove({ commit }: any, notification: any) {
+    remove(
+      { commit }: ActionContext<RootState, RootState>,
+      notification: CustomNotification
+    ) {
       commit("DELETE", notification);
     },
   },
