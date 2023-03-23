@@ -59,7 +59,7 @@ export default {
             credentials
           );
         commit("SET_USER_DATA", data.data);
-        router.push({ name: "users" });
+        router.push({ name: "home" });
       } catch (error) {
         const notification = {
           type: "error",

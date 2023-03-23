@@ -6,6 +6,7 @@
       sort-by="lastName"
       :search="search"
       :loading="loading"
+      class="ma-2"
     >
       <template #top>
         <v-toolbar

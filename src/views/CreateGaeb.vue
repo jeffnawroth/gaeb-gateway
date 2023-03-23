@@ -66,7 +66,7 @@ export default Vue.extend({
   data: () => ({
     avaProject: {
       projectInformation: {
-        name: "FourWallsDoorWindowsRoof",
+        name: "SampleHouse",
         currencyShort: "€",
       },
       serviceSpecifications: [

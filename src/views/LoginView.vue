@@ -63,8 +63,8 @@ import { mapActions } from "vuex";
 export default Vue.extend({
   components: { ValidationObserver, ValidationProvider },
   data: () => ({
-    email: "",
-    password: "",
+    email: "admin@nimda.de",
+    password: "Admin1!",
     showPassword: false,
   }),
   methods: {
