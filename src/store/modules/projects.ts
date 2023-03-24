@@ -76,7 +76,10 @@ export default {
   getters: {
     getFilteredProjects: (state: ProjectState) => {
       return state.projects.filter((project) => {
-        return project;
+        return (
+          project.id.endsWith("-281878346acf") &&
+          !project.name.toLocaleLowerCase().includes("test")
+        );
       });
     },
   },
