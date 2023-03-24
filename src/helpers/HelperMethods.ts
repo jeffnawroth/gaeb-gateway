@@ -1,3 +1,5 @@
+import { ExtensionMap } from "./Interfaces";
+
 export function fileDownload(blob: Blob, filename: string) {
   const data = window.URL.createObjectURL(blob);
 
