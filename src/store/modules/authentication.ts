@@ -10,7 +10,6 @@ export default {
   namespaced: true,
   state: {
     user: null,
-    darkMode: false,
   },
   mutations: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,15 +24,6 @@ export default {
       localStorage.removeItem("user");
       state.user = null;
       axios.defaults.headers.common["Authorization"] = null;
-    },
-    TOGGLE_DARK_MODE(state: AuthUserState) {
-      state.darkMode = !state.darkMode;
-      vuetify.framework.theme.dark = state.darkMode;
-      localStorage.setItem("darkMode", JSON.stringify(state.darkMode));
-    },
-    SET_DARK_MODE(state: AuthUserState, value: boolean) {
-      state.darkMode = value;
-      vuetify.framework.theme.dark = state.darkMode;
     },
   },
   actions: {
@@ -124,19 +114,6 @@ export default {
         };
         dispatch("notification/add", notification, { root: true });
         return Promise.reject(error);
-      }
-    },
-
-    /**
-
-    This is an action that loads the user's preferred dark mode setting from local storage and updates the store accordingly.
-    If the user has previously set a dark mode preference, it retrieves the value from local storage and commits it to the store.
-    @param {ActionContext<RootState, RootState>} context - the context object that includes the store state and methods
-    */
-    loadDarkMode({ commit }: ActionContext<RootState, RootState>) {
-      const darkMode = localStorage.getItem("darkMode");
-      if (darkMode !== null) {
-        commit("SET_DARK_MODE", darkMode === "true");
       }
     },
   },

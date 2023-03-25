@@ -29,19 +29,7 @@
 
       <v-spacer />
 
-      <span>{{ `${user.firstName} ${user.lastName}` }}</span>
-      <BaseButton
-        show-tooltip
-        bottom
-        icon
-        @click="TOGGLE_DARK_MODE"
-      >
-        <v-icon> mdi-theme-light-dark </v-icon>
-        <template #tooltipContent>
-          <span v-if="$vuetify.theme.dark">Heller Modus einschalten </span>
-          <span v-else>Dunkler Modus einschalten </span>
-        </template>
-      </BaseButton>
+      <span>{{ fullName }}</span>
 
       <BaseButton
         v-if="loggedIn"
@@ -87,16 +75,20 @@
 import Vue from "vue";
 import { authComputed } from "@/store/helpers";
 
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default Vue.extend({
   computed: {
     ...authComputed,
     ...mapState(["loadingGlobal"]),
-    ...mapState("authentication", ["user"]),
+    ...mapState("authentication", {
+      user: "user",
+    }),
+    fullName() {
+      return this.user ? `${this.user.firstName} ${this.user.lastName}` : "";
+    },
   },
   methods: {
-    ...mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
     ...mapActions("authentication", ["logout"]),
   },
 });

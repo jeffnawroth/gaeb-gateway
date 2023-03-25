@@ -151,7 +151,7 @@ router.beforeEach((to, from, next) => {
   } else if (
     to.matched.some((record) => record.path === "/users") &&
     loggedIn &&
-    user.role !== "Admin"
+    user.role !== "admin"
   ) {
     next({ name: "404" });
     const notification = {

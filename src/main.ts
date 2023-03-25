@@ -41,7 +41,6 @@ export const bus = new Vue();
     store,
     vuetify,
     created() {
-      store.dispatch("authentication/loadDarkMode");
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);

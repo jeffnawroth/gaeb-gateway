@@ -26,7 +26,6 @@ export interface UserState {
 
 export interface AuthUserState {
   user: User | null;
-  darkMode: boolean;
 }
 
 export interface ProjectState {
