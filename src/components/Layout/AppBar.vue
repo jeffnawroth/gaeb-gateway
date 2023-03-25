@@ -29,6 +29,7 @@
 
       <v-spacer />
 
+      <span>{{ `${user.firstName} ${user.lastName}` }}</span>
       <BaseButton
         show-tooltip
         bottom
@@ -92,6 +93,7 @@ export default Vue.extend({
   computed: {
     ...authComputed,
     ...mapState(["loadingGlobal"]),
+    ...mapState("authentication", ["user"]),
   },
   methods: {
     ...mapMutations("authentication", ["TOGGLE_DARK_MODE"]),
