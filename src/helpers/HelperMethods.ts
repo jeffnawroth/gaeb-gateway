@@ -1,5 +1,12 @@
 import { ExtensionMap } from "./Interfaces";
 
+/**
+
+    This function triggers a file download by creating a temporary link element with a download attribute.
+    It takes in a blob containing the file data and a filename for the downloaded file.
+    @param {Blob} blob - the file data in the form of a Blob object
+    @param {string} filename - the desired filename for the downloaded file
+    */
 export function fileDownload(blob: Blob, filename: string) {
   const data = window.URL.createObjectURL(blob);
 
@@ -15,6 +22,16 @@ export function fileDownload(blob: Blob, filename: string) {
   }, 100);
 }
 
+/**
+
+    This function generates a filename for a GAEB file based on the given phaseId and fileName.
+    It uses an extension map to determine the appropriate file extension based on the phaseId,
+    and falls back to a default extension if no matching extension is found.
+    If a fileName is provided, it replaces the file extension with the appropriate one.
+    @param {number} phaseId - the phaseId of the GAEB file
+    @param {string|undefined} fileName - the original filename of the GAEB file, including the extension (optional)
+    @returns {string} - the generated filename for the GAEB file, including the appropriate extension
+    */
 export function getFileName(phaseId: number, fileName?: string | undefined) {
   const extensionMap = {
     83: ".X83",

@@ -35,6 +35,8 @@ export default Vue.extend({
   }),
   methods: {
     ...mapActions("documents", ["downloadDocument"]),
+
+    //Downloads a document file
     async downloadFile() {
       this.downloading = true;
 

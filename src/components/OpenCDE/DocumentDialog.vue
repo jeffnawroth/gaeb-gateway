@@ -86,6 +86,8 @@ export default Vue.extend({
   }),
   methods: {
     ...mapActions("documents", ["uploadDocument"]),
+
+    //Saves the document by calling the uploadDocument action with the document object
     async saveDocument() {
       this.loading = true;
       await this.uploadDocument({
@@ -97,6 +99,8 @@ export default Vue.extend({
 
       this.closeDialog();
     },
+
+    // Closes the dialog and optionally toggles the discard dialog based on the dirty flag
     closeDialog(dirty?: boolean) {
       if (dirty) {
         this.toggleDialogs();
@@ -104,11 +108,14 @@ export default Vue.extend({
         this.close();
       }
     },
+
+    // Toggles the documenmt and discard dialogs
     toggleDialogs() {
       this.showDocumentDialog = !this.showDocumentDialog;
       this.showDiscardDialog = !this.showDiscardDialog;
     },
 
+    // Closes the document dialog, sets a timeout to wait for the dialog to close completely, and navigates to the documents route
     close() {
       this.showDocumentDialog = false;
       setTimeout(() => {

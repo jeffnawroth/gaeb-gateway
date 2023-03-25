@@ -45,12 +45,15 @@ export default Vue.extend({
     },
   },
   methods: {
+    // Emits a zoom-to event to the bus with the ID of the model element to zoom to
     zoomTo(id: number) {
       bus.$emit("zoom-to", id);
     },
+    // Emits a highlight-model-element event to the bus with the ID of the model element to highlight
     highlightModelElement(id: number) {
       bus.$emit("highlight-model-element", id);
     },
+    // Updates the component's value and emits an input event with the updated value
     updateValue(value: number[]) {
       this.$emit("input", value);
     },

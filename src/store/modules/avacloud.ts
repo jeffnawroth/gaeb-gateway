@@ -21,6 +21,13 @@ export default {
     },
   },
   actions: {
+    /**
+
+    Converts a GAEB file to an AVA project and sets the result in the store.
+    @param {ActionContext<RootState, RootState>} context - The context object of the Vuex store.
+    @param {File} file - The GAEB file to convert.
+    @returns {Promise<void>}
+    */
     async convertGaebToAva(
       { dispatch, commit }: ActionContext<RootState, RootState>,
       file: File
@@ -53,6 +60,16 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
+
+    /**
+
+    This action converts an Ava project to Ava format by sending a request to the AvaConversionApi.
+    If successful, it sets the Ava project in the store and dispatches a success notification.
+    If there is an error, it dispatches an error notification and rejects the Promise.
+    @param {ActionContext<RootState, RootState>} context - the context object of the Vuex store
+    @param {ProjectDto} avaProject - the Ava project to be converted to Ava format
+    @returns {Promise} - a Promise that resolves with the Ava project data or rejects with an error
+    */
     async convertAvaToAva(
       { dispatch, commit }: ActionContext<RootState, RootState>,
       avaProject: ProjectDto
@@ -85,6 +102,19 @@ export default {
         return Promise.reject(error);
       }
     },
+
+    /**
+
+    This action converts an Ava project to GAEB format by sending a request to the AvaConversionApi.
+    If successful, it downloads the GAEB file and dispatches a success notification.
+    If there is an error, it dispatches an error notification.
+    @param {ActionContext<RootState, RootState>} context - the context object of the Vuex store
+    @param {ProjectDto} avaProject - the Ava project to be converted to GAEB format
+    @param {DestinationGaebType} destinationType - the destination type of the GAEB file
+    @param {DestinationGaebExchangePhase} targetPhase - the target phase of the GAEB file
+    @param {number} phaseId - the ID of the phase to export
+    @param {string} fileName - the name of the GAEB file to be downloaded
+    */
     async convertAvaToGaeb(
       { dispatch }: ActionContext<RootState, RootState>,
       { avaProject, destinationType, targetPhase, phaseId, fileName }: any
@@ -127,6 +157,14 @@ export default {
     },
   },
   getters: {
+    /**
+
+    Returns a flattened array of positions including any nested elements or blocks
+    @param state - The Vuex state object for AvaCloud module
+    @param getters - The Vuex getters object for AvaCloud module
+    @param items - An array of positions to be flattened
+    @returns An array of flattened positions including any nested elements or blocks
+    */
     getFlattenedPositions:
       (state: AvaCloudState, getters: any) => (items: any) => {
         const result = [];

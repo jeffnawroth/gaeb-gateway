@@ -131,16 +131,16 @@ const router = new VueRouter({
   routes,
 });
 
-/* router.beforeEach((to, from, next) => {
-  store.commit("SET_LOADING_GLOBAL", true);
-  const loggedIn = localStorage.getItem("user");
+/**
 
-  if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
-    next({ name: "login" });
-  }
-  next();
-}); */
-
+    This is a global navigation guard that is executed before each route change.
+    It sets the global loading state to true and checks if the user is logged in and has the necessary authorization
+    to access the requested route. If the user is not authorized, it redirects them to the login page or displays a 404 error.
+    It also dispatches a notification to display an error message if the user is not authorized to access the requested route.
+    @param {RouteLocationNormalized} to - the route being navigated to
+    @param {RouteLocationNormalized} from - the current route being navigated from
+    @param {Function} next - the callback function that allows navigation to continue
+    */
 router.beforeEach((to, from, next) => {
   store.commit("SET_LOADING_GLOBAL", true);
   const loggedIn = localStorage.getItem("user");
@@ -164,6 +164,11 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+/**
+
+    This is a global navigation guard that is executed after each route change.
+    It sets the global loading state to false after the route has finished loading.
+    */
 router.afterEach(() => {
   store.commit("SET_LOADING_GLOBAL", false);
 });

@@ -11,14 +11,18 @@ var viewer: Viewer;
 var cube: NavigationCube;
 
 export default Vue.extend({
+  // Initialize the viewer, sets the viewer size, and emits the bus
   mounted() {
     this.initViewer();
     window.addEventListener("resize", this.setViewerSize);
     this.emitBus();
   },
+  // Removes the window resize event listener
   destroyed() {
     window.removeEventListener("resize", this.setViewerSize);
   },
+
+  // Removes event listeners for the bus
   beforeDestroy() {
     bus.$off("zoom-to");
     bus.$off("highlight-model-element");
@@ -26,6 +30,8 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions("notification", ["add"]),
+
+    // Emits events to the bus and sets up event listeners for the bus
     emitBus() {
       bus.$on("zoom-to", (id: number) => viewer.zoomTo(id));
       bus.$on("highlight-model-element", (id: number) =>
@@ -33,12 +39,16 @@ export default Vue.extend({
       );
       bus.$on("clear-selection", () => viewer.clearHighlighting());
     },
+
+    // Sets the viewer size based on the height of the window and width of the
     setViewerSize() {
       const sheet = document.getElementById("sheet");
 
       viewer.canvas.height = window.innerHeight * 0.6;
       viewer.canvas.width = (sheet?.offsetWidth as number) / 2;
     },
+
+    // Initializes the viewer, checks if there are any errors, and loads the 3D
     initViewer() {
       cube = new NavigationCube();
       viewer = new Viewer("viewer");
@@ -70,6 +80,8 @@ export default Vue.extend({
         this.add(notification);
       }
     },
+
+    // Initializes viewer actions such as showing the default view, highlighting the selected model element, etc.
     initViewerActions() {
       viewer.on("loaded", () => {
         viewer.show(ViewType.DEFAULT);
@@ -83,6 +95,7 @@ export default Vue.extend({
       });
     },
 
+    // Highlights the selected model element by setting its state to highlighted or undefined based on its current state
     highlightModelElement(id: number) {
       if (viewer.getState(id) === 253) {
         viewer.setState(State.UNDEFINED, [id]);

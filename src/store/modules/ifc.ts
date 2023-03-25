@@ -13,6 +13,12 @@ export default {
     },
   },
   actions: {
+    /**
+
+    This is a Vuex action that fetches building elements from the server and sets them in the store state.
+    If there is an error, it dispatches a notification to be displayed.
+    @param {ActionContext<RootState, RootState>} context - the context object for the store module
+    */
     async getBuildingElements({
       commit,
       dispatch,

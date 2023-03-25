@@ -17,6 +17,13 @@ export default {
     },
   },
   actions: {
+    /**
+
+    This action retrieves all projects from the server using the Projects API.
+    If successful, it sets the retrieved projects to the state.
+    If there is an error, it dispatches a notification to display an error message.
+    @param {ActionContext<RootState, RootState>} context - the context object of the action
+    */
     async getAllProjects({
       commit,
       dispatch,
@@ -44,6 +51,14 @@ export default {
       }
     },
 
+    /**
+
+    Creates a new project with the provided project data and adds it to the project table.
+    @param {ActionContext<RootState, RootState>} context - The Vuex action context object.
+    @param {ProjectPost} projectPost - The project data to create the project with.
+    @returns {Promise<void>} A promise that resolves when the project has been created and added to the table.
+    @throws An error if there was a problem creating the project.
+    */
     async createProject(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       projectPost: ProjectPost
@@ -75,12 +90,13 @@ export default {
   },
   getters: {
     getFilteredProjects: (state: ProjectState) => {
-      return state.projects.filter((project) => {
+      return state.projects;
+      /* return state.projects.filter((project) => {
         return (
           project.id.endsWith("-281878346acf") &&
           !project.name.toLocaleLowerCase().includes("test")
         );
-      });
+      }); */
     },
   },
 };

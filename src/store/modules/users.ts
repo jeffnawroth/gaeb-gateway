@@ -33,6 +33,13 @@ export default {
     },
   },
   actions: {
+    /**
+
+    This is an asynchronous Vuex action that fetches a list of users from the server using the UserApi prototype.
+    If the request is successful, it commits the users to the Vuex store by calling the SET_USERS mutation.
+    If the request fails, it dispatches a notification to display an error message and returns a rejected promise.
+    @param {ActionContext<RootState, RootState>} context - the Vuex action context object that provides access to commit and dispatch methods
+    */
     async getUsers({ commit, dispatch }: ActionContext<RootState, RootState>) {
       try {
         const response = await UserApi.prototype.apiUserGet();
@@ -46,6 +53,18 @@ export default {
         return Promise.reject(error);
       }
     },
+
+    /**
+
+    This is an asynchronous Vuex action that retrieves a user's data either from the Vuex store or the server using the UserApi prototype.
+    If the user's data is already available in the Vuex store, it commits the data to the store by calling the SET_USER mutation and returns the data.
+    If the user's data is not available in the Vuex store, it makes an API request to the server to fetch the user's data.
+    If the request is successful, it commits the data to the Vuex store by calling the SET_USER mutation and returns the data.
+    If the request fails, it dispatches a notification to display an error message.
+    @param {ActionContext<RootState, RootState>} context - the Vuex action context object that provides access to commit, dispatch, and getters methods
+    @param {string} id - the ID of the user to retrieve
+    @returns {Promise<User>} - a Promise that resolves to the user's data if successful, or rejects with an error if unsuccessful
+    */
     async getUser(
       { commit, dispatch, getters }: ActionContext<RootState, RootState>,
       id: string
@@ -68,6 +87,16 @@ export default {
         }
       }
     },
+
+    /**
+
+    This is an asynchronous Vuex action that creates a new user by sending a POST request to the server using the UserApi prototype.
+    If the request is successful, it adds the new user to the Vuex store by calling the ADD_USER mutation and dispatches a notification to display a success message.
+    If the request fails, it dispatches a notification to display an error message and returns a rejected promise.
+    @param {ActionContext<RootState, RootState>} context - the Vuex action context object that provides access to commit and dispatch methods
+    @param {ApplicationUser} user - the user object containing the data to create the new user
+    @returns {Promise<any>} - a Promise that resolves if the user is successfully created or rejects with an error if unsuccessful
+    */
     async createUser(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       user: ApplicationUser
@@ -89,6 +118,16 @@ export default {
         return Promise.reject(error);
       }
     },
+
+    /**
+
+    This is an asynchronous Vuex action that deletes a user by sending a DELETE request to the server using the UserApi prototype.
+    If the request is successful, it removes the user from the Vuex store by calling the DELETE_USER mutation and dispatches a notification to display a success message.
+    If the request fails, it dispatches a notification to display an error message and returns a rejected promise.
+    @param {ActionContext<RootState, RootState>} context - the Vuex action context object that provides access to commit and dispatch methods
+    @param {ApplicationUser} user - the user object to delete
+    @returns {Promise<any>} - a Promise that resolves if the user is successfully deleted or rejects with an error if unsuccessful
+    */
     async deleteUser(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       user: ApplicationUser
@@ -110,6 +149,16 @@ export default {
         return Promise.reject(error);
       }
     },
+
+    /**
+
+    This is an asynchronous Vuex action that updates a user by sending a PUT request to the server using the UserApi prototype.
+    If the request is successful, it updates the user in the Vuex store by calling the UPDATE_USER mutation and dispatches a notification to display a success message.
+    If the request fails, it dispatches a notification to display an error message and returns a rejected promise.
+    @param {ActionContext<RootState, RootState>} context - the Vuex action context object that provides access to commit and dispatch methods
+    @param {ApplicationUser} user - the updated user object
+    @returns {Promise<any>} - a Promise that resolves if the user is successfully updated or rejects with an error if unsuccessful
+    */
     async updateUser(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       user: ApplicationUser
@@ -133,6 +182,13 @@ export default {
     },
   },
   getters: {
+    /**
+
+    This is a getter function that returns a user object from the Vuex store based on the given ID.
+    @param {UserState} state - the current state of the Vuex user module
+    @param {string} id - the ID of the user to be returned
+    @returns {ApplicationUser | undefined} - the user object matching the ID or undefined if no matching user is found
+    */
     getUserById: (state: UserState) => (id: string) => {
       return state.users.find((user: ApplicationUser) => user.id === id);
     },

@@ -1,6 +1,6 @@
 import { getGlobalAccessTokenOpenCde } from "@/helpers/DanglIdentity";
 import { fileDownload } from "@/helpers/HelperMethods";
-import { DocumentGet, DocumentsApi } from "@/openCDE API";
+import { DocumentGet, DocumentPost, DocumentsApi } from "@/openCDE API";
 import { ActionContext } from "vuex";
 import { DocumentState, RootState } from "../types";
 
@@ -23,6 +23,15 @@ export default {
     },
   },
   actions: {
+    /**
+
+    Retrieves all documents for a project with the specified project ID by making a request to the Documents API.
+    If the request is successful, it commits the retrieved documents to the store. If the request fails,
+    it dispatches a notification to display an error message.
+    @param {ActionContext<RootState, RootState>} context - the context object of the store
+    @param {string} projectId - the ID of the project for which to retrieve documents
+    @returns {Promise<void>}
+    */
     async getAllDocumentsForProject(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       projectId: string
@@ -51,6 +60,16 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
+
+    /**
+
+    Uploads document metadata to the Documents API for the specified project ID.
+    If the upload is successful, it returns the uploaded document data.
+    @param {ActionContext<RootState, RootState>} context - the context object of the store
+    @param {string} projectId - the ID of the project to which to upload the document metadata
+    @param {DocumentPost} documentPost - the document metadata to upload
+    @returns {Promise<DocumentGet>} - the uploaded document data
+    */
     async uploadDocumentMetadata(
       // eslint-disable-next-line no-empty-pattern
       {}: ActionContext<RootState, RootState>,
@@ -69,6 +88,17 @@ export default {
 
       return documentGet.data;
     },
+
+    /**
+
+    Uploads document content to the Documents API for the specified project ID and document ID.
+    If the upload is successful, it returns the uploaded document data.
+    @param {ActionContext<RootState, RootState>} context - the context object of the store
+    @param {string} projectId - the ID of the project to which to upload the document content
+    @param {string} documentId - the ID of the document to which to upload the content
+    @param {File} file - the file containing the document content to upload
+    @returns {Promise<DocumentGet>} - the uploaded document data
+    */
     async uploadDocumentContent(
       // eslint-disable-next-line no-empty-pattern
       {}: ActionContext<RootState, RootState>,
@@ -88,6 +118,18 @@ export default {
 
       return documentGet.data;
     },
+
+    /**
+
+    Uploads a document to the Documents API for the specified project ID.
+    If the upload is successful, it creates a new row in the document table in the store and dispatches a success notification.
+    If the upload fails, it dispatches an error notification.
+    @param {ActionContext<RootState, RootState>} context - the context object of the store
+    @param {string} projectId - the ID of the project to which to upload the document
+    @param {DocumentPost} documentPost - the document metadata to upload
+    @param {File} file - the file containing the document content to upload
+    @returns {Promise<void>}
+    */
     async uploadDocument(
       { commit, dispatch }: ActionContext<RootState, RootState>,
       { projectId, documentPost, file }: any
@@ -146,6 +188,17 @@ export default {
         dispatch("notification/add", notification, { root: true });
       }
     },
+
+    /**
+
+    Deletes a document from the Documents API for the specified project and document IDs.
+    If the deletion is successful, it removes the corresponding row from the document table in the store and dispatches a success notification.
+    If the deletion fails, it dispatches an error notification.
+    @param {ActionContext<RootState, RootState>} context - the context object of the store
+    @param {string} projectId - the ID of the project containing the document to delete
+    @param {string} documentId - the ID of the document to delete
+    @returns {Promise<void>}
+    */
     async downloadDocument(
       { dispatch }: ActionContext<RootState, RootState>,
       { projectId, documentId, fileName }: any

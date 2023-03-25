@@ -76,12 +76,14 @@ export default Vue.extend({
   methods: {
     ...mapActions("projects", ["createProject"]),
 
+    //Saves the project by calling the createProject action with the project object,
     async saveProject() {
       this.loading = true;
       await this.createProject(this.project);
       this.loading = false;
       this.closeDialog();
     },
+    // Closes the dialog and optionally toggles the discard dialog based on the dirty flag
     closeDialog(dirty?: boolean) {
       if (dirty) {
         this.toggleDialogs();
@@ -89,10 +91,12 @@ export default Vue.extend({
         this.close();
       }
     },
+    // Toggles the project and discard dialogs
     toggleDialogs() {
       this.showProjectDialog = !this.showProjectDialog;
       this.showDiscardDialog = !this.showDiscardDialog;
     },
+    // Closes the project dialog, sets a timeout to wait for the dialog to close completely, and navigates to the projects route
     close() {
       this.showProjectDialog = false;
       setTimeout(() => {
