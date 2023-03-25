@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import store from "@/store/index";
+import { User } from "@/helpers/Interfaces";
 
 Vue.use(VueRouter);
 
@@ -130,7 +131,7 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   store.commit("SET_LOADING_GLOBAL", true);
   const loggedIn = localStorage.getItem("user");
 
@@ -138,6 +139,29 @@ router.beforeEach((to, from, next) => {
     next({ name: "login" });
   }
   next();
+}); */
+
+router.beforeEach((to, from, next) => {
+  store.commit("SET_LOADING_GLOBAL", true);
+  const loggedIn = localStorage.getItem("user");
+  const user = JSON.parse(loggedIn as string) as User;
+
+  if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
+    next({ name: "login" });
+  } else if (
+    to.matched.some((record) => record.path === "/users") &&
+    loggedIn &&
+    user.role !== "Admin"
+  ) {
+    next({ name: "404" });
+    const notification = {
+      type: "error",
+      message: "Keine Zugangsberechtigung für diese Seite.",
+    };
+    store.dispatch("notification/add", notification);
+  } else {
+    next();
+  }
 });
 
 router.afterEach(() => {

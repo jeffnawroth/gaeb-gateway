@@ -8,7 +8,7 @@
             color="transparent"
           >
             <v-list-item
-              v-for="item in items"
+              v-for="item in filteredItems"
               :key="item.title"
               :to="item.route"
             >
@@ -39,11 +39,12 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapState } from "vuex";
+import { authComputed } from "@/store/helpers";
 
 export default Vue.extend({
   data: () => ({
     //links: ["Dashboard", "Messages", "Profile", "Updates"],
-
     items: [
       {
         title: "Benutzerverwaltung",
@@ -67,5 +68,20 @@ export default Vue.extend({
       },
     ],
   }),
+  computed: {
+    ...mapState("authentication", {
+      user: "user",
+    }),
+    ...authComputed,
+    filteredItems() {
+      if (!this.loggedIn) {
+        return this.items;
+      }
+      if (this.user.role === "admin") {
+        return this.items;
+      }
+      return this.items.filter((item) => item.title !== "Benutzerverwaltung");
+    },
+  },
 });
 </script>
