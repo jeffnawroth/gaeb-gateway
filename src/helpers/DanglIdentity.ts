@@ -1,8 +1,9 @@
 import axios from "axios";
 import store from "@/store";
 
-const clientId = "13737747-8c15-4e1d-bec8-690e9b61d632";
-const clientSecret = "DBxJi2XLr7fUdRg";
+//Add your Dangl-IT credentials
+const clientId = "xxxxxxxxxxxxxxxxxxxx";
+const clientSecret = "xxxxxxxxxxxxxxxxx";
 const identityTokenUrl = "https://identity.dangl-it.com/connect/token";
 //const avacloudBaseUrl = "https://avacloud-api.dangl-it.com";
 
