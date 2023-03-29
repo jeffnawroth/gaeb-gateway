@@ -1,4 +1,5 @@
 import axios from "axios";
+import store from "@/store";
 
 const clientId = "13737747-8c15-4e1d-bec8-690e9b61d632";
 const clientSecret = "DBxJi2XLr7fUdRg";
@@ -73,9 +74,10 @@ async function getAccessToken(scope: string) {
 
     return response.data.access_token;
   } catch (error) {
-    console.error(error);
-    alert(
-      "Failed to obtain an access token. Have you read the documentation and set up your OAuth2 client?"
-    );
+    const notification = {
+      type: "error",
+      message: `Beim Authentifizieren des Nutzers (${scope}) ist ein Fehler aufgetreten.`,
+    };
+    store.dispatch("notification/add", notification);
   }
 }

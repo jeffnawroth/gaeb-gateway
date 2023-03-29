@@ -22,8 +22,11 @@
       </BaseButton>
     </v-toolbar>
 
-    <v-row no-gutters>
-      <v-col class="px-3">
+    <v-row class="pa-2">
+      <v-col
+        cols="6"
+        class="px-3"
+      >
         <ModelViewer
           v-if="showViewer"
           ref="modelViewer"
@@ -32,6 +35,7 @@
       </v-col>
       <v-col
         v-if="showViewer"
+        cols="6"
         class="px-3"
       >
         <ListOfPositions
