@@ -71,7 +71,7 @@ export default Vue.extend({
       { text: "Nachname", value: "lastName" },
       { text: "Vorname", value: "firstName" },
       { text: "E-Mail", value: "email" },
-      { text: "", value: "actions", sortable: false, width: "10%" },
+      { text: "", value: "actions", sortable: false, width: "15%" },
     ],
     search: "",
     deleteDialog: false,

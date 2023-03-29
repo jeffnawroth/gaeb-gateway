@@ -11,14 +11,20 @@
       <template #top>
         <v-toolbar flat>
           <v-toolbar-title>Projekte</v-toolbar-title>
-          <v-spacer />
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          />
           <v-text-field
             v-model="search"
-            outlined
-            hide-details="auto"
-            dense
-            placeholder="Suche"
+            append-icon="mdi-magnify"
+            label="Suche"
+            single-line
+            hide-details
           />
+          <v-spacer />
+          <v-spacer />
           <v-spacer />
           <BaseButton @click="openProjectDialog">
             Projekt erstellen

@@ -23,14 +23,20 @@
             <span>Zurück</span>
           </v-tooltip>
           <v-toolbar-title>Dokumente</v-toolbar-title>
-          <v-spacer />
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          />
           <v-text-field
             v-model="search"
-            outlined
-            hide-details="auto"
-            dense
-            placeholder="Suche"
+            append-icon="mdi-magnify"
+            label="Suche"
+            single-line
+            hide-details
           />
+          <v-spacer />
+          <v-spacer />
           <v-spacer />
           <BaseButton @click="openDocumentDialog">
             Dokument Hochladen
@@ -113,7 +119,7 @@ export default Vue.extend({
         text: "Erstellt am",
         value: "createdAtUtc",
       },
-      { value: "actions", sortable: false, width: "10%" },
+      { value: "actions", sortable: false, width: "15%" },
     ],
     search: "",
     showDeleteDocumentDialog: false,

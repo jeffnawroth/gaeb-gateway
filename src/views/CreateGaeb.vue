@@ -150,6 +150,7 @@ export default Vue.extend({
         fileName: this.avaProject.projectInformation?.name,
       });
       this.creating = false;
+      this.selectedElements = [];
     },
 
     getSelectedItems() {
