@@ -55,13 +55,19 @@ namespace gaeb_gateway_backend.Controllers;
     [ProducesResponseType(200, Type = typeof(ApplicationUser))]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
+    
+    // Retrieve a user based on their ID
     public async Task<IActionResult>GetById(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
+        
+        // If no user is found with the given ID, return a 404 Not Found response
         if (user == null)
         {
+            
             return NotFound();
         }
+        // If a user is found with the given ID, return a 200 OK response with the user object as the response body
         return Ok(user);
     }
 
@@ -77,39 +83,50 @@ namespace gaeb_gateway_backend.Controllers;
     [ProducesResponseType(201, Type = typeof(ApplicationUser))]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
+    
+    // Creates a new ApplicationUser
     public async Task<IActionResult> Create([FromBody] ApplicationUser user)
     {
+        // Checks if the model state is valid
         if (!ModelState.IsValid)
         {
+            // If the model state is invalid, returns a bad request response with the validation errors
             return BadRequest(ModelState);
         }
 
-        
+        // Sets the username property of the user to be a combination of their first and last name
         user.UserName = user.FirstName + "." + user.LastName;
+        
+        // Hashes the user's password using the PasswordHasher service injected into the class and sets the hash as the user's password hash
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, user.PasswordHash);
 
+        // Checks if a user with the same email already exists in the system
         var user_exist = await _userManager.FindByEmailAsync(user.Email);
         if (user_exist != null)
         {
+            // If a user with the same email already exists, returns a bad request response with an error message
             return BadRequest(new AuthResult()
             {
-
                 Errors = new List<string>()
-                    {
-                        "Email existiert bereits. Bitte einloggen."
-                    }
+                {
+                    "Email already exists. Please log in."
+                }
             });
         }
 
+        // Creates a new user in the system using the UserManager service injected into the class
         var result = await _userManager.CreateAsync(user);
+        
+        // Adds the user to the role specified in their role property
         await _userManager.AddToRoleAsync(user, $"{user.Role}");
         if (result.Succeeded)
         {
+            // If the user creation was successful, returns a created response with the newly created user object
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
+        // If the user creation was not successful, returns a bad request response with the error messages
         return BadRequest(result.Errors);
     }
-
     /// <summary>
     /// Updates an existing user.
     /// </summary>
@@ -125,21 +142,31 @@ namespace gaeb_gateway_backend.Controllers;
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
+    
+    // Updates the ApplicationUser.
     public async Task<IActionResult> Update(string id, [FromBody] ApplicationUser user)
     {
+        // Check if the given id matches the user's id.
         if (id != user.Id)
         {
+            // Return bad request if they don't match.
             return BadRequest();
         }
+        // Check if the user object is valid.
         if (!ModelState.IsValid)
         {
+            // Return bad request with model state errors if it's not valid.
             return BadRequest(ModelState);
         }
+        // Find the existing user based on the id.
         var existingUser = await _userManager.FindByIdAsync(id);
+        
+        // Return not found if the user doesn't exist.
         if (existingUser == null)
         {
             return NotFound();
         }
+        // Update the user properties with the properties from the given user object.
         existingUser.Id = user.Id;
         existingUser.UserName = user.UserName;
         existingUser.FirstName = user.FirstName;
@@ -158,25 +185,33 @@ namespace gaeb_gateway_backend.Controllers;
         existingUser.LockoutEnabled = user.LockoutEnabled;
         existingUser.AccessFailedCount = user.AccessFailedCount;
 
-        var user_exist = await _userManager.FindByEmailAsync(existingUser.Email);
-        if (user_exist != null && user_exist.Email == user.Email)
+        // Check if a user with the given email already exists.
+        var userExist = await _userManager.FindByEmailAsync(existingUser.Email);
+
+        // If user exists and the email is the same as the one provided, return a bad request with an error message.
+        if (userExist != null && userExist.Email == user.Email)
         {
             return BadRequest(new AuthResult()
             {
-
                 Errors = new List<string>()
-                    {
-                        "Nutzer mit der Email existiert bereits. Bitte andere Email-Adresse verwenden."
-                    }
+                {
+                    "Nutzer mit der E-Mail Adresse existiert bereits. Bitte wählen Sie eine andere E-Mail."
+                }
             });
         }
-       
+
+        // Update the existing user.
         var result = await _userManager.UpdateAsync(existingUser);
+
+        // If the update is successful, return an OK response with the updated user object.
         if (result.Succeeded)
         {
             return Ok(user);
         }
+
+        // If the update fails, return a bad request with the errors from the result object.
         return BadRequest(result.Errors);
+
     }
 
     /// <summary>
@@ -191,19 +226,30 @@ namespace gaeb_gateway_backend.Controllers;
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
+    
+    // This method deletes a user with a given id.
     public async Task<IActionResult> Delete(string id)
     {
+        // Find the user with the given id using the UserManager.
         var user = await _userManager.FindByIdAsync(id);
+        // If the user is not found, return a 404 Not Found response.
         if (user == null)
         {
             return NotFound();
         }
+
+        // Attempt to delete the user using the UserManager.
         var result = await _userManager.DeleteAsync(user);
+
+        // If the deletion is successful, return a 200 OK response.
         if (result.Succeeded)
         {
             return Ok();
         }
+
+        // If the deletion is not successful, return a 400 Bad Request response and include any errors that occurred.
         return BadRequest(result.Errors);
+
     }
     
 }

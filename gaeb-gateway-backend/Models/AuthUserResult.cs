@@ -1,5 +1,4 @@
-﻿using System;
-namespace gaeb_gateway_backend.Models
+﻿namespace gaeb_gateway_backend.Models
 {
 	public class AuthUserResult
 	{

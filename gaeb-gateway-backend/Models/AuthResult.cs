@@ -1,5 +1,4 @@
-﻿using System;
-namespace gaeb_gateway_backend.Models
+﻿namespace gaeb_gateway_backend.Models
 {
 	// Response information from API
 	public class AuthResult

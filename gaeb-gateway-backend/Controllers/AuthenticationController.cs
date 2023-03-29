@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography.Pkcs;
 using System.Text;
-using System.Threading.Tasks;
-using gaeb_gateway_backend.Configurations;
 using gaeb_gateway_backend.Data;
 using gaeb_gateway_backend.Models;
 using gaeb_gateway_backend.Models.DTOs;
@@ -19,15 +13,18 @@ namespace gaeb_gateway_backend.Controllers;
 
 [Route("api/[controller]")] // api/authentication
 [ApiController]
+// The [ApiController] attribute adds some default behavior for Web API controllers.
 public class AuthenticationController : ControllerBase
 {
+    // These are the dependencies needed by the controller. They are passed in through the constructor.
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly RoleManager<IdentityRole> roleManager;
 
     private readonly ApiDbContext _context;
-
+    
+    // The constructor takes in the dependencies and assigns them to the private fields.
     public AuthenticationController(
         UserManager<ApplicationUser> userManager,
         IConfiguration configuration,
@@ -150,8 +147,9 @@ public class AuthenticationController : ControllerBase
         {
             // Check if user exists
             var existing_user = await _userManager.FindByEmailAsync(loginRequest.Email);
-
+            
             if (existing_user == null)
+                // Return bad request with error message if user doesn't exist
                 return BadRequest(new AuthResult()
                 {
                     Errors = new List<string>()
@@ -162,6 +160,8 @@ public class AuthenticationController : ControllerBase
             var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.Password);
 
             if (!isCorrect)
+                
+                // Return bad request with error message if email and password don't match
                 return BadRequest(new AuthResult()
                 {
                     Errors = new List<string>()
@@ -169,12 +169,12 @@ public class AuthenticationController : ControllerBase
                         "Email und Passwort stimmen nicht überein."
                     },
                 });
-
+            // Generate JWT token and return it
             var jwtToken = await GenerateJwtToken(existing_user);
 
             return Ok(jwtToken);
         }
-
+        // Return bad request with error message if model state is invalid
         return BadRequest(new AuthResult()
         {
             Errors = new List<string>()
@@ -196,11 +196,13 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
     {
         if (ModelState.IsValid)
-        {
+        {   
+            // Verify and generate new token
             var result = await VerifyAndGenerateToken(tokenRequest);
 
             if(result == null)
             {
+                // Return bad request if token is invalid
                 return BadRequest(new AuthResult()
                 {
                     Errors = new List<string>()
@@ -210,11 +212,11 @@ public class AuthenticationController : ControllerBase
 
                 });
             }
-
+            // Return new token if request is valid
             return Ok(result);
 
         }
-
+        // Return bad request if request is invalid
         return BadRequest(new AuthResult()
         {
             Errors = new List<string>()
@@ -229,24 +231,28 @@ public class AuthenticationController : ControllerBase
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
             
-            // The lifetime should not be validated because it will be expired for this operation. Otherwise an exception occurs.
+            // Clone the validation parameters to avoid modifying the original instance
             var tokenValidationParameters = _tokenValidationParameters.Clone();
+            // Disable lifetime validation as the token will have already expired for this operation
             tokenValidationParameters.ValidateLifetime = false;
 
+            // Validate the token
             var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validedToken);
 
             if (validedToken is JwtSecurityToken jwtSecurityToken)
             {
+                // Check if the algorithm used to sign the token is HmacSha256
                 var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
 
                 if (result == false)
                     return null;
 
             }
-
+            // Extract the expiry date from the token
             var utcExpiryDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
             var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
+            
+            // Check if the access token has expired
             if (expiryDate > DateTime.UtcNow)
             {
                 return new AuthResult()
@@ -259,11 +265,13 @@ public class AuthenticationController : ControllerBase
             }
 
             
-
+        // Retrieve the stored refresh token
         var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
-
+            
+            // Check if stored refresh token is valid
             if (storedToken == null)
             {
+                // If the stored token is null, return an AuthResult with an error message
                 return new AuthResult()
                 {
                     Errors = new List<string>()
@@ -277,6 +285,7 @@ public class AuthenticationController : ControllerBase
 
             if(storedToken.IsUsed)
             {
+                // If the stored token has already been used, return an AuthResult with an error message
                 return new AuthResult()
                 {
                     Errors = new List<string>()
@@ -288,6 +297,7 @@ public class AuthenticationController : ControllerBase
 
             if (storedToken.IsRevoked)
             {
+                // If the stored token has been revoked, return an AuthResult with an error message
                 return new AuthResult()
                 {
                     Errors = new List<string>()
@@ -296,9 +306,11 @@ public class AuthenticationController : ControllerBase
                     }
                 };
             }
-
+            
+            // Retrieve the "Jti" claim from the token being verified
             var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
 
+            // If the stored token's "JwtId" does not match the "Jti" claim, return an AuthResult with an error message
             if(storedToken.JwtId != jti)
             {
                 return new AuthResult()
@@ -309,7 +321,8 @@ public class AuthenticationController : ControllerBase
                     }
                 };
             }
-
+            
+            // If the stored token has expired, return an AuthResult with an error message
             if(storedToken.ExpiryDate < DateTime.UtcNow)
             {
                 return new AuthResult()
@@ -322,7 +335,9 @@ public class AuthenticationController : ControllerBase
             }
 
             
-
+            // Mark the stored token as used,
+            // update it in the database,
+            // and generate a new JWT token for the user
             storedToken.IsUsed = true;
             _context.RefreshTokens.Update(storedToken);
             await _context.SaveChangesAsync();
@@ -334,25 +349,32 @@ public class AuthenticationController : ControllerBase
 
         
     }
-
+    // This method converts a Unix timestamp to a DateTime object
     private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
-    {
+    {   
+        // Create a DateTime object with the Unix epoch time (1970-01-01 00:00:00 UTC)
         var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        
+        // Add the number of seconds since the Unix epoch time to the DateTime object
         dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
-
+        
+        // Return the resulting DateTime object
         return dateTimeVal;
     }
-
+    
+    // This method generates a JWT token for the given ApplicationUser object
     private async Task <AuthResult> GenerateJwtToken(ApplicationUser user)
 {
+    // Create a JwtSecurityTokenHandler object to handle JWT tokens
     var jwtTokenHandler = new JwtSecurityTokenHandler();
 
-    // Get key from configuration
+    // Get the secret key from the configuration
     var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
-
+    
+    // Get the roles of the user from the UserManager
     var userRoles = await _userManager.GetRolesAsync(user);
     
-        // Token descriptor
+        // Set the token descriptor with the information needed for the token
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
             Issuer = _configuration.GetSection("JwtConfig:Issuer").Value,
@@ -380,7 +402,8 @@ public class AuthenticationController : ControllerBase
         // Tokenhandler to create Token based on the tokenDescriptor information
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);
-
+        
+        // Generate a refresh token and set its properties
         var refreshToken = new RefreshToken()
         {
             JwtId = token.Id,
@@ -391,10 +414,12 @@ public class AuthenticationController : ControllerBase
             IsUsed = false,
             UserId = user.Id
         };
-
+        
+        // Add the refresh token to the context and save the changes
         await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
-
+        
+        // Return the authentication result with the user's information, the JWT token and refresh token
         return new AuthResult()
         {
             FirstName = user.FirstName,
@@ -406,14 +431,18 @@ public class AuthenticationController : ControllerBase
         };
 
     }
-
-
-
-
+    
+    // Generate a random string of a specified length
     private string RandomStringGeneration(int length)
     {
+        // Create a new instance of the Random class
         var random = new Random();
+        
+        // Define the characters that can be used in the random string
         var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz_";
+        
+        // Select a random character from the string 's' using the Random class instance,
+        // and finally, convert the resulting sequence to an array of characters and create a new string
         return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
