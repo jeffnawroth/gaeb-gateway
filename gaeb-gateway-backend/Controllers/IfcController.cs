@@ -24,7 +24,8 @@ public class IfcController : ControllerBase
     public ActionResult<List<BuildingElement>> RetrieveIfcData()
 {
     // Specify the path of the IFC file
-    const string filePath = "/Users/ec61/gaeb-gateway-backend/gaeb-gateway-backend/SampleHouse.ifc";
+    // Insert your path to the x
+    const string filePath = "x/SampleHouse.ifc";
 
     // Open the IFC file
     using (var model = IfcStore.Open(filePath))
@@ -354,7 +355,7 @@ public class IfcController : ControllerBase
     // Converts IFC into wexBim
     public static void ConvertIfcToWexBim()
     {
-        using var model = IfcStore.Open("/Users/ec61/gaeb-gateway-backend/gaeb-gateway-backend/SampleHouse.ifc");
+        using var model = IfcStore.Open("Here should be the ifc filepath");
         var context = new Xbim3DModelContext(model);
         context.CreateContext (null, false);
         using var wexBimFile = System.IO.File.Create("SampleHouse.wexbim");
