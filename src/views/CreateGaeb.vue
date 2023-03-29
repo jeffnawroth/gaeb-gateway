@@ -10,6 +10,7 @@
         placeholder="Durchsuchen..."
         hide-details="auto"
         accept=".ifc"
+        @change="showViewer = true"
       />
       <v-spacer />
       <BaseButton
@@ -24,11 +25,15 @@
     <v-row no-gutters>
       <v-col class="px-3">
         <ModelViewer
+          v-if="showViewer"
           ref="modelViewer"
           @toggle-list-element="toggleListElement"
         />
       </v-col>
-      <v-col class="px-3">
+      <v-col
+        v-if="showViewer"
+        class="px-3"
+      >
         <ListOfPositions
           ref="listOfPositions"
           v-model="selectedElements"
@@ -80,6 +85,7 @@ export default Vue.extend({
     } as ProjectDto,
     selectedElements: [] as any,
     creating: false,
+    showViewer: false,
   }),
   computed: {
     ...mapState("ifc", ["elements"]),
