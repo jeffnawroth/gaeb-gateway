@@ -1,0 +1,201 @@
+import {
+  AvaConversionApi,
+  GaebConversionApi,
+  ProjectDto,
+} from "@/AVACloud API";
+import { getGlobalAccessTokenAvaCloud } from "@/helpers/DanglIdentity";
+import { fileDownload, getFileName } from "@/helpers/HelperMethods";
+import { v4 as uuidv4 } from "uuid";
+import { ActionContext } from "vuex";
+import { AvaCloudState, RootState } from "../types";
+
+export default {
+  namespaced: true,
+  state: {
+    avaProject: {} as ProjectDto,
+    positions: [],
+  },
+  mutations: {
+    SET_AVA_PROJECT(state: AvaCloudState, avaProject: ProjectDto) {
+      state.avaProject = avaProject;
+    },
+  },
+  actions: {
+    /**
+
+    Converts a GAEB file to an AVA project and sets the result in the store.
+    @param {ActionContext<RootState, RootState>} context - The context object of the Vuex store.
+    @param {File} file - The GAEB file to convert.
+    @returns {Promise<void>}
+    */
+    async convertGaebToAva(
+      { dispatch, commit }: ActionContext<RootState, RootState>,
+      file: File
+    ) {
+      try {
+        const avaProject =
+          await GaebConversionApi.prototype.gaebConversionConvertToAva(
+            undefined,
+            undefined,
+            undefined,
+            file,
+            {
+              headers: {
+                Authorization: `Bearer ${getGlobalAccessTokenAvaCloud()}`,
+              },
+            }
+          );
+        commit("SET_AVA_PROJECT", avaProject.data);
+        const notification = {
+          type: "success",
+          message: "Dokument erfolgreich geladen.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      } catch (error) {
+        commit("SET_AVA_PROJECT", {});
+        const notification = {
+          type: "error",
+          message: "Beim Laden des Dokuments ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      }
+    },
+
+    /**
+
+    This action converts an Ava project to Ava format by sending a request to the AvaConversionApi.
+    If successful, it sets the Ava project in the store and dispatches a success notification.
+    If there is an error, it dispatches an error notification and rejects the Promise.
+    @param {ActionContext<RootState, RootState>} context - the context object of the Vuex store
+    @param {ProjectDto} avaProject - the Ava project to be converted to Ava format
+    @returns {Promise} - a Promise that resolves with the Ava project data or rejects with an error
+    */
+    async convertAvaToAva(
+      { dispatch, commit }: ActionContext<RootState, RootState>,
+      avaProject: ProjectDto
+    ) {
+      try {
+        const avaProjectNew =
+          await AvaConversionApi.prototype.avaConversionConvertToAva(
+            avaProject,
+            undefined,
+            undefined,
+            undefined,
+            {
+              headers: {
+                Authorization: `Bearer ${getGlobalAccessTokenAvaCloud()}`,
+              },
+            }
+          );
+        commit("SET_AVA_PROJECT", avaProjectNew.data);
+        const notification = {
+          type: "success",
+          message: "Kosten erfolgreich kalkuliert.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Beim Kalkulieren der Preise ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+        return Promise.reject(error);
+      }
+    },
+
+    /**
+
+    This action converts an Ava project to GAEB format by sending a request to the AvaConversionApi.
+    If successful, it downloads the GAEB file and dispatches a success notification.
+    If there is an error, it dispatches an error notification.
+    @param {ActionContext<RootState, RootState>} context - the context object of the Vuex store
+    @param {ProjectDto} avaProject - the Ava project to be converted to GAEB format
+    @param {DestinationGaebType} destinationType - the destination type of the GAEB file
+    @param {DestinationGaebExchangePhase} targetPhase - the target phase of the GAEB file
+    @param {number} phaseId - the ID of the phase to export
+    @param {string} fileName - the name of the GAEB file to be downloaded
+    */
+    async convertAvaToGaeb(
+      { dispatch }: ActionContext<RootState, RootState>,
+      { avaProject, destinationType, targetPhase, phaseId, fileName }: any
+    ) {
+      try {
+        const newfileName = getFileName(phaseId, fileName);
+
+        const gaebFile =
+          await AvaConversionApi.prototype.avaConversionConvertToGaeb(
+            avaProject,
+            undefined,
+            destinationType,
+            targetPhase,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            {
+              headers: {
+                Authorization: `Bearer ${getGlobalAccessTokenAvaCloud()}`,
+              },
+            }
+          );
+
+        const blob = new Blob([gaebFile.data]);
+        fileDownload(blob, newfileName);
+        const notification = {
+          type: "success",
+          message: "Datei erfolgreich konvertiert.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      } catch (error) {
+        const notification = {
+          type: "error",
+          message: "Beim Exportieren der GAEB ist ein Problem aufgetreten.",
+        };
+        dispatch("notification/add", notification, { root: true });
+      }
+    },
+  },
+  getters: {
+    /**
+
+    Returns a flattened array of positions including any nested elements or blocks
+    @param state - The Vuex state object for AvaCloud module
+    @param getters - The Vuex getters object for AvaCloud module
+    @param items - An array of positions to be flattened
+    @returns An array of flattened positions including any nested elements or blocks
+    */
+    getFlattenedPositions:
+      (state: AvaCloudState, getters: any) => (items: any) => {
+        const result = [];
+        for (const item of items) {
+          result.push(item);
+          if (item.elements) {
+            const flattenedElements = getters.getFlattenedPositions(
+              item.elements
+            );
+            result.push(...flattenedElements);
+          }
+          if (item.blocks) {
+            for (const block of item.blocks) {
+              block.elementType = "NoteTextBlock";
+            }
+            const flattenedBlocks = getters.getFlattenedPositions(item.blocks);
+            result.push(...flattenedBlocks);
+          }
+          if (item.elementType == "ServiceSpecificationGroupDto") {
+            result.push({
+              id: uuidv4(),
+              elementType: "GroupSum",
+              totalPrice: item.totalPrice,
+              totalPriceGrossDeducted: item.totalPriceGrossDeducted,
+              itemNumber: {
+                stringRepresentation: item.itemNumber.stringRepresentation,
+              },
+            });
+          }
+        }
+        return result;
+      },
+  },
+};
