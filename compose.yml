@@ -6,6 +6,9 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
+    environment:
+      VUE_APP_API_PATH: http://localhost:5007
+
   backend:
     container_name: gaeb-backend-dev
     build:
