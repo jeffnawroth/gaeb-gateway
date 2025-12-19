@@ -15,6 +15,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     environment:
+      IFC_FILE_PATH: "/app/gaeb-gateway-backend/SampleHouse.ifc"
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "http://*:5007"
       ConnectionStrings__PostgresqlDbConnection: "${POSTGRES_CONNECTION_STRING}"
