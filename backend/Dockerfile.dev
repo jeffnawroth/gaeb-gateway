@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0
+
+WORKDIR /app
+
+COPY gaeb-gateway-backend/*.csproj ./
+
+RUN dotnet restore
+
+COPY . .
+
+ENV ASPNETCORE_URLS=http://*:5007
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+CMD ["dotnet","run","--no-launch-profile","--project","gaeb-gateway-backend/gaeb-gateway-backend.csproj"]
