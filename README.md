@@ -4,6 +4,8 @@
 
 GAEB Gateway is a web application for processing and visualizing IFC building models (Industry Foundation Classes) with integration to GAEB formats (Gemeinsamer Ausschreibungsstandard Elektronisch für Bauleistungen - German standard for electronic tendering in construction). The project enables extraction of building elements from IFC files, their interactive 3D visualization, and creation of bills of quantities.
 
+**📹 Demo**: You can watch a demo video of the application at [https://gaeb.jeffnawroth.me](https://gaeb.jeffnawroth.me)
+
 ## Features
 
 - **IFC Processing**: Load and parse IFC files to extract building elements (walls, doors, windows, roofs, etc.)
@@ -11,6 +13,14 @@ GAEB Gateway is a web application for processing and visualizing IFC building mo
 - **GAEB Conversion**: Create and edit GAEB bills of quantities from IFC data
 - **User Management**: JWT-based authentication and authorization with role system
 - **REST API**: Complete backend API for IFC and user data management
+
+### Screenshots
+
+**IFC Converter Interface**
+![IFC Converter Interface](./docs/screenshot_ifc-converter.png)
+
+**GAEB Management**
+![GAEB Management](./docs/screenshot_gaeb_management.png)
 
 ## Tech Stack
 
@@ -55,7 +65,7 @@ JWT_SECRET=your_jwt_secret_at_least_32_characters_long
 
 ```bash
 # Start development environment with Docker Compose
-docker-compose -f compose.dev.yml up --build
+docker compose -f compose.dev.yml up --build
 ```
 
 The application will be available at:
