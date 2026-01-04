@@ -21,7 +21,7 @@ import globalAxios, {
   AxiosRequestConfig,
 } from "axios";
 
-export const BASE_PATH = "https://localhost:7043".replace(/\/+$/, "");
+export const BASE_PATH = process.env.VUE_APP_API_PATH || "http://localhost:5007".replace(/\/+$/, "");
 
 /**
  *

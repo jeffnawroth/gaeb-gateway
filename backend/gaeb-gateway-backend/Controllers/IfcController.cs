@@ -1,5 +1,6 @@
 using gaeb_gateway_backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
@@ -12,6 +13,12 @@ namespace gaeb_gateway_backend.Controllers;
 [ApiController]
 public class IfcController : ControllerBase
 {   
+    private readonly IWebHostEnvironment _env;
+
+    public IfcController(IWebHostEnvironment env)
+    {
+        _env = env;
+    }
     /// <summary>
     /// Gets a list of elements with their properties.
     /// </summary>
@@ -23,9 +30,11 @@ public class IfcController : ControllerBase
     [ProducesResponseType(500)]
     public ActionResult<List<BuildingElement>> RetrieveIfcData()
 {
-    // Specify the path of the IFC file
-    // Insert your path to the x
-    const string filePath = "x/SampleHouse.ifc";
+    // Build the IFC file path relative to the app content root
+    var configuredPath = Environment.GetEnvironmentVariable("IFC_FILE_PATH");
+    var filePath = string.IsNullOrWhiteSpace(configuredPath)
+        ? System.IO.Path.Combine(_env.ContentRootPath, "SampleHouse.ifc")
+        : configuredPath;
 
     // Open the IFC file
     using (var model = IfcStore.Open(filePath))
